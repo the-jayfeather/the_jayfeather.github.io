@@ -1,0 +1,538 @@
+<html>
+  <head>
+    <title>主页 - the_jayfeather的导航站</title>
+    <style>
+    .card-wrap{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin:8px 0 18px 0;
+      }
+      .card-group{
+        display: flex; 
+        gap: 10px; 
+        margin:8px 0 18px 0;
+      }
+      .card{
+        line-height: 45px;
+        background-color: rgba(187,238,255,0.85);
+        width: 90px;
+        height: 90px;
+        padding: 10px;
+        border-radius: 15px;
+        box-shadow: 0 4px 14px rgba(34,85,136,0.25);
+        padding: center;
+        text-align: center;
+        flex-shrink: 0;
+        transition: all 0.22s ease;
+      }
+     .card:hover {
+        background-color: rgba(102,204,255,0.88);
+        box-shadow:0 6px 20px rgba(102,204,255,0.35);
+        max-width: 95px;
+        height: 95px;
+      }
+      .card img{
+        padding: 10px;
+        width:40px;
+      }
+      .card a{
+        font-size:14px;
+        color:#113355;
+      }
+      .card a:hover{
+        color:#113355;
+        font-size:15px;
+     }
+    .long_card{
+      line-height: 30px;
+      background-color: rgba(187,238,255,0.85);
+      width: 200px;
+      height: 30px;
+      padding: 10px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(34,85,136,0.25);
+      display: flex;
+      align-items: center;
+      gap:8px;
+      flex-shrink: 0;
+      transition: all 0.22s ease;
+    }
+    .long_card:hover {
+      background-color: rgba(102,204,255,0.88);
+      width: 206px;
+      height: 36px;
+      box-shadow:0 6px 20px rgba(102,204,255,0.35);
+    }
+    .long_card a{
+      font-size:14px;
+      color:#113355;
+    }
+    .long_card img{
+      max-width:40px;
+    }
+    .long_card_about{
+      line-height: 30px;
+      background-color: rgba(187,238,255,0.85);
+      height: 30px;
+      padding: 10px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(34,85,136,0.25);
+      display: flex;
+      align-items: center;
+      gap:8px;
+      flex-shrink: 0;
+      transition: all 0.22s ease;
+    }
+    .long_card_about:hover {
+      background-color: rgba(102,204,255,0.88);
+      height: 36px;
+      box-shadow:0 6px 20px rgba(102,204,255,0.35);
+    }
+    .long_card_about a{
+      font-size:14px;
+      color:#113355;
+    }
+    .long_card_about img{
+      max-width:40px;
+    }
+    .headline{
+      position: fixed;
+      top: 0;
+      left: 0;
+       right: 0;
+       height: 64px;
+       background-color: #225588;
+       box-shadow: 0 2px 10px rgba(34,85,136,0.4);
+       display: flex;
+       align-items: center;
+       padding: 0 24px;
+       gap:28px;
+       z-index:999;
+      }
+      .headline .title-text{
+        font-family:"微软雅黑";
+        font-size:26px;
+        color:#99DDFF;
+        font-weight:bold;
+      }
+      .headline a.page{
+        font-family:"霞鹜文楷";
+        font-size:20px;
+        color:#94C8FF;
+        text-decoration:none;
+        padding:6px 14px;
+        border-radius:8px;
+        transition: 0.25s ease;
+      }
+      .headline a.page:hover{
+        background-color:rgba(102,204,255,0.20);
+        color:#FFFFFF;
+      }
+      .card-wrap::-webkit-scrollbar{
+        height:4px;
+      }
+      .card-wrap::-webkit-scrollbar-thumb{
+        background:#44688C;
+        border-radius:2px;
+      }
+      .footer{
+        margin-top:60px;
+        padding:20px 0;
+        text-align:center;
+        color:#99DDFF;
+        font-family:"霞鹜文楷";
+        font-size:15px;
+        border-top:1px solid RGBA(102,204,255,0.25);
+      }
+      .footer a{
+        color:#BBEEFF;
+        text-decoration:none;
+      }
+      .video-box{
+        background-color: RGBA(187,238,255,0.12);
+        border-radius:16px;
+        padding:16px;
+        margin:14px 0;
+        box-shadow:0 4px 14px RGBA(34,85,136,0.22);
+      }
+      .video-box .media-title{
+        font-family:"霞鹜文楷";
+        font-size:18px;
+        color:#99DDFF;
+        margin-bottom:10px;
+      }
+      .video-box video{
+        width:100%;
+        max-width:640px;
+        border-radius:10px;
+        display:block;
+      }
+      .audio-box{
+        background-color: RGBA(187,238,255,0.12);
+        border-radius:16px;
+        padding:14px 16px;
+        margin:14px 0;
+        box-shadow:0 4px 14px RGBA(34,85,136,0.22);
+        display:flex;
+        align-items:center;
+        gap:14px;
+        flex-wrap:wrap;
+      }
+      .audio-box .media-title{
+        font-family:"霞鹜文楷";
+        font-size:18px;
+        color:#99DDFF;
+      }
+      .audio-box audio{
+        flex:1;
+        min-width:220px;
+      }
+      h1{
+        font-family:"微软雅黑";
+        font-size:30px;
+        color:#FFFFFF;
+      }
+      h2{
+        font-family:"霞鹜文楷";
+        font-size:24px;
+        color:#99DDFF;
+        margin:32px 0 10px 0;
+        display: flex;
+        align-items: center;
+        gap:8px;
+      }
+      h2::before{
+        content:"";
+        width:12px;
+        height:12px;
+        border-radius:50%;
+        background-color:#66CCFF;
+        flex‑shrink:0;
+      }
+      p{
+        font-family:"霞鹜文楷";
+        font-size:20px;
+        color:#FEFEFE;
+      }
+      body{
+        padding-top:80px;
+        background: linear-gradient(160deg, #062742 0%,#041E33 100%);
+      }
+      a{
+        font-family:"霞鹜文楷";
+        color:#113355;
+        text-decoration: none;
+      }
+      iframe{
+        height:250;
+        border-radius: 5%;
+        border: 1px solid black;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class=headline>
+      <h1>the_jayfeather的导航站</h1>
+      <a class="page" href="#">主页</a>
+      <a class="page" href="the_jayfeather的导航站 - 功能实验室.html">功能实验室</a>
+      <a class="page" href="the_jayfeather的导航站 - 关于.html">关于</a>
+    </div class=headline>
+    <h2>科技</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/编程猫社区.png"></img><br>
+        <a href="https://shequ.codemao.cn">编程猫社区</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/COCO编辑器.png"></img><br>
+        <a href="https://coco.codemao.cn">COCO</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/github.svg"></img><br>
+        <a href="https://https://github.com">Github</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/CSDN.ico"></img><br>
+        <a href="http://www.csdn.net">CSDN博客</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/开源中国.png"></img><br>
+        <a href="http://www.oschina.net">开源中国</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/智教联盟.jpg"></img><br>
+        <a href="https://forum.smart-teach.cn/">智教联盟</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>在线工具</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/进制转换.png"></img><br>
+        <a href="https://tool.lu/hexconvert/">在线进制转换</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/歌词滚动姬.png"></img><br>
+        <a href="https://lrc-maker.github.io/">歌词滚动姬</a><br>
+      </div class=card>
+      <div class=card>
+        <img src="icons/picwish.png"></img><br>
+        <a href="https://picwish.cn/">佐糖图片编辑</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>小游戏</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/POKI.png"></img><br>
+        <a href="http://poki.com/">Poki在线小游戏</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/yikm.png"></img><br>
+        <a href="https://www.yikm.net/">在线小霸王</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>我的世界</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/minecraft.png"></img><br>
+        <a href="https://www.minecraft.net/zh-hans">我的世界官网</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/ChunkBase.png"></img><br>
+        <a href="https://www.chunkbase.com/apps/seed-map">种子查找器</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/MineBBS.png"></img><br>
+        <a href="https://www.minebbs.com">MineBBS</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/MinecraftWiki.png"></img><br>
+        <a href="https://zh.minecraft.wiki/">MinecraftWIKI</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/McMap.png"></img><br>
+        <a href="https://mc-map.djfun.de/">图转MC地图</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/McSounds.png"></img><br>
+        <a href="https://o.xbottle.top/mcsounds">MC音效站</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/McNav.png"></img><br>
+        <a href="https://www.mcnav.net/">MC导航站</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/MC.BE.Download.png"></img><br>
+        <a href="https://mc.minebbs.com/">MCBE下载</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/MCJS.png"></img><br>
+        <a href="https://mcjs.link/">在线网页MC</a>
+      </div class=card>
+    </div class=card-group>
+    <div class=card-group>
+      <div class=long_card>
+        <img src="icons/Alpha.png"></img>
+        <a href="files/Eaglercraft_Alpha1.2.6.html">[离线网页版]MC&nbspAlpha</a>
+      </div class=long_card>
+      <div class=long_card>
+        <img src="icons/1.5.2.png"></img>
+        <a href="files/Eaglercraft_1.5.2.html">[离线网页版]MC&nbsp1.5.2</a>
+      </div class=long_card>
+      <div class=long_card>
+        <img src="icons/1.8.8.png"></img>
+        <a href="files/Eaglercraft_1.8.8.html">[离线网页版]MC&nbsp1.8.8</a>
+      </div class=long_card>
+      <div class=long_card>
+        <img src="icons/1.12.2.png"></img>
+        <a href="files/Eaglercraft_1.12.2.html">[离线网页版]MC&nbsp1.12.2</a>
+      </div class=long_card>
+    </div class=card-group>
+    <h2>影视</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/优酷.png"></img><br>
+        <a href="https://www.youku.com/">优酷</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/爱奇艺.png"></img><br>
+        <a href="https://https://www.iqiyi.com/">爱奇艺</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/腾讯视频.png"></img><br>
+        <a href="https://www.iqiyi.com/">腾讯视频</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/豆瓣.png"></img><br>
+        <a href="http://www.douban.com">豆瓣评分网</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>短视频</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/抖音.png"></img><br>
+        <a href="https://www.douyin.com">抖音</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/BiliBili.png"></img><br>
+        <a href="http://www.bilibili.com/">bilibili</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>网站推荐</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/ARealMe.png"></img><br>
+              <a href="https://arealme.com">A Real Me</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/FUUN.FUN.png"></img><br>
+        <a href="https:/fuun.fun">网站收藏家</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>腾讯应用</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/QQMail.png"></img><br>
+        <a href="https://mail.qq.com">QQ邮箱</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/QQ微云.png"></img><br>
+        <a href="https://www.weiyun.com">QQ微云</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>维基百科</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/猫武士维基.png"></img><br>
+        <a href="https://warriors.huijiwiki.com">猫武士维基</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/TARDIS.WIKI.png"></img><br>
+        <a href="https://zh.tardis.wiki/">神秘博士维基</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/卫星百科.png"></img><br>
+        <a href="https://sat.huijiwiki.com/">卫星百科</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/MLP.WIKI.png"></img><br>
+        <a href="https://mlp.huijiwiki.com">小马宝莉维基
+      </div class=card>
+    </div class=card-group>
+    <h2>AI工具</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/豆包.jpg"></img><br>
+        <a href="https://www.doubao.com/chat/">豆包</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/DeepSeek.png"></img><br>
+        <a href="https://www.deepseek.com/">DeepSeek</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>文件格式在线转换</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/convertio.co.webp"></img><br>
+        <a href="https://convertio.co/zh/">Convertio</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/freeconvert.png"></img><br>
+        <a href="https://www.freeconvert.com/zh/">FreeConvert</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>资源下载</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/N.ITO.png"></img><br>
+        <a href="https://next.itellyou.cn/Original/#">Win镜像下载1</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/HW.webp"></img><br>
+        <a href="https://hellowindows.cn/">Win镜像下载2</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/Snapany.png"></img><br>
+        <a href="https://snapany.com/zh">视频在线下载</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/PNGIMG.png"></img><br>
+        <a href="https://pngimg.com/">免扣绿幕素材</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/XTC.png"></img><br>
+        <a href="http://tiantech.zjjsw.com/xtc/index.html">小天才社区</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/XTC.CODE.svg"></img><br>
+        <a href="https://xtc-code.onesoft.top/">小天才校验码</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>网盘</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/lanzou.jpg"></img><br>
+        <a href="https://lanzoui.com/">蓝奏云</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/baidu.pan.png"></img><br>
+        <a href="https://pan.baidu.com/">百度网盘</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/quark.pan.jpg"></img><br>
+        <a href="https://www.quark.cn/">夸克网盘</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/Ali.pan.jpg"></img><br>
+        <a href="https://www.aliyun.com/">阿里云</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/xunlei.pan.png"></img><br>
+        <a href="https://www.xunlei.com/">迅雷云盘</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/123.pan.png"></img><br>
+        <a href="https://www.123pan.com/">123网盘</a>
+      </div class=card>
+    </div class=card-group>
+    <h2>音乐</h2>
+    <div class=card-group>
+      <div class=card>
+        <img src="icons/163.music.png"></img><br>
+        <a href="https://music.163.com/">网易云音乐</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/qq.music.png"></img><br>
+        <a href="https://y.qq.com/">QQ音乐</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/kugou.music.ico"></img><br>
+        <a href="https://www.kugou.com/">酷狗音乐</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/kuwo.music.jpg"></img><br>
+        <a href="https://kuwo.cn/">酷我音乐</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/migu.music.png"></img><br>
+        <a href="https://music.migu.cn/">咪咕音乐</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/qisui.music.svg"></img><br>
+        <a href="https://music.douyin.com/qishui">汽水音乐</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/Apple.music.png"></img><br>
+        <a href="https://music.apple.com/cn/">Apple音乐</a>
+      </div class=card>
+      <div class=card>
+        <img src="icons/gequhai.music.png"></img><br>
+        <a href="https://www.gequhai.com/">歌曲海</a>
+      </div class=card>
+    </div class=card-group>
+    <div class="footer">
+      FU Studio · 一只松鸦羽(the_jayfeather) © 2026 版权所有 | 一只松鸦羽的导航站
+    </div>
+  </body>
+</html>

@@ -1,0 +1,262 @@
+<html>
+  <head>
+    <title>功能实验室 - the_jayfeather的导航站</title>
+    <style>
+    .card-wrap{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin:8px 0 18px 0;
+      }
+      .card-group{
+        display: flex; 
+        gap: 10px; 
+        margin:8px 0 18px 0;
+      }
+      .card{
+        line-height: 45px;
+        background-color: rgba(187,238,255,0.85);
+        width: 90px;
+        height: 90px;
+        padding: 10px;
+        border-radius: 15px;
+        box-shadow: 0 4px 14px rgba(34,85,136,0.25);
+        padding: center;
+        text-align: center;
+        flex-shrink: 0;
+        transition: all 0.22s ease;
+      }
+     .card:hover {
+        background-color: rgba(102,204,255,0.88);
+        box-shadow:0 6px 20px rgba(102,204,255,0.35);
+        max-width: 95px;
+        height: 95px;
+      }
+      .card img{
+        padding: 10px;
+        width:40px;
+      }
+      .card a{
+        font-size:14px;
+        color:#113355;
+      }
+      .card a:hover{
+        color:#113355;
+        font-size:15px;
+     }
+    .long_card{
+      line-height: 30px;
+      background-color: rgba(187,238,255,0.85);
+      width: 200px;
+      height: 30px;
+      padding: 10px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(34,85,136,0.25);
+      display: flex;
+      align-items: center;
+      gap:8px;
+      flex-shrink: 0;
+      transition: all 0.22s ease;
+    }
+    .long_card:hover {
+      background-color: rgba(102,204,255,0.88);
+      width: 206px;
+      height: 36px;
+      box-shadow:0 6px 20px rgba(102,204,255,0.35);
+    }
+    .long_card a{
+      font-size:14px;
+      color:#113355;
+    }
+    .long_card img{
+      max-width:40px;
+    }
+    .long_card_about{
+      line-height: 30px;
+      background-color: rgba(187,238,255,0.85);
+      height: 30px;
+      padding: 10px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(34,85,136,0.25);
+      display: flex;
+      align-items: center;
+      gap:8px;
+      flex-shrink: 0;
+      transition: all 0.22s ease;
+    }
+    .long_card_about:hover {
+      background-color: rgba(102,204,255,0.88);
+      height: 36px;
+      box-shadow:0 6px 20px rgba(102,204,255,0.35);
+    }
+    .long_card_about a{
+      font-size:14px;
+      color:#113355;
+    }
+    .long_card_about img{
+      max-width:40px;
+    }
+    .headline{
+      position: fixed;
+      top: 0;
+      left: 0;
+       right: 0;
+       height: 64px;
+       background-color: #225588;
+       box-shadow: 0 2px 10px rgba(34,85,136,0.4);
+       display: flex;
+       align-items: center;
+       padding: 0 24px;
+       gap:28px;
+       z-index:999;
+      }
+      .headline .title-text{
+        font-family:"微软雅黑";
+        font-size:26px;
+        color:#99DDFF;
+        font-weight:bold;
+      }
+      .headline a.page{
+        font-family:"霞鹜文楷";
+        font-size:20px;
+        color:#94C8FF;
+        text-decoration:none;
+        padding:6px 14px;
+        border-radius:8px;
+        transition: 0.25s ease;
+      }
+      .headline a.page:hover{
+        background-color:rgba(102,204,255,0.20);
+        color:#FFFFFF;
+      }
+      .card-wrap::-webkit-scrollbar{
+        height:4px;
+      }
+      .card-wrap::-webkit-scrollbar-thumb{
+        background:#44688C;
+        border-radius:2px;
+      }
+      .footer{
+        margin-top:60px;
+        padding:20px 0;
+        text-align:center;
+        color:#99DDFF;
+        font-family:"霞鹜文楷";
+        font-size:15px;
+        border-top:1px solid RGBA(102,204,255,0.25);
+      }
+      .footer a{
+        color:#BBEEFF;
+        text-decoration:none;
+      }
+      .video-box{
+        background-color: RGBA(187,238,255,0.12);
+        border-radius:16px;
+        padding:16px;
+        margin:14px 0;
+        box-shadow:0 4px 14px RGBA(34,85,136,0.22);
+      }
+      .video-box .media-title{
+        font-family:"霞鹜文楷";
+        font-size:18px;
+        color:#99DDFF;
+        margin-bottom:10px;
+      }
+      .video-box video{
+        width:100%;
+        max-width:640px;
+        border-radius:10px;
+        display:block;
+      }
+      .audio-box{
+        background-color: RGBA(187,238,255,0.12);
+        border-radius:16px;
+        padding:14px 16px;
+        margin:14px 0;
+        box-shadow:0 4px 14px RGBA(34,85,136,0.22);
+        display:flex;
+        align-items:center;
+        gap:14px;
+        flex-wrap:wrap;
+      }
+      .audio-box .media-title{
+        font-family:"霞鹜文楷";
+        font-size:18px;
+        color:#99DDFF;
+      }
+      .audio-box audio{
+        flex:1;
+        min-width:220px;
+      }
+      h1{
+        font-family:"微软雅黑";
+        font-size:30px;
+        color:#FFFFFF;
+      }
+      h2{
+        font-family:"霞鹜文楷";
+        font-size:24px;
+        color:#99DDFF;
+        margin:32px 0 10px 0;
+        display: flex;
+        align-items: center;
+        gap:8px;
+      }
+      h2::before{
+        content:"";
+        width:12px;
+        height:12px;
+        border-radius:50%;
+        background-color:#66CCFF;
+        flex‑shrink:0;
+      }
+      p{
+        font-family:"霞鹜文楷";
+        font-size:20px;
+        color:#FEFEFE;
+      }
+      body{
+        padding-top:80px;
+        background: linear-gradient(160deg, #062742 0%,#041E33 100%);
+      }
+      a{
+        font-family:"霞鹜文楷";
+        color:#113355;
+        text-decoration: none;
+      }
+      iframe{
+        height:250;
+        border-radius: 5%;
+        border: 1px solid black;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class=headline>
+      <h1>the_jayfeather的导航站</h1>
+      <a class="page" href="index.html">主页</a>
+      <a class="page" href="#">功能实验室</a>
+      <a class="page" href="the_jayfeather的导航站 - 关于.html">关于</a>
+    </div class=headline>
+    <h2>神秘功能实验室</h2>
+      <div class=long_card>
+        <a href="新·第78届毛顿奖/新·第78届毛顿奖.html">第78届毛顿奖</a>
+      </div class=long_card>
+      <div class="video-box">
+        <div class="media-title">恭喜发财(4K修复版)</div>
+        <video src="videos/恭喜发财_4K.mp4" controls></video>
+      </div>
+      <div class="video-box">
+        <div class="media-title">«我乱剪的，灯神大人»</div>
+        <video src="videos/【术力口乱剪】«我乱剪的，灯神大人».mp4" controls></video>
+      </div>
+    <div class="audio-box">
+      <div class="media-title">八任博士主题曲(但是有TARDIS音效)</div>
+      <audio src="sounds/My DW TV Music.mp3" controls>
+    </div>
+    <div class="footer">
+      FU Studio · 一只松鸦羽(the_jayfeather) © 2026 版权所有 | 一只松鸦羽的导航站
+    </div>
+  </body>
+</html>
