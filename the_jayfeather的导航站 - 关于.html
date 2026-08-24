@@ -1,267 +1,45 @@
 <html>
   <head>
     <title>关于 - the_jayfeather的导航站</title>
-    <style>
-    .card-wrap{
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin:8px 0 18px 0;
-      }
-      .card-group{
-        display: flex; 
-        gap: 10px; 
-        margin:8px 0 18px 0;
-      }
-      .card{
-        line-height: 45px;
-        background-color: rgba(187,238,255,0.85);
-        width: 90px;
-        height: 90px;
-        padding: 10px;
-        border-radius: 15px;
-        box-shadow: 0 4px 14px rgba(34,85,136,0.25);
-        padding: center;
-        text-align: center;
-        flex-shrink: 0;
-        transition: all 0.22s ease;
-      }
-     .card:hover {
-        background-color: rgba(102,204,255,0.88);
-        box-shadow:0 6px 20px rgba(102,204,255,0.35);
-        max-width: 95px;
-        height: 95px;
-      }
-      .card img{
-        padding: 10px;
-        width:40px;
-      }
-      .card a{
-        font-size:14px;
-        color:#113355;
-      }
-      .card a:hover{
-        color:#113355;
-        font-size:15px;
-     }
-    .long_card{
-      line-height: 30px;
-      background-color: rgba(187,238,255,0.85);
-      width: 200px;
-      height: 30px;
-      padding: 10px;
-      border-radius: 16px;
-      box-shadow: 0 4px 14px rgba(34,85,136,0.25);
-      display: flex;
-      align-items: center;
-      gap:8px;
-      flex-shrink: 0;
-      transition: all 0.22s ease;
-    }
-    .long_card:hover {
-      background-color: rgba(102,204,255,0.88);
-      width: 206px;
-      height: 36px;
-      box-shadow:0 6px 20px rgba(102,204,255,0.35);
-    }
-    .long_card a{
-      font-size:14px;
-      color:#113355;
-    }
-    .long_card img{
-      max-width:40px;
-    }
-    .long_card_about{
-      line-height: 30px;
-      background-color: rgba(187,238,255,0.85);
-      height: 30px;
-      padding: 10px;
-      border-radius: 16px;
-      box-shadow: 0 4px 14px rgba(34,85,136,0.25);
-      display: flex;
-      align-items: center;
-      gap:8px;
-      flex-shrink: 0;
-      transition: all 0.22s ease;
-    }
-    .long_card_about:hover {
-      background-color: rgba(102,204,255,0.88);
-      height: 36px;
-      box-shadow:0 6px 20px rgba(102,204,255,0.35);
-    }
-    .long_card_about a{
-      font-size:14px;
-      color:#113355;
-    }
-    .long_card_about img{
-      max-width:40px;
-    }
-    .headline{
-      position: fixed;
-      top: 0;
-      left: 0;
-       right: 0;
-       height: 64px;
-       background-color: #225588;
-       box-shadow: 0 2px 10px rgba(34,85,136,0.4);
-       display: flex;
-       align-items: center;
-       padding: 0 24px;
-       gap:28px;
-       z-index:999;
-      }
-      .headline .title-text{
-        font-family:"微软雅黑";
-        font-size:26px;
-        color:#99DDFF;
-        font-weight:bold;
-      }
-      .headline a.page{
-        font-family:"霞鹜文楷";
-        font-size:20px;
-        color:#94C8FF;
-        text-decoration:none;
-        padding:6px 14px;
-        border-radius:8px;
-        transition: 0.25s ease;
-      }
-      .headline a.page:hover{
-        background-color:rgba(102,204,255,0.20);
-        color:#FFFFFF;
-      }
-      .card-wrap::-webkit-scrollbar{
-        height:4px;
-      }
-      .card-wrap::-webkit-scrollbar-thumb{
-        background:#44688C;
-        border-radius:2px;
-      }
-      .footer{
-        margin-top:60px;
-        padding:20px 0;
-        text-align:center;
-        color:#99DDFF;
-        font-family:"霞鹜文楷";
-        font-size:15px;
-        border-top:1px solid RGBA(102,204,255,0.25);
-      }
-      .footer a{
-        color:#BBEEFF;
-        text-decoration:none;
-      }
-      .video-box{
-        background-color: RGBA(187,238,255,0.12);
-        border-radius:16px;
-        padding:16px;
-        margin:14px 0;
-        box-shadow:0 4px 14px RGBA(34,85,136,0.22);
-      }
-      .video-box .media-title{
-        font-family:"霞鹜文楷";
-        font-size:18px;
-        color:#99DDFF;
-        margin-bottom:10px;
-      }
-      .video-box video{
-        width:100%;
-        max-width:640px;
-        border-radius:10px;
-        display:block;
-      }
-      .audio-box{
-        background-color: RGBA(187,238,255,0.12);
-        border-radius:16px;
-        padding:14px 16px;
-        margin:14px 0;
-        box-shadow:0 4px 14px RGBA(34,85,136,0.22);
-        display:flex;
-        align-items:center;
-        gap:14px;
-        flex-wrap:wrap;
-      }
-      .audio-box .media-title{
-        font-family:"霞鹜文楷";
-        font-size:18px;
-        color:#99DDFF;
-      }
-      .audio-box audio{
-        flex:1;
-        min-width:220px;
-      }
-      h1{
-        font-family:"微软雅黑";
-        font-size:30px;
-        color:#FFFFFF;
-      }
-      h2{
-        font-family:"霞鹜文楷";
-        font-size:24px;
-        color:#99DDFF;
-        margin:32px 0 10px 0;
-        display: flex;
-        align-items: center;
-        gap:8px;
-      }
-      h2::before{
-        content:"";
-        width:12px;
-        height:12px;
-        border-radius:50%;
-        background-color:#66CCFF;
-        flex‑shrink:0;
-      }
-      p{
-        font-family:"霞鹜文楷";
-        font-size:20px;
-        color:#FEFEFE;
-      }
-      body{
-        padding-top:80px;
-        background: linear-gradient(160deg, #062742 0%,#041E33 100%);
-      }
-      a{
-        font-family:"霞鹜文楷";
-        color:#113355;
-        text-decoration: none;
-      }
-      iframe{
-        height:250;
-        border-radius: 5%;
-        border: 1px solid black;
-        margin: 10px 0;
-      }
-    </style>
+    <link rel="icon" href="icons/Fluent_ico.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+    <base target="_blank">
   </head>
   <body>
-    <div class=headline>
-      <h1>the_jayfeather的导航站</h1>
-      <a class="page" href="index.html">主页</a>
-      <a class="page" href="the_jayfeather的导航站 - 功能实验室.html">功能实验室</a>
-      <a class="page" href="the_jayfeather的导航站 - 关于.html">关于</a>
-    </div class=headline>
-    <div class=card-group>
-      <div class=long_card_about>
-        <img src="icons/xxx.png"></img>
-        <a href="xxx.xx">这是the_jayfeatherd的本地导航站</a>
-      </div class=long_card>
-    </div class=card-group>
-      <h2>制作 | 鸣谢</h2>
-    <div class=card-group>
-      <div class=card>
-        <img src="icons/DeepSeek.png"></img><br>
-        <a href="xxx.xx">DeepSeek</a>
-      </div class=card>
-      <div class=card>
-        <img src="icons/豆包.jpg"></img><br>
-        <a href="xxx.xx">豆包</a>
-      </div class=card>
-      <div class=card>
-        <img src="icons/the_jayfeather.jpg"></img><br>
-        <a href="xxx.xx">一只松鸦羽</a>
-      </div class=card>
-    </div class=card-group>
-    <div class="footer">
-      FU Studio · 一只松鸦羽(the_jayfeather) © 2026 版权所有 | 一只松鸦羽的导航站
+    <div class="headline_show"></div>
+    <div class=card_group>
+      <div class="card_write">
+        <h2>这里是一只松鸦羽的个人导航站</h2>
+        <h3>网站说明</h3>
+        <h4>制作名单：</h4>
+        <p>主框架搭建：一只松鸦羽</p>
+        <p>配色建议：<a href="https://doubao.com">豆包AI</a>，<a href="https://deepseek.com">DeepSeek</a></p>
+        <p>编写教程：<a href="https://deepseek.com">DeepSeek</a>，<a href="https://doubao.com">豆包AI</a>，<a href="https://www.runoob.com/">菜鸟教程</a></p>
+        <p>网站托管：<a href="https://github.com">GitHub</a></p>
+        <p>图标提供：SharpThief，<a href="https://pngimg.com/">免版权图标库</a></p>
+        <p>视频提供：<a href="https://douyin.com">抖音</a>，<a href="https://bilibili.com">哔哩哔哩</a></p>
+      </div>
     </div>
+    <h2>支持作者</h2>
+    <div class=card-group>
+      <div class=long_card>
+        <img src="icons/抖音.ico"></img>
+        <a href="https://www.douyin.com/user/MS4wLjABAAAA4rI23Qs9ge3T9rcIO8D3QaYdK79VIIQvZuADWmO4s-EJ0ygx5W_KfaWEYvFVhoWD?f">作者抖音</a>
+      </div>
+      <div class=long_card>
+        <img src="icons/BiliBili.ico"></img>
+        <a href="https://space.bilibili.com/3546581701757584">作者B站</a>
+      </div>
+      <div class=long_card>
+        <img src="icons/Github.svg"></img>
+        <a href="https://github.com/the-jayfeather">作者Github</a>
+      </div>
+      <div class=long_card>
+        <img src="icons/Github.svg"></img>
+        <a href="https://github.com/the-jayfeather">项目Github</a>
+      </div>
+    </div class=card-group>
+    <div class="footer_show"></div>
+    <script src="./components.js"></script>
   </body>
 </html>
