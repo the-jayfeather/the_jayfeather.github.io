@@ -83,6 +83,7 @@ body{
     text-align: center;
     flex-shrink: 0;
     transition: all 0.22s ease;
+    cursor: pointer;
 }
 .card:hover {
     background-color: rgba(102,204,255,0.88);
@@ -105,7 +106,7 @@ body{
 .long_card{
   line-height: 30px;
   background-color: rgba(187,238,255,0.85);
-  mix-width: 200px;
+  width: 205px;
   height: 30px;
   padding: 10px;
   border-radius: 16px;
@@ -115,11 +116,12 @@ body{
   gap:8px;
   flex-shrink: 0;
   transition: all 0.22s ease;
+  cursor: pointer;
 }
 .long_card:hover {
   background-color: rgba(102,204,255,0.88);
-  width: 206px;
-  height: 36px;
+  width: 210px;
+  height: 35px;
   box-shadow:0 6px 20px rgba(102,204,255,0.35);
 }
 .long_card a{
@@ -141,10 +143,11 @@ body{
   gap:8px;
   flex-shrink: 0;
   transition: all 0.22s ease;
+  cursor: pointer;
 }
 .long_card_about:hover {
   background-color: rgba(102,204,255,0.88);
-  mix-width:200px;
+  min-width: 200px;
   height: 36px;
   box-shadow:0 6px 20px rgba(102,204,255,0.35);
 }
@@ -208,6 +211,7 @@ body{
   font-family:"霞鹜文楷";
   cursor:pointer;
   transition:0.2s ease;
+  cursor: pointer;
 }
 .island-search button:hover{
   background-color:#99DDFF;
@@ -321,6 +325,7 @@ body{
     transition: all 0.22s ease;
     flex-wrap: wrap;
     box-sizing: border-box;
+    cursor: pointer;
 }
 .strip:hover {
     background-color: rgba(102,204,255,0.88);
@@ -430,6 +435,12 @@ a{
     font-family:"霞鹜文楷";
     color:#113355;
     text-decoration: none;
+}
+a:hover{
+    color:#082244;
+}
+.footer a:hover{
+    color:#039acc;
 }
 iframe{
     height:250px;

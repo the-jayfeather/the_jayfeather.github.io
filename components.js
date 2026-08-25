@@ -11,13 +11,30 @@ document.addEventListener('DOMContentLoaded',function(){
 </div>
         `;
     }
-
     const footerContainer = document.querySelector('.footer_show');
     if(footerContainer){
         footerContainer.innerHTML = `
 <div class="footer">
-  FU Studio · 一只松鸦羽(the_jayfeather) © 2026 版权所有 | 一只松鸦羽的导航站 | <a href="https://github.com/the-jayfeather/the_jayfeather.github.io">项目开源地址</a>
+  FU Studio · 一只松鸦羽(the_jayfeather) © 2026 版权所有 | 一只松鸦羽的导航站 | <a href="https://the-jayfeather.github.io/the_jayfeather.github.io/">在线版</a> | <a href="https://github.com/the-jayfeather/the_jayfeather.github.io">项目开源地址</a>
 </div>
         `;
     }
+    function enableWholeBoxClick(selector){
+        const boxList = document.querySelectorAll(selector);
+        boxList.forEach(box=>{
+            const link = box.querySelector('a');
+            if(!link) return;
+            const targetHref = link.href;
+            const targetMode = link.target || "_self";
+            box.style.cursor = "pointer";
+            box.addEventListener('click',function(e){
+                if(e.target.tagName.toLowerCase() === 'a') return;
+                window.open(targetHref, targetMode);
+            })
+        })
+    }
+    enableWholeBoxClick('.card');
+    enableWholeBoxClick('.long_card');
+    enableWholeBoxClick('.long_card_about');
+    enableWholeBoxClick('.strip');
 })
