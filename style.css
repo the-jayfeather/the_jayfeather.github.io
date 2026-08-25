@@ -1,12 +1,17 @@
 html{
     height:100%;
+    scroll-padding-top: 136px;
 }
 body{
     min-height:100%;
+    background: #062742;
+    margin:0;
+}
+.page-wrap{
+    min-height:100vh;
     display:flex;
     flex-direction:column;
-    padding-top:80px;
-    background: #062742;
+    padding-top: 84px;
 }
 .card_write{
     position: relative;
@@ -68,9 +73,12 @@ body{
     margin:8px 0 18px 0;
 }
 .card-group{
-    display: flex; 
-    gap: 10px; 
-    margin:8px 0 18px 0;
+    display: flex;
+    gap: 10px;
+    margin-top:0;
+    margin-bottom:22px;
+    margin-left:0;
+    margin-right:0;
 }
 .card{
     line-height: 45px;
@@ -159,21 +167,48 @@ body{
   max-width:40px;
 }
 .island-search-wrap{
-  width:100%;
-  display:flex;
-  justify-content:center;
-  margin:40px 0;
+    width:100%;
+    margin:12px 0 40px 0;
+    padding:0 12px;
+    box-sizing:border-box;
+}
+.island-search-wrap.sticky-active{
+    position:fixed;
+    top:74px;
+    right:12px;
+    width:auto;
+    margin:0;
+    padding:0;
+    z-index:996;
 }
 .island-search{
-  display:flex;
-  align-items:center;
-  background-color:rgba(20,35,55,0.75);
-  backdrop-filter:blur(12px);
-  border-radius:9999px;
-  padding:8px 12px;
-  box-shadow:0 4px 18px rgba(102,204,255,0.18);
-  border:1px solid rgba(102,204,255,0.22);
-  gap:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto;
+    background-color:rgba(20,35,55,0.75);
+    backdrop-filter:blur(12px);
+    border-radius:9999px;
+    padding:8px 12px;
+    box-shadow:0 4px 18px rgba(102,204,255,0.18);
+    border:1px solid rgba(102,204,255,0.22);
+    gap:8px;
+    max-width:48vw;
+    transition: all 0.35s ease;
+}
+.island-search-wrap.sticky-active .island-search{
+    max-width:320px;
+    margin:0;
+    background-color:rgba(20,35,55,0.92);
+    padding:4px 8px;
+}
+.island-search-placeholder{
+    display:none;
+    height:0;
+}
+.island-search-wrap.sticky-active + .island-search-placeholder{
+    display:block;
+    height:56px;
 }
 .island-search select{
   background-color:rgba(40,70,105,0.6);
@@ -216,6 +251,21 @@ body{
 .island-search button:hover{
   background-color:#99DDFF;
 }
+.island-search-wrap.sticky-active .island-search select{
+    max-width:100px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.island-search-wrap.sticky-active .island-search input{
+    width:150px;
+    font-size:14px;
+}
+.island-search-wrap.sticky-active .island-search input::placeholder{
+    font-size:13px;
+}
+.island-search-wrap.sticky-active .island-search button{
+    padding:5px 10px;
+}
 .headline{
   position: fixed;
   top: 0;
@@ -248,6 +298,53 @@ body{
 .headline a.page:hover{
   background-color:rgba(102,204,255,0.20);
   color:#FFFFFF;
+}
+.h2-nav-wrap{
+    position: sticky;
+    top: 72px;
+    z-index: 998;
+    display:block;
+    width:100%;
+    margin:4px 0 6px 0;
+    padding:0 12px;
+    box-sizing: border-box;
+}
+.h2-nav{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:flex-start;
+    background-color:rgba(20,35,55,0.92);
+    backdrop-filter:blur(12px);
+    border-radius:20px;
+    padding:6px 12px;
+    box-shadow:0 4px 18px rgba(102,204,255,0.18);
+    border:1px solid rgba(102,204,255,0.22);
+    gap:4px;
+    box-sizing:border-box;
+}
+.h2-nav-item{
+    background-color:rgba(40,70,105,0.6);
+    color:#BBEEFF;
+    border:none;
+    border-radius:9999px;
+    padding:4px 10px;
+    outline:none;
+    font-family:"霞鹜文楷";
+    cursor:pointer;
+    transition:0.2s ease;
+    font-size:13px;
+    white-space:nowrap;
+    flex-shrink:0;
+}
+.h2-nav-item:hover{
+    background-color:#66CCFF;
+    color:#032138;
+}
+.h2-nav-active{
+    background-color:#66CCFF;
+    color:#032138;
 }
 .card-wrap::-webkit-scrollbar{
   height:4px;
@@ -413,7 +510,10 @@ h2{
     font-family:"霞鹜文楷";
     font-size:24px;
     color:#99DDFF;
-    margin:32px 0 10px 0;
+    margin-top:28px;
+    margin-bottom:10px;
+    margin-left:0;
+    margin-right:0;
     display: flex;
     align-items: center;
     gap:8px;
