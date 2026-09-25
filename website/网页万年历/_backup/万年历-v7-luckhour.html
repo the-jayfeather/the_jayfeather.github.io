@@ -148,8 +148,6 @@
         <div>农历详细年月日信息</div>
         <label class="switch"><input type="checkbox" id="setLunarDetail"><span class="slider"></span></label>
       </div>
-      <div class="set-hint" id="lunarDetailHint" hidden>单项内容开关需开启总体开关后调节</div>
-      <div id="lunarDetailSubs">
       <h5 class="set-sub-title">农历详细信息 · 单项</h5>
       <div class="set-row sub-row">
         <div>农历</div>
@@ -202,7 +200,6 @@
       <div class="set-row sub-row">
         <div>彭祖百忌</div>
         <label class="switch"><input type="checkbox" id="setPengZu"><span class="slider"></span></label>
-      </div>
       </div>
       <h5 class="set-sub-title">日期卡片附加</h5>
       <div class="set-row sub-row">
@@ -580,7 +577,7 @@ function hourShenIdx(dayZhi, hourZhi) {
   var start = SHI_QINGLONG_START[((dayZhi % 12) + 12) % 12];
   return (((hourZhi - start) % 12) + 12) % 12;
 }
-function nextLuckHour(y, m, d, dateObj) {
+function nextLuckHourTxt(y, m, d, dateObj) {
   var gzSeq = L.dayGzSeq(y, m, d);
   var dayZhi = ((gzSeq % 12) + 12) % 12;
   var h = dateObj ? dateObj.getHours() : new Date().getHours();
@@ -589,15 +586,10 @@ function nextLuckHour(y, m, d, dateObj) {
     var zhi = (cur + i) % 12;
     var idx = hourShenIdx(dayZhi, zhi);
     if (HUANGDAO[idx]) {
-      return { zhi: zhi, idx: idx, range: SHI_RANGES[zhi][1] };
+      return SHI_RANGES[zhi][0] + ' ' + SHI_RANGES[zhi][1] + ' · ' + SHEN_NAMES[idx];
     }
   }
-  return null;
-}
-/* 吉时文案：'未时 · 玉堂'；悬停"未时"显示时间段（title） */
-function luckHourHtml(o) {
-  if (!o) return '—';
-  return '<span class="luck-shi" title="' + o.range + '">' + SHI_RANGES[o.zhi][0] + '</span> · ' + SHEN_NAMES[o.idx];
+  return '—';
 }
 
 /* ---------- 道历 / 佛历（年月日随农历） ---------- */
@@ -727,7 +719,7 @@ function renderLunarDetail(info) {
     item('showLiuYao', '六曜', liuYaoOf(lunar)) +
     item('showShen', '十二神', shenOf(info.dayZhi, monthZhi)) +
     (s.showDetailLuckHour
-      ? '<div class="lg-item"><span class="lg-label">今日吉时</span><span class="lg-val wrap" data-luck-hour>' + luckHourHtml(nextLuckHour(sel.y, sel.m, sel.d, TimeSrc.nowDate())) + '</span></div>'
+      ? '<div class="lg-item"><span class="lg-label">今日吉时</span><span class="lg-val wrap" data-luck-hour>' + nextLuckHourTxt(sel.y, sel.m, sel.d, TimeSrc.nowDate()) + '</span></div>'
       : '');
   $('lunarDetail').innerHTML = '<div class="lg-col">' + left + '</div><div class="lg-col">' + right + '</div>';
   $('lunarDetail').style.display = settings.showLunarDetail ? '' : 'none';
@@ -1222,16 +1214,6 @@ function syncSettingsUI() {
   $('setTarotSpread').checked = settings.showTarotSpread;
   $('modeAuto').classList.toggle('active', TimeSrc.mode === 'auto');
   $('modeLocal').classList.toggle('active', TimeSrc.mode === 'local');
-  updateLunarDetailSubs();
-}
-
-/* 总开关关闭时：隐藏"农历详细信息 · 单项"全部子开关，显示提示文本 */
-function updateLunarDetailSubs() {
-  var subs = $('lunarDetailSubs'), hint = $('lunarDetailHint');
-  if (!subs || !hint) return;
-  var on = settings.showLunarDetail;
-  subs.hidden = !on;
-  hint.hidden = on;
 }
 
 var SET_KEY = {
@@ -1253,7 +1235,6 @@ for (var sk in SET_KEY) {
       settings[key] = this.checked;
       saveSettings();
       $('quickLunar').checked = settings.showLunar;
-      if (key === 'showLunarDetail') updateLunarDetailSubs();
       renderAll();
     });
   })(sk, SET_KEY[sk]);
@@ -1343,7 +1324,7 @@ setInterval(function () {
   }
   if (settings.showDetailLuckHour) {
     var lh = el.querySelector('.lg-val[data-luck-hour]');
-    if (lh) lh.innerHTML = luckHourHtml(nextLuckHour(sel.y, sel.m, sel.d, now));
+    if (lh) lh.textContent = nextLuckHourTxt(sel.y, sel.m, sel.d, now);
   }
 }, 30000);
 </script>

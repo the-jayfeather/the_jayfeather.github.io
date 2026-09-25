@@ -269,16 +269,24 @@ body {
   color: rgba(153, 221, 255, 0.6);
   margin-right: 6px;
 }
-/* 农历详历（并入日期卡片内，2 列排版） */
+/* 农历详历（并入日期卡片内，左右两列：左 农历/年柱/月柱/日柱/时柱，右 节气/节日/月相/星宿/六曜/十二神） */
 .big-date .lunar-grid {
   margin-top: 12px;
   padding-top: 10px;
   border-top: 1px dashed rgba(102, 204, 255, 0.18);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px 16px;
+  gap: 0 16px;
   text-align: left;
 }
+.big-date .lg-col {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+.big-date .lg-col:empty { display: none; }
+.big-date .lunar-grid:has(.lg-col:only-child) .lg-col { grid-column: 1 / -1; }
 .big-date .lg-item {
   display: flex;
   align-items: baseline;
@@ -297,6 +305,25 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+/* 长文本项（如彭祖百忌两句）允许换行 */
+.big-date .lg-val.wrap {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.45;
+}
+/* 今日吉时 · 时辰名：悬停显示时间段（虚线提示可悬停） */
+.big-date .luck-shi {
+  border-bottom: 1px dotted var(--tianyi);
+  cursor: help;
+  white-space: nowrap;
+}
+/* 大日期卡片中的道历 / 佛历行（农历下方，独立开关） */
+.big-date .lunar-brief.dao,
+.big-date .lunar-brief.fo {
+  font-size: 12.5px;
+  opacity: 0.85;
 }
 
 /* ============================================================
@@ -963,6 +990,26 @@ body {
   color: var(--cloud);
 }
 .set-row .desc { font-size: 12px; color: var(--placeholder); margin-top: 2px; }
+/* 设置面板子标题与缩进行（农历详细信息 · 单项 / 日期卡片附加） */
+.set-sub-title {
+  font-size: 12.5px;
+  color: var(--sky);
+  margin: 10px 0 2px;
+  letter-spacing: 1px;
+  font-weight: normal;
+}
+/* 设置面板提示文本（总开关关闭时替代子开关组显示） */
+.set-hint {
+  font-size: 12px;
+  color: var(--placeholder);
+  padding: 4px 4px 6px 4px;
+  font-style: italic;
+}
+.set-row.sub-row {
+  padding: 5px 4px 5px 18px;
+  font-size: 13px;
+}
+.set-row.sub-row .switch { transform: scale(0.88); }
 
 .radio-group { display: flex; gap: 8px; }
 .radio-pill {
