@@ -611,7 +611,7 @@ body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:i
           <li>状元奖品保留至全场结束，由摇出的<b>最大状元</b>夺得：状元插金花 &gt; 满堂红 &gt; 遍地锦 &gt; 六勃黑 &gt; 五王 &gt; 五子登科 &gt; 状元。</li>
           <li>同级状元比较<b>剩余骰子点数之和</b>，点数大者胜；仍相同则先摇者胜。</li>
           <li>所有非状元奖品摇完后进入<b>最后一轮</b>，每位玩家再掷一次；若全程无人摇出状元，则进入加赛。</li>
-          <li>加赛阶段每轮<b>点数总和最大者留下</b>，其余淘汰，重复至只剩一人，即为状元。</li>
+          <li>加赛阶段每轮按所选方式角逐：<b>点数总和最高者</b>留下，或<b>摇出奖项最高者</b>留下（状元 &gt; 对堂 &gt; 三红 &gt; 四进 &gt; 二举 &gt; 一秀，同级比点数），重复至只剩一人即为状元。</li>
         </ul>
       </div>
     </div>
@@ -779,10 +779,14 @@ function toast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-/* ==================== 音效（Web Audio 本地合成骰子声） ==================== */
+/* ==================== 音效（Web Audio 本地合成骰子声 / 瓷碗真实碗声） ==================== */
 function loadSfx() { try { return (localStorage.getItem('bb_sfx') || '1') !== '0'; } catch (e) { return true; } }
 function saveSfx(v) { try { localStorage.setItem('bb_sfx', v ? '1' : '0'); } catch (e) {} }
+/* 音效来源：'synth' 合成音效 / 'bowl' 瓷碗音效 */
+function loadSfxSrc() { try { return localStorage.getItem('bb_sfx_src') === 'bowl' ? 'bowl' : 'synth'; } catch (e) { return 'synth'; } }
+function saveSfxSrc(v) { try { localStorage.setItem('bb_sfx_src', v); } catch (e) {} }
 let sfxEnabled = loadSfx();
+let sfxSrc = loadSfxSrc();
 let audioCtx = null;
 
 function getAudioCtx() {
@@ -856,6 +860,16 @@ function playShakeSound(ms) {
   diceHit(ctx, end + 0.018, 0.14);
   diceClack(ctx, end + 0.05, 0.5);
 }
+/* 瓷碗音效：5 段真实碗声 mp3，每次摇动随机使用其中一个 */
+const BOWL_SFX = ['assets/muti_1.mp3', 'assets/muti_2.mp3', 'assets/muti_3.mp3', 'assets/muti_4.mp3', 'assets/muti_5.mp3'];
+function playBowlSound() {
+  if (!sfxEnabled) return;
+  try {
+    const a = new Audio(BOWL_SFX[Math.floor(Math.random() * BOWL_SFX.length)]);
+    a.volume = 0.9;
+    a.play();
+  } catch (e) {}
+}
 
 /* ==================== 骰子面主题 ==================== */
 const THEME_NAMES = { classic: '经典白', red: '发财红', blue: '天依蓝' };
@@ -882,8 +896,13 @@ function openSettings() {
     '<div class="theme-preview" id="themePreview"><span class="dice-line">' + diceRowHTML([4, 3, 5, 1, 6, 2], true) + '</span></div>' +
     '<div class="radio-group" id="diceThemeGroup">' + pills + '</div>' +
     '<div class="set-sep"></div>' +
-    '<div class="set-row"><span>摇骰子音效</span><label class="switch"><input type="checkbox" id="sfxToggle"' + (sfxEnabled ? ' checked' : '') + '><span class="slider"></span></label></div>' +
-    '<div class="set-note">开启后，点击「摇骰子」时播放骰子碰撞音效（本地合成，无需网络）。</div>',
+    '<div class="set-title">摇骰子音效</div>' +
+    '<div class="set-row"><span>音效来源</span><div class="radio-group" id="sfxSrcGroup">' +
+      '<button class="radio-pill' + (sfxSrc === 'synth' ? ' active' : '') + '" data-src="synth" type="button">合成音效</button>' +
+      '<button class="radio-pill' + (sfxSrc === 'bowl' ? ' active' : '') + '" data-src="bowl" type="button">瓷碗音效</button>' +
+    '</div></div>' +
+    '<div class="set-row"><span>启用音效</span><label class="switch"><input type="checkbox" id="sfxToggle"' + (sfxEnabled ? ' checked' : '') + '><span class="slider"></span></label></div>' +
+    '<div class="set-note" id="sfxNote">' + (sfxSrc === 'bowl' ? '瓷碗音效：每次摇动随机播放 5 段真实碗声之一。' : '合成音效：本地合成的骰子碰撞声，无需网络。') + '</div>',
     '完成', closeModal);
   document.querySelectorAll('#diceThemeGroup .radio-pill').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -893,6 +912,17 @@ function openSettings() {
       document.querySelectorAll('#diceThemeGroup .radio-pill').forEach(b => b.classList.toggle('active', b === btn));
       const prev = $('themePreview');
       if (prev) prev.innerHTML = '<span class="dice-line">' + diceRowHTML([4, 3, 5, 1, 6, 2], true) + '</span>';
+    });
+  });
+  document.querySelectorAll('#sfxSrcGroup .radio-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sfxSrc = btn.dataset.src;
+      saveSfxSrc(sfxSrc);
+      document.querySelectorAll('#sfxSrcGroup .radio-pill').forEach(b => b.classList.toggle('active', b === btn));
+      const note = $('sfxNote');
+      if (note) note.textContent = sfxSrc === 'bowl'
+        ? '瓷碗音效：每次摇动随机播放 5 段真实碗声之一。'
+        : '合成音效：本地合成的骰子碰撞声，无需网络。';
     });
   });
   const tg = $('sfxToggle');
@@ -1057,7 +1087,7 @@ function doRoll() {
   if (G.phase === 'done') { restartConfirm(); return; }
   if (G.rolling) return;
   G.rolling = true;
-  playShakeSound(1520);
+  if (sfxSrc === 'bowl') playBowlSound(); else playShakeSound(1520);
   const btn = $('rollBtn');
   btn.disabled = true;
   const dice = rollDice();                       // 结果先定，动画后揭晓
@@ -1175,24 +1205,57 @@ function resolveFinale() {
     G.winnerTier = b.tier;
     renderStatus();
     renderStats();
-    openModal('状元揭晓！', '全场共摇出 ' + G.zyRolls.length + ' 次状元级牌型。<br>最大状元：<b>' + pName(b.player) + '</b>，牌型「' + b.tier.name + '」！<br>夺得状元奖品「' + G.prizes.zhuangyuan.name + '」！', '再来一局', restart);
+    openModal('状元揭晓！', '全场共摇出 ' + G.zyRolls.length + ' 次状元级牌型。<br>最大状元：<b>' + pName(b.player) + '</b>，牌型「' + b.tier.name + '」！夺得状元奖品「' + G.prizes.zhuangyuan.name + '」！<br><br>' + buildStatsHTML(), '再来一局', restart);
   } else {
     G.phase = 'elim';
+    G.elimMode = 'sum';
     G.elimPlayers = Array.from({ length: G.N }, (_, i) => i + 1);
     G.elimRound = 1;
     G.elimRolled = 0;
     G.elimRoundSize = G.N;
     G.elimRolls = [];
     renderStatus();
-    openModal('无人摇出状元！', '整场（含最后一轮）都无人摇出状元，进入<b>加赛淘汰</b>。<br>每轮<b>点数总和最大者</b>留下，其余淘汰，直到只剩最后一人即为状元！', '开始加赛');
+    openModal('无人摇出状元！',
+      '整场（含最后一轮）都无人摇出状元，进入<b>加赛淘汰</b>。请选择最终角逐状元的方式：' +
+      '<div class="radio-group" id="elimModeGroup" style="margin-top:10px">' +
+        '<button class="radio-pill active" data-emode="sum" type="button">点数最高者胜</button>' +
+        '<button class="radio-pill" data-emode="tier" type="button">奖项最高者胜</button>' +
+      '</div>' +
+      '<div class="set-note" id="elimModeNote">点数最高者胜：每轮点数总和最大者留下，其余淘汰，直到只剩最后一人。</div>',
+      '开始加赛');
+    document.querySelectorAll('#elimModeGroup .radio-pill').forEach(b => {
+      b.addEventListener('click', () => {
+        G.elimMode = b.dataset.emode;
+        document.querySelectorAll('#elimModeGroup .radio-pill').forEach(x => x.classList.toggle('active', x === b));
+        const note = $('elimModeNote');
+        if (note) note.textContent = G.elimMode === 'tier'
+          ? '奖项最高者胜：每轮摇出奖项最高者留下（状元 > 对堂 > 三红 > 四进 > 二举 > 一秀），同级比点数。'
+          : '点数最高者胜：每轮点数总和最大者留下，其余淘汰，直到只剩最后一人。';
+      });
+    });
   }
 }
 
-/* 加赛一轮结束：保留点数最大者 */
+/* 加赛一轮结束：按所选方式保留晋级者 */
 function resolveElimRound() {
   if (!G) return;
-  const maxSum = Math.max(...G.elimRolls.map(r => r.sum));
-  const adv = G.elimRolls.filter(r => r.sum === maxSum).map(r => r.player);
+  const mode = G.elimMode === 'tier' ? 'tier' : 'sum';
+  let adv, desc;
+  if (mode === 'tier') {
+    /* 奖项最高者留下：状元>对堂>三红>四进>二举>一秀（rank 越小越高），同级比点数 */
+    const best = Math.min(...G.elimRolls.map(r => r.tier ? r.tier.rank : Infinity));
+    let top = G.elimRolls.filter(r => (r.tier ? r.tier.rank : Infinity) === best);
+    desc = top[0] && top[0].tier ? top[0].tier.name : '未中奖';
+    if (top.length > 1) {
+      const maxSum = Math.max(...top.map(r => r.sum));
+      top = top.filter(r => r.sum === maxSum);
+    }
+    adv = top.map(r => r.player);
+  } else {
+    const maxSum = Math.max(...G.elimRolls.map(r => r.sum));
+    desc = maxSum + ' 点';
+    adv = G.elimRolls.filter(r => r.sum === maxSum).map(r => r.player);
+  }
   if (adv.length === 1) {
     const winner = adv[0];
     G.phase = 'done';
@@ -1200,9 +1263,16 @@ function resolveElimRound() {
     G.winnerTier = null;
     renderStatus();
     renderStats();
-    openModal('状元诞生！', '加赛第 ' + G.elimRound + ' 轮，<b>' + pName(winner) + '</b> 以 ' + maxSum + ' 点成为最后一人！<br>荣登状元，夺得「' + G.prizes.zhuangyuan.name + '」！', '再来一局', restart);
+    const why = mode === 'tier'
+      ? '以最高奖项「' + desc + '」成为最后一人'
+      : '以 ' + desc + ' 成为最后一人';
+    openModal('状元诞生！', '加赛第 ' + G.elimRound + ' 轮，<b>' + pName(winner) + '</b> ' + why + '！<br>荣登状元，夺得「' + G.prizes.zhuangyuan.name + '」！<br><br>' + buildStatsHTML(), '再来一局', restart);
   } else {
-    openModal('加赛第 ' + G.elimRound + ' 轮结果', '本轮最高 ' + maxSum + ' 点：<b>' + adv.map(pName).join('、') + '</b> 并列最大，晋级下一轮。', '继续加赛');
+    const title = '加赛第 ' + G.elimRound + ' 轮结果';
+    const body = mode === 'tier'
+      ? '本轮最高奖项「' + desc + '」：<b>' + adv.map(pName).join('、') + '</b> 并列晋级下一轮。'
+      : '本轮最高 ' + desc + '：<b>' + adv.map(pName).join('、') + '</b> 并列最大，晋级下一轮。';
+    openModal(title, body, '继续加赛');
     G.elimPlayers = adv;
     G.elimRound++;
     G.elimRolled = 0;
@@ -1234,7 +1304,7 @@ function renderStatus() {
     whoEl.innerHTML = '轮到 <b>' + pName(G.elimPlayers[0]) + '</b>';
     candBar.hidden = false;
     candBar.innerHTML = '候选：' + G.elimPlayers.map((p, i) => '<span class="chip cand' + (i === 0 ? ' cur' : '') + '">' + pName(p) + '</span>').join('');
-    setHint('点数总和最大者留下 · 本轮已摇 ' + G.elimRolled + ' / ' + G.elimRoundSize + ' 人');
+    setHint((G.elimMode === 'tier' ? '奖项最高者留下' : '点数总和最大者留下') + ' · 本轮已摇 ' + G.elimRolled + ' / ' + G.elimRoundSize + ' 人');
     btn.textContent = '摇骰子（争取晋级）';
   } else if (G.phase === 'final') {
     badge.textContent = '最后一轮';
@@ -1282,12 +1352,10 @@ function renderBestZY() {
 }
 
 /* 本局统计：结束时展示每位玩家的所得，状元获得者用不同颜色区分 */
-function renderStats() {
-  const panel = $('statsPanel');
-  if (!G || G.phase !== 'done') { panel.hidden = true; return; }
-  panel.hidden = false;
+/* 生成统计表格 HTML（状元置顶，其余按名称排序）——同时用于统计面板与结算弹窗 */
+function buildStatsHTML() {
+  if (!G || G.phase !== 'done') return '';
   const cashMode = G.prizeMode === 'cash';
-  $('statsCap').textContent = cashMode ? '自动结算奖金总额' : '各玩家所得奖品';
   /* 按玩家聚合非状元中奖记录 */
   const per = {};
   for (let i = 1; i <= G.N; i++) per[i] = { wins: [], isWinner: false };
@@ -1307,10 +1375,18 @@ function renderStats() {
     const zp = G.prizes.zhuangyuan;
     per[G.winner].wins.push({ label: zp.name, count: 1, amount: zp.amount, zy: true });
   }
+  /* 玩家排序：状元获得者置顶，其余按玩家名称排序（自然序，玩家 2 先于玩家 10） */
+  const coll = (typeof Intl !== 'undefined' && Intl.Collator) ? new Intl.Collator('zh-Hans-CN', { numeric: true }) : null;
+  const order = [];
+  for (let i = 1; i <= G.N; i++) order.push(i);
+  order.sort((a, b) => {
+    if (per[a].isWinner !== per[b].isWinner) return per[a].isWinner ? -1 : 1;
+    return coll ? coll.compare(pName(a), pName(b)) : pName(a).localeCompare(pName(b), 'zh-Hans-CN');
+  });
   let html = '<table class="stats-table">' +
     '<colgroup><col style="width:22%"><col style="width:56%"><col style="width:22%"></colgroup>' +
     '<thead><tr><th>玩家</th><th>' + (cashMode ? '奖金明细' : '所得奖品') + '</th><th>' + (cashMode ? '奖金合计' : '中奖件数') + '</th></tr></thead><tbody>';
-  for (let i = 1; i <= G.N; i++) {
+  for (const i of order) {
     const w = per[i];
     const list = [];
     let total = 0, cnt = 0;
@@ -1326,7 +1402,17 @@ function renderStats() {
     '</tr>';
   }
   html += '</tbody></table>';
-  $('statsBox').innerHTML = html;
+  return html;
+}
+
+function renderStats() {
+  const panel = $('statsPanel');
+  if (!G || G.phase !== 'done') { panel.hidden = true; return; }
+  panel.hidden = false;
+  $('statsCap').textContent = (G.prizeMode === 'cash')
+    ? '状元置顶 · 按名称排序 · 自动结算总金额'
+    : '状元置顶 · 按名称排序 · 各玩家所得奖品';
+  $('statsBox').innerHTML = buildStatsHTML();
 }
 
 function renderRecords() {
