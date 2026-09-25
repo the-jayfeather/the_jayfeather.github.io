@@ -131,6 +131,8 @@ body {
 .setup-label { font-size:15px; color:var(--sky); letter-spacing:1px; }
 .setup-unit { font-size:14px; color:var(--placeholder); }
 .setup-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+/* 自定义玩家名输入区（人数多时可滚动） */
+#playerNames { max-height:252px; overflow:auto; padding-right:4px; }
 .prize-card {
   background:rgba(102,204,255,.07); border:1px solid var(--border);
   border-radius:14px; padding:12px; display:flex; flex-direction:column; gap:8px; min-width:0;
@@ -329,6 +331,26 @@ body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:i
 .prize-stock { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
 .stock-cap { font-size:13px; color:var(--sky); margin-right:2px; }
 
+/* ==================== 本局统计 ==================== */
+.stats-table { width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; font-size:14px; }
+.stats-table th {
+  background:var(--bar); color:var(--ice); font-weight:normal; letter-spacing:1px;
+  padding:9px 8px; text-align:left; border-bottom:1px solid var(--border-strong);
+}
+.stats-table td { padding:9px 8px; border-bottom:1px solid var(--border); color:var(--cloud); vertical-align:middle; word-break:break-all; }
+.stats-table tr:last-child td { border-bottom:none; }
+.stats-table b { color:var(--gold); }
+.stats-table .st-none { color:var(--placeholder); }
+.stats-table .st-total { color:var(--sky); }
+.stats-table .zy-badge {
+  display:inline-block; font-size:11px; padding:1px 9px; border-radius:9999px;
+  background:var(--gold); color:var(--ink-deep); margin-right:7px; font-weight:bold;
+}
+/* 状元获得者：金色高亮区分 */
+.stats-table tr.row-stats-winner td { background:rgba(255,217,138,.16); color:var(--gold-soft); font-weight:bold; }
+.stats-table tr.row-stats-winner td:first-child { color:var(--gold); }
+.stats-table tr.row-stats-winner .st-total { color:var(--gold); font-size:16px; }
+
 /* ==================== 摇骰记录表 ==================== */
 .records-wrap { overflow:auto; max-height:calc(100vh - 300px); border-radius:12px; }
 .records-table { width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; font-size:12.5px; }
@@ -339,7 +361,8 @@ body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:i
 }
 .records-table td { padding:7px 6px; border-bottom:1px solid var(--border); color:var(--cloud); vertical-align:middle; word-break:break-all; }
 .records-table tr.row-zy td { color:var(--gold-soft); font-weight:bold; background:rgba(255,217,138,.08); }
-.records-table .d4, .records-table .d1 { color:#E4574F; font-weight:bold; }
+/* 未中奖 / 已无剩余的奖项：仅结果列文字灰色，其余列颜色正常 */
+.records-table td.rec-no { color:var(--placeholder); }
 .records-empty { padding:26px 10px; text-align:center; color:var(--placeholder); font-size:13px; }
 
 /* ==================== 规则表 ==================== */
@@ -389,6 +412,7 @@ body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:i
 .modal-close {
   width:34px; height:34px; border-radius:10px; border:1px solid var(--border-strong);
   background:var(--select-bg); color:var(--ice); font-size:18px; cursor:pointer;
+  font-family:inherit; line-height:1;
   display:flex; align-items:center; justify-content:center; transition:all .2s ease;
 }
 .modal-close:hover { background:var(--tianyi); color:var(--ink-deep); }
@@ -429,6 +453,7 @@ body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:i
   .brand-sub { display:none; }
   .brand-name { font-size:20px; }
   .view-tab { padding:8px 14px; font-size:14px; min-width:44px; min-height:44px; }
+  .radio-pill { min-width:48px; min-height:44px; display:inline-flex; align-items:center; justify-content:center; }
   .modal-close { width:40px; height:40px; }
   .settings-btn { width:44px; height:44px; }
   .inp { font-size:16px; }
@@ -437,6 +462,7 @@ body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:i
   .roll-btn { letter-spacing:3px; }
   .status-main b { font-size:19px; }
   .rules-table, .records-table { font-size:12px; }
+  .stats-table { font-size:12.5px; }
 }
 @media (max-width:520px) {
   .setup-grid { grid-template-columns:1fr; }
@@ -488,9 +514,29 @@ body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:i
           <label class="setup-label" for="inputPlayers">博饼总人数</label>
           <input class="inp num big" id="inputPlayers" type="number" min="2" max="50" value="6">
           <span class="setup-unit">人</span>
+          <span class="tool-spacer"></span>
+          <span class="setup-label" for="nameModeSwitch">自定义玩家名</span>
+          <label class="switch"><input type="checkbox" id="nameModeSwitch"><span class="slider"></span></label>
+        </div>
+        <div class="setup-grid" id="playerNames" hidden></div>
+        <div class="setup-note" id="nameModeHint">默认模式：玩家 1、玩家 2… 按顺序自动命名。</div>
+        <div class="setup-row">
+          <label class="setup-label">奖品模式</label>
+          <div class="radio-group" id="prizeModeGroup">
+            <button class="radio-pill active" data-mode="name" type="button">名称奖品</button>
+            <button class="radio-pill" data-mode="cash" type="button">奖金</button>
+          </div>
+        </div>
+        <div class="setup-row" id="cashPresetRow" hidden>
+          <label class="setup-label">奖金预设</label>
+          <div class="radio-group" id="cashPresetGroup">
+            <button class="radio-pill" data-preset="63" type="button">63博版</button>
+            <button class="radio-pill" data-preset="cash2" type="button">纸币凑整版</button>
+          </div>
+          <span class="setup-unit" id="cashPresetNote"></span>
         </div>
         <div class="setup-grid" id="setupRows"></div>
-        <div class="setup-note">数量默认沿用闽南传统「63 博」：一秀 32 · 二举 16 · 四进 8 · 三红 4 · 对堂 2 · 状元 1。奖品名称与数量均可修改；状元奖品保留至最后角逐，决赛时颁发给最大状元。</div>
+        <div class="setup-note">数量默认沿用闽南传统「63 博」：一秀 32 · 二举 16 · 四进 8 · 三红 4 · 对堂 2 · 状元 1。奖品名称/金额与数量均可修改；状元奖品保留至最后角逐，决赛时颁发给最大状元。</div>
         <div class="setup-foot"><button class="tool-btn primary big-start" id="startBtn">开始博饼</button></div>
       </div>
 
@@ -511,13 +557,17 @@ body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:i
         <div class="result-banner" id="resultBanner"></div>
         <div class="best-zy" id="bestZY"></div>
         <div class="prize-stock" id="prizeStock"></div>
+        <div class="panel" id="statsPanel" hidden>
+          <h3 class="panel-title">本局统计 <span class="tiny-tag" id="statsCap"></span></h3>
+          <div id="statsBox"></div>
+        </div>
       </div>
     </div>
 
     <!-- 右侧：摇骰记录（获奖历史），仅游戏进行时显示 -->
     <aside class="sidebar" id="recordSidebar" hidden>
       <div class="panel">
-        <h3 class="panel-title">摇骰记录 <span class="tiny-tag">按时间排序 · 状元加粗</span></h3>
+        <h3 class="panel-title">摇骰记录 <span class="tiny-tag">最新在前 · 状元加粗</span></h3>
         <div class="records-wrap">
           <table class="records-table">
             <colgroup>
@@ -623,6 +673,14 @@ const PRIZE_DEFS = [
   { key:'duitang',   label:'对堂', desc:'123456',            qty:2,  finale:false },
   { key:'zhuangyuan',label:'状元', desc:'决赛角逐',          qty:1,  finale:true  }
 ];
+
+/* 奖金模式预设（元）：
+ * 63 版：闽南传统「63 博」
+ * cash2 版：人民币纸币凑整（2/5/10/20/50/100） */
+const CASH_PRESETS = {
+  '63':   { label: '63博版',     note: '闽南传统',     values: { yixiu:1, erju:2, sijin:4, sanhong:8, duitang:16, zhuangyuan:63 } },
+  'cash2':{ label: '纸币凑整版', note: '人民币纸币',   values: { yixiu:2, erju:5, sijin:10, sanhong:20, duitang:50, zhuangyuan:100 } }
+};
 
 /* 规则表图示 */
 const ILLUS = {
@@ -804,6 +862,14 @@ const THEME_NAMES = { classic: '经典白', red: '发财红', blue: '天依蓝' 
 function loadTheme() { try { const v = localStorage.getItem('bb_dice_theme'); return (v === 'red' || v === 'blue') ? v : 'classic'; } catch (e) { return 'classic'; } }
 function saveTheme(t) { try { localStorage.setItem('bb_dice_theme', t); } catch (e) {} }
 let diceTheme = loadTheme();
+/* 奖品模式：'name' 名称奖品 / 'cash' 奖金（只填钱数） */
+function loadPrizeMode() { try { return localStorage.getItem('bb_prize_mode') === 'cash' ? 'cash' : 'name'; } catch (e) { return 'name'; } }
+function savePrizeMode(m) { try { localStorage.setItem('bb_prize_mode', m); } catch (e) {} }
+let prizeMode = loadPrizeMode();
+/* 奖金预设：'63' 闽南传统63博 / 'cash2' 纸币凑整 */
+function loadCashPreset() { try { const v = localStorage.getItem('bb_cash_preset'); return CASH_PRESETS[v] ? v : '63'; } catch (e) { return '63'; } }
+function saveCashPreset(p) { try { localStorage.setItem('bb_cash_preset', p); } catch (e) {} }
+let cashPreset = loadCashPreset();
 
 /* ==================== 设置面板 ==================== */
 function openSettings() {
@@ -850,19 +916,59 @@ function roundText() {
   if (G.phase === 'final') return '第' + G.round + '轮·末';
   return '第' + G.round + '轮';
 }
+/* 玩家显示名：自定义名或默认「玩家 n」 */
+function pName(who) { return G ? (G.playerNames[who - 1] || '玩家 ' + who) : '玩家 ' + who; }
 
 /* ==================== 设置面板 ==================== */
 function renderSetupRows() {
-  $('setupRows').innerHTML = PRIZE_DEFS.map(d =>
-    '<div class="prize-card' + (d.finale ? ' zhuangyuan' : '') + '">' +
+  const cash = (prizeMode === 'cash');
+  const pres = CASH_PRESETS[cashPreset] || CASH_PRESETS['63'];
+  $('cashPresetRow').hidden = !cash;
+  if (cash) {
+    document.querySelectorAll('#cashPresetGroup .radio-pill').forEach(b => b.classList.toggle('active', b.dataset.preset === cashPreset));
+    $('cashPresetNote').textContent = pres.note;
+  }
+  $('setupRows').innerHTML = PRIZE_DEFS.map(d => {
+    if (cash) {
+      return '<div class="prize-card' + (d.finale ? ' zhuangyuan' : '') + '">' +
+        '<div class="pc-head"><span class="pc-name">' + d.label + '</span><span class="pc-desc">' + d.desc + '</span></div>' +
+        '<div class="pc-row">' +
+          '<input class="inp num" id="pmoney_' + d.key + '" type="number" min="0" step="1" value="' + pres.values[d.key] + '">' +
+          '<span class="pc-unit">元</span>' +
+          '<input class="inp num" id="pqty_' + d.key + '" type="number" min="0" max="999" value="' + d.qty + '">' +
+          '<span class="pc-unit">个</span>' +
+        '</div>' +
+      '</div>';
+    }
+    return '<div class="prize-card' + (d.finale ? ' zhuangyuan' : '') + '">' +
       '<div class="pc-head"><span class="pc-name">' + d.label + '</span><span class="pc-desc">' + d.desc + '</span></div>' +
       '<div class="pc-row">' +
         '<input class="inp" id="pname_' + d.key + '" maxlength="12" value="' + d.label + '" placeholder="奖品名">' +
         '<input class="inp num" id="pqty_' + d.key + '" type="number" min="0" max="999" value="' + d.qty + '">' +
         '<span class="pc-unit">个</span>' +
       '</div>' +
-    '</div>'
-  ).join('');
+    '</div>';
+  }).join('');
+}
+
+/* 自定义玩家名输入区：随模式开关与人数联动 */
+function renderPlayerNames() {
+  const wrap = $('playerNames');
+  const custom = $('nameModeSwitch').checked;
+  wrap.hidden = !custom;
+  $('nameModeHint').textContent = custom
+    ? '自定义模式：未填写的玩家将使用默认「玩家 n」命名。'
+    : '默认模式：玩家 1、玩家 2… 按顺序自动命名。';
+  if (!custom) { wrap.innerHTML = ''; return; }
+  const N = parseInt($('inputPlayers').value, 10) || 6;
+  let html = '';
+  for (let i = 1; i <= N; i++) {
+    html += '<div class="prize-card">' +
+      '<div class="pc-head"><span class="pc-name">玩家 ' + i + '</span><span class="pc-desc">自定义名称</span></div>' +
+      '<div class="pc-row"><input class="inp" id="pname_' + i + '" maxlength="10" placeholder="玩家 ' + i + '"></div>' +
+    '</div>';
+  }
+  wrap.innerHTML = html;
 }
 
 function startGame() {
@@ -870,23 +976,45 @@ function startGame() {
   if (!N || N < 2) { toast('请设置至少 2 名玩家'); return; }
   if (N > 50) { toast('人数过多，最多 50 人'); return; }
   const prizes = {};
+  const mode = prizeMode;
   PRIZE_DEFS.forEach(d => {
-    const nameEl = $('pname_' + d.key);
     const qtyEl = $('pqty_' + d.key);
     const q = parseInt(qtyEl.value, 10);
-    prizes[d.key] = { name: (nameEl.value || '').trim() || d.label, qty: Number.isFinite(q) && q > 0 ? q : 0 };
+    const qty = Number.isFinite(q) && q > 0 ? q : 0;
+    if (mode === 'cash') {
+      const amtEl = $('pmoney_' + d.key);
+      const amt = parseFloat(amtEl.value);
+      const a = Number.isFinite(amt) && amt > 0 ? amt : 0;
+      prizes[d.key] = { name: a + '元', amount: a, qty };
+    } else {
+      const nameEl = $('pname_' + d.key);
+      prizes[d.key] = { name: (nameEl.value || '').trim() || d.label, amount: null, qty };
+    }
   });
+  const custom = $('nameModeSwitch').checked;
+  const playerNames = [];
+  for (let i = 1; i <= N; i++) {
+    let nm = '玩家 ' + i;
+    if (custom) {
+      const el = $('pname_' + i);
+      const v = (el && el.value || '').trim();
+      if (v) nm = v;
+    }
+    playerNames.push(nm);
+  }
   G = {
     N, round: 1, cur: 1,
     phase: 'main',
     finalRolled: 0,
     elimPlayers: [], elimRound: 0, elimRolled: 0, elimRoundSize: 0, elimRolls: [],
     prizes, records: [], zyRolls: [], bestZY: null,
+    playerNames, startTime: Date.now(), prizeMode: mode,
     rolling: false, winner: null, winnerTier: null
   };
   $('setupPanel').hidden = true;
   $('gamePanel').hidden = false;
   $('recordSidebar').hidden = false;
+  $('statsPanel').hidden = true;
   $('recordsBody').innerHTML = '';
   $('recordsEmpty').hidden = false;
   $('resultBanner').className = 'result-banner';
@@ -911,6 +1039,7 @@ function restart() {
   $('gamePanel').hidden = true;
   $('setupPanel').hidden = false;
   $('recordSidebar').hidden = true;
+  $('statsPanel').hidden = true;
   $('recordsBody').innerHTML = '';
   $('recordsEmpty').hidden = false;
   $('diceArea').innerHTML = diceRowHTML([1, 1, 1, 1, 1, 1]);
@@ -960,32 +1089,33 @@ function processRoll(dice) {
   if (!G) return;
   const tier = judge(dice);
   const who = (G.phase === 'elim') ? G.elimPlayers[0] : G.cur;
-  const now = new Date();
-  const timeStr = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
-  const rec = { time: timeStr, round: roundText(), player: who, dice: [...dice], tier, sum: sumOf(dice), prize: null };
+  const elapsed = Math.max(0, Math.floor((Date.now() - G.startTime) / 1000));
+  const timeStr = pad(Math.floor(elapsed / 60)) + ':' + pad(elapsed % 60);
+  const rec = { time: timeStr, round: roundText(), player: who, dice: [...dice], tier, sum: sumOf(dice), prize: null, noPrize: false };
   G.records.push(rec);
 
   if (G.phase === 'elim') {
     G.elimRolls.push({ player: who, sum: sumOf(dice), tier });
     showResult(tier
-      ? '玩家 ' + who + ' 摇出「' + tier.name + '」 · ' + sumOf(dice) + ' 点'
-      : '玩家 ' + who + ' · ' + sumOf(dice) + ' 点', 'info');
+      ? pName(who) + ' 摇出「' + tier.name + '」 · ' + sumOf(dice) + ' 点'
+      : pName(who) + ' · ' + sumOf(dice) + ' 点', 'info');
   } else if (tier && tier.isZhuangyuan) {
     const extra = zyExtra(dice, tier);
     G.zyRolls.push({ player: who, tier, extra, sum: sumOf(dice), time: timeStr });
     if (betterZY(G.bestZY, G.zyRolls[G.zyRolls.length - 1])) G.bestZY = G.zyRolls[G.zyRolls.length - 1];
-    showResult('玩家 ' + who + ' 摇出「' + tier.name + '」！状元角逐中 · 全场最佳：玩家 ' + G.bestZY.player, 'zy');
+    showResult(pName(who) + ' 摇出「' + tier.name + '」！状元角逐中 · 全场最佳：' + pName(G.bestZY.player), 'zy');
   } else if (tier) {
     const p = G.prizes[tier.prize];
     if (p.qty > 0) {
       p.qty--;
       rec.prize = p.name;
-      showResult('恭喜 玩家 ' + who + ' 获得「' + p.name + '」！该奖品剩余 ' + p.qty + ' 个', 'win');
+      showResult('恭喜 ' + pName(who) + ' 获得「' + tier.name + ' - ' + p.name + '」！该奖剩余' + p.qty + '个', 'win');
     } else {
-      showResult('玩家 ' + who + ' 摇出「' + tier.name + '」，但「' + p.name + '」已无剩余', 'none');
+      rec.noPrize = true;
+      showResult(pName(who) + ' 摇出「' + tier.name + '」，但「' + p.name + '」已无剩余', 'none');
     }
   } else {
-    showResult(PITY[Math.floor(Math.random() * PITY.length)] + ' · 玩家 ' + who + ' 未中奖', 'none');
+    showResult(PITY[Math.floor(Math.random() * PITY.length)] + ' · ' + pName(who) + ' 未中奖', 'none');
   }
 
   renderRecords();
@@ -1044,7 +1174,8 @@ function resolveFinale() {
     G.winner = b.player;
     G.winnerTier = b.tier;
     renderStatus();
-    openModal('状元揭晓！', '全场共摇出 ' + G.zyRolls.length + ' 次状元级牌型。<br>最大状元：<b>玩家 ' + b.player + '</b>，牌型「' + b.tier.name + '」！<br>夺得状元奖品「' + G.prizes.zhuangyuan.name + '」！', '再来一局', restart);
+    renderStats();
+    openModal('状元揭晓！', '全场共摇出 ' + G.zyRolls.length + ' 次状元级牌型。<br>最大状元：<b>' + pName(b.player) + '</b>，牌型「' + b.tier.name + '」！<br>夺得状元奖品「' + G.prizes.zhuangyuan.name + '」！', '再来一局', restart);
   } else {
     G.phase = 'elim';
     G.elimPlayers = Array.from({ length: G.N }, (_, i) => i + 1);
@@ -1068,9 +1199,10 @@ function resolveElimRound() {
     G.winner = winner;
     G.winnerTier = null;
     renderStatus();
-    openModal('状元诞生！', '加赛第 ' + G.elimRound + ' 轮，玩家 <b>' + winner + '</b> 以 ' + maxSum + ' 点成为最后一人！<br>荣登状元，夺得「' + G.prizes.zhuangyuan.name + '」！', '再来一局', restart);
+    renderStats();
+    openModal('状元诞生！', '加赛第 ' + G.elimRound + ' 轮，<b>' + pName(winner) + '</b> 以 ' + maxSum + ' 点成为最后一人！<br>荣登状元，夺得「' + G.prizes.zhuangyuan.name + '」！', '再来一局', restart);
   } else {
-    openModal('加赛第 ' + G.elimRound + ' 轮结果', '本轮最高 ' + maxSum + ' 点：玩家 <b>' + adv.join('、') + '</b> 并列最大，晋级下一轮。', '继续加赛');
+    openModal('加赛第 ' + G.elimRound + ' 轮结果', '本轮最高 ' + maxSum + ' 点：<b>' + adv.map(pName).join('、') + '</b> 并列最大，晋级下一轮。', '继续加赛');
     G.elimPlayers = adv;
     G.elimRound++;
     G.elimRolled = 0;
@@ -1099,16 +1231,16 @@ function renderStatus() {
     badge.textContent = '状元加赛';
     badge.className = 'phase-badge elim';
     roundEl.textContent = '第 ' + G.elimRound + ' 轮';
-    whoEl.innerHTML = '轮到 玩家 <b>' + G.elimPlayers[0] + '</b>';
+    whoEl.innerHTML = '轮到 <b>' + pName(G.elimPlayers[0]) + '</b>';
     candBar.hidden = false;
-    candBar.innerHTML = '候选：' + G.elimPlayers.map((p, i) => '<span class="chip cand' + (i === 0 ? ' cur' : '') + '">玩家 ' + p + '</span>').join('');
+    candBar.innerHTML = '候选：' + G.elimPlayers.map((p, i) => '<span class="chip cand' + (i === 0 ? ' cur' : '') + '">' + pName(p) + '</span>').join('');
     setHint('点数总和最大者留下 · 本轮已摇 ' + G.elimRolled + ' / ' + G.elimRoundSize + ' 人');
     btn.textContent = '摇骰子（争取晋级）';
   } else if (G.phase === 'final') {
     badge.textContent = '最后一轮';
     badge.className = 'phase-badge final';
     roundEl.textContent = '第 ' + G.round + ' 轮';
-    whoEl.innerHTML = '轮到 玩家 <b>' + G.cur + '</b>';
+    whoEl.innerHTML = '轮到 <b>' + pName(G.cur) + '</b>';
     candBar.hidden = true;
     setHint('最后一轮 · 已摇 ' + G.finalRolled + ' / ' + G.N + ' 人 · 角逐最大状元');
     btn.textContent = '摇骰子';
@@ -1117,8 +1249,8 @@ function renderStatus() {
     badge.className = 'phase-badge';
     roundEl.textContent = '第 ' + G.round + ' 轮';
     whoEl.innerHTML = G.winnerTier
-      ? '状元：玩家 <b>' + G.winner + '</b>（' + G.winnerTier.name + '）'
-      : '状元：玩家 <b>' + G.winner + '</b>';
+      ? '状元：<b>' + pName(G.winner) + '</b>（' + G.winnerTier.name + '）'
+      : '状元：<b>' + pName(G.winner) + '</b>';
     candBar.hidden = true;
     setHint('本局已结束，点击「本局已结束」或右上「重新设置」再来一局');
     btn.textContent = '本局已结束';
@@ -1126,7 +1258,7 @@ function renderStatus() {
     badge.textContent = '正式轮';
     badge.className = 'phase-badge';
     roundEl.textContent = '第 ' + G.round + ' 轮';
-    whoEl.innerHTML = '轮到 玩家 <b>' + G.cur + '</b>';
+    whoEl.innerHTML = '轮到 <b>' + pName(G.cur) + '</b>';
     candBar.hidden = true;
     setHint('点击「摇骰子」掷出你的点数');
     btn.textContent = '摇骰子';
@@ -1137,34 +1269,85 @@ function renderStock() {
   if (!G) { $('prizeStock').innerHTML = ''; return; }
   $('prizeStock').innerHTML = '<span class="stock-cap">奖品余量：</span>' + PRIZE_DEFS.map(d => {
     const p = G.prizes[d.key];
-    if (d.finale) return '<span class="chip finale">状元 · ' + p.name + '<span class="cnt">决赛颁发</span></span>';
-    return '<span class="chip' + (p.qty === 0 ? ' out' : '') + '">' + p.name + '<span class="cnt">×' + p.qty + '</span></span>';
+    if (d.finale) return '<span class="chip finale">' + d.label + ' - ' + p.name + '<span class="cnt">决赛颁发</span></span>';
+    return '<span class="chip' + (p.qty === 0 ? ' out' : '') + '">' + d.label + ' - ' + p.name + '<span class="cnt">×' + p.qty + '</span></span>';
   }).join('');
 }
 
 function renderBestZY() {
   if (!G) { $('bestZY').innerHTML = ''; return; }
   $('bestZY').innerHTML = G.bestZY
-    ? '当前最佳状元：<b>玩家 ' + G.bestZY.player + '</b>（' + G.bestZY.tier.name + '）· 状元奖品「' + G.prizes.zhuangyuan.name + '」等待角逐'
+    ? '当前最佳状元：<b>' + pName(G.bestZY.player) + '</b>（' + G.bestZY.tier.name + '）· 状元奖品「' + G.prizes.zhuangyuan.name + '」等待角逐'
     : '当前尚无状元 · 状元奖品「' + G.prizes.zhuangyuan.name + '」等待角逐';
+}
+
+/* 本局统计：结束时展示每位玩家的所得，状元获得者用不同颜色区分 */
+function renderStats() {
+  const panel = $('statsPanel');
+  if (!G || G.phase !== 'done') { panel.hidden = true; return; }
+  panel.hidden = false;
+  const cashMode = G.prizeMode === 'cash';
+  $('statsCap').textContent = cashMode ? '自动结算奖金总额' : '各玩家所得奖品';
+  /* 按玩家聚合非状元中奖记录 */
+  const per = {};
+  for (let i = 1; i <= G.N; i++) per[i] = { wins: [], isWinner: false };
+  for (const r of G.records) {
+    if (r.prize && r.tier && !r.tier.isZhuangyuan) {
+      const p = G.prizes[r.tier.prize];
+      const w = per[r.player].wins;
+      let hit = null;
+      for (const it of w) { if (it.label === r.prize) { hit = it; break; } }
+      if (hit) hit.count++;
+      else w.push({ label: r.prize, count: 1, amount: p ? p.amount : null, zy: false });
+    }
+  }
+  /* 状元奖品计入获得者 */
+  if (G.winner && per[G.winner]) {
+    per[G.winner].isWinner = true;
+    const zp = G.prizes.zhuangyuan;
+    per[G.winner].wins.push({ label: zp.name, count: 1, amount: zp.amount, zy: true });
+  }
+  let html = '<table class="stats-table">' +
+    '<colgroup><col style="width:22%"><col style="width:56%"><col style="width:22%"></colgroup>' +
+    '<thead><tr><th>玩家</th><th>' + (cashMode ? '奖金明细' : '所得奖品') + '</th><th>' + (cashMode ? '奖金合计' : '中奖件数') + '</th></tr></thead><tbody>';
+  for (let i = 1; i <= G.N; i++) {
+    const w = per[i];
+    const list = [];
+    let total = 0, cnt = 0;
+    for (const it of w.wins) {
+      cnt += it.count;
+      if (it.amount != null) total += it.amount * it.count;
+      list.push((it.zy ? '<b>' : '') + it.label + '×' + it.count + (it.zy ? '</b>' : ''));
+    }
+    html += '<tr class="' + (w.isWinner ? 'row-stats-winner' : '') + '">' +
+      '<td>' + (w.isWinner ? '<span class="zy-badge">状元</span>' : '') + pName(i) + '</td>' +
+      '<td>' + (list.length ? list.join(' · ') : '<span class="st-none">未中奖</span>') + '</td>' +
+      '<td class="st-total">' + (cashMode ? '¥' + total : cnt + ' 件') + '</td>' +
+    '</tr>';
+  }
+  html += '</tbody></table>';
+  $('statsBox').innerHTML = html;
 }
 
 function renderRecords() {
   const tb = $('recordsBody');
   if (!G || G.records.length === 0) { $('recordsEmpty').hidden = false; tb.innerHTML = ''; return; }
   $('recordsEmpty').hidden = true;
-  tb.innerHTML = G.records.map(r => {
+  tb.innerHTML = G.records.slice().reverse().map(r => {
     const isZY = !!(r.tier && r.tier.isZhuangyuan);
     const res = isZY
-      ? '<b>' + r.tier.name + '</b>'
+      ? '<b>状元 - ' + r.tier.name + '</b>'
       : (r.prize ? r.prize : (r.tier ? r.tier.name : '未中奖'));
-    const diceTxt = r.dice.map(v => v === 4 ? '<b class="d4">4</b>' : v === 1 ? '<b class="d1">1</b>' : v).join('·');
-    return '<tr class="' + (isZY ? 'row-zy' : '') + '">' +
+    const rowCls = isZY ? 'row-zy' : '';
+    /* 未中奖 / 已无剩余：结果列文字灰色，其余列保持正常颜色 */
+    const resCls = (!isZY && !r.prize) ? ' class="rec-no"' : '';
+    const diceTxt = r.dice.join('·');
+    return '<tr class="' + rowCls + '">' +
       '<td>' + r.time + '</td>' +
       '<td>' + r.round + '</td>' +
-      '<td>玩家 ' + r.player + '</td>' +
+      '<td>' + pName(r.player) + '</td>' +
       '<td>' + diceTxt + '</td>' +
-      '<td>' + res + '</td>' +
+      '<td' + resCls + '>' + res + '</td>' +
     '</tr>';
   }).join('');
 }
@@ -1185,6 +1368,7 @@ function renderRules() {
 /* ==================== 初始化 ==================== */
 function init() {
   renderSetupRows();
+  renderPlayerNames();
   renderRules();
   document.body.dataset.diceTheme = diceTheme;
   $('diceArea').innerHTML = diceRowHTML([1, 1, 1, 1, 1, 1]);
@@ -1201,6 +1385,24 @@ function init() {
   switchView(v === 'rules' ? 'rules' : 'game');
 
   $('startBtn').addEventListener('click', startGame);
+  $('inputPlayers').addEventListener('input', renderPlayerNames);
+  $('nameModeSwitch').addEventListener('change', renderPlayerNames);
+  document.querySelectorAll('#prizeModeGroup .radio-pill').forEach(b => b.classList.toggle('active', b.dataset.mode === prizeMode));
+  document.querySelectorAll('#prizeModeGroup .radio-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      prizeMode = btn.dataset.mode;
+      savePrizeMode(prizeMode);
+      document.querySelectorAll('#prizeModeGroup .radio-pill').forEach(b => b.classList.toggle('active', b === btn));
+      renderSetupRows();
+    });
+  });
+  document.querySelectorAll('#cashPresetGroup .radio-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      cashPreset = btn.dataset.preset;
+      saveCashPreset(cashPreset);
+      renderSetupRows(); // 重新预填金额并刷新选中态
+    });
+  });
   $('rollBtn').addEventListener('click', doRoll);
   $('restartBtn').addEventListener('click', restartConfirm);
   $('settingsBtn').addEventListener('click', openSettings);
