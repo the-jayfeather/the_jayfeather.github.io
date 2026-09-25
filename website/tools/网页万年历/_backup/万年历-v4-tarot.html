@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一只松鸦羽的万年历</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='22'%20fill='%23225588'/%3E%3Crect%20x='20'%20y='24'%20width='60'%20height='54'%20rx='10'%20fill='none'%20stroke='%2366CCFF'%20stroke-width='6'/%3E%3Cpath%20d='M32%2016v14M68%2016v14M26%2042h48'%20stroke='%2366CCFF'%20stroke-width='6'%20fill='none'/%3E%3Cpath%20d='M64%2058c-8%202-13%209-13%2017%200%205%203%208%208%208s8-4%208-9v-18l7-3v11c-1%205-5%208-10%2010z'%20fill='%23BBEEFF'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=LXGW+WenKai&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ================= 顶部导航栏 ================= -->
+<header class="navbar">
+  <div class="brand">
+    <span class="brand-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18" stroke="currentColor" stroke-width="1.8"/><path d="M8 3v3M16 3v3" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 12.5c-1.8.5-3 2-3 3.6 0 1.2.8 1.9 1.8 1.9s1.9-.9 1.9-2.1v-4.6l1.6-.6v2.6c-.4 1.1-1.2 1.7-2.3 2z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">一只松鸦羽的网页万年历</span>
+    <span class="brand-sub">万年历 · 万年时光</span>
+  </div>
+  <div class="nav-right">
+    <span class="time-source" id="timeSource" title="点击重新检测时间源">
+      <span class="dot"></span><span id="timeSourceText">检测中…</span>
+    </span>
+    <button class="settings-btn" id="settingsBtn" title="设置" aria-label="设置">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.08a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.08a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ================= 主区 ================= -->
+<main class="main">
+
+  <!-- 左侧：日期详情 -->
+  <aside class="sidebar" id="sidebar">
+    <section class="panel big-date" id="bigDateCard"></section>
+    <section class="panel" id="panelYiJi" data-key="showYiJi">
+      <h3 class="panel-title">今日宜忌 <span class="tiny-tag" id="jianChuTag"></span></h3>
+      <div class="yi-block" id="yiJiBox"></div>
+    </section>
+    <section class="panel" id="panelChong" data-key="showChong">
+      <h3 class="panel-title">属相 · 冲煞 · 吉神方位</h3>
+      <div class="chong-grid" id="chongBox"></div>
+    </section>
+    <section class="panel" id="panelBagua" data-key="showBagua">
+      <h3 class="panel-title">今日八卦</h3>
+      <div class="bagua-box" id="baguaBox"></div>
+    </section>
+    <section class="panel" id="panelBirthday">
+      <h3 class="panel-title">今日生日 <span class="tiny-tag">名人 · 角色</span></h3>
+      <div class="birth-cols" id="birthCols">
+        <div class="birth-col fame-group" id="fameGroup">
+          <h4 class="sub-title fame">名人</h4>
+          <ul class="info-list fame-list" id="celebList"></ul>
+        </div>
+        <div class="birth-col char-group" id="charGroup">
+          <h4 class="sub-title char">二次元角色</h4>
+          <ul class="info-list char-list" id="birthList"></ul>
+        </div>
+      </div>
+    </section>
+    <section class="panel" id="panelHistory" data-key="showHistory">
+      <h3 class="panel-title">历史上的今天</h3>
+      <ul class="info-list" id="historyList"></ul>
+    </section>
+    <section class="panel" id="panelTarot" data-key="showTarot">
+      <h3 class="panel-title">塔罗 · 每日单牌 · 往今未三牌阵</h3>
+      <div class="tarot-daily" id="tarotDaily"></div>
+      <div class="tarot-box" id="tarotBox"></div>
+    </section>
+  </aside>
+
+  <!-- 右侧：大表 -->
+  <div class="content">
+    <div class="toolbar">
+      <div class="view-tabs" role="tablist">
+        <button class="view-tab" data-mode="century">世纪</button>
+        <button class="view-tab" data-mode="decade">十年</button>
+        <button class="view-tab" data-mode="year">年</button>
+        <button class="view-tab active" data-mode="month">月</button>
+      </div>
+      <button class="tool-btn" id="prevBtn" title="上一步" aria-label="上一步">‹</button>
+      <span class="tool-title" id="toolTitle"></span>
+      <button class="tool-btn" id="nextBtn" title="下一步" aria-label="下一步">›</button>
+      <button class="tool-btn primary" id="todayBtn">今</button>
+      <span class="tool-spacer"></span>
+      <label class="lunar-switch">
+        <span>日期下方显农历</span>
+        <span class="switch">
+          <input type="checkbox" id="quickLunar">
+          <span class="slider"></span>
+        </span>
+      </label>
+    </div>
+    <div class="cal-wrap" id="calWrap"></div>
+  </div>
+</main>
+
+<!-- ================= 设置模态 ================= -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="设置">
+    <div class="modal-head">
+      <h2>设置</h2>
+      <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+    </div>
+
+    <div class="set-group">
+      <h4 class="set-group-title">时间来源</h4>
+      <div class="set-row">
+        <div>
+          <div>获取日期方式</div>
+          <div class="desc" id="timeModeDesc">自动检测并优先使用在线时间，失败时回退本地时间</div>
+        </div>
+        <div class="radio-group">
+          <button class="radio-pill" data-mode="auto" id="modeAuto">在线优先</button>
+          <button class="radio-pill" data-mode="local" id="modeLocal">仅本地</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div>
+          <div>当前时间源</div>
+          <div class="desc" id="timeStatusDesc">尚未检测</div>
+        </div>
+        <button class="tool-btn" id="redetectBtn" style="font-size:13px;">重新检测</button>
+      </div>
+    </div>
+
+    <div class="set-group">
+      <h4 class="set-group-title">日历显示</h4>
+      <div class="set-row">
+        <div>
+          <div>数字日期下方显示农历</div>
+          <div class="desc">月视图中每个日期格下方显示农历 / 节气</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setShowLunar">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="set-group">
+      <h4 class="set-group-title">左侧日期详情模块</h4>
+      <div class="set-row">
+        <div>农历详细年月日信息</div>
+        <label class="switch"><input type="checkbox" id="setLunarDetail"><span class="slider"></span></label>
+      </div>
+      <h5 class="set-sub-title">农历详细信息 · 单项</h5>
+      <div class="set-row sub-row">
+        <div>农历</div>
+        <label class="switch"><input type="checkbox" id="setDetailLunar"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>年柱</div>
+        <label class="switch"><input type="checkbox" id="setDetailYearGz"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>月柱</div>
+        <label class="switch"><input type="checkbox" id="setDetailMonthGz"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>日柱</div>
+        <label class="switch"><input type="checkbox" id="setDetailDayGz"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>时柱</div>
+        <label class="switch"><input type="checkbox" id="setHourGz"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>节气</div>
+        <label class="switch"><input type="checkbox" id="setDetailTerm"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>节日</div>
+        <label class="switch"><input type="checkbox" id="setDetailFest"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>月相</div>
+        <label class="switch"><input type="checkbox" id="setDetailMoon"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>星宿</div>
+        <label class="switch"><input type="checkbox" id="setDetailMansion"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>六曜</div>
+        <label class="switch"><input type="checkbox" id="setLiuYao"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>十二神（黄道黑道）</div>
+        <label class="switch"><input type="checkbox" id="setShen"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>彭祖百忌</div>
+        <label class="switch"><input type="checkbox" id="setPengZu"><span class="slider"></span></label>
+      </div>
+      <h5 class="set-sub-title">日期卡片附加</h5>
+      <div class="set-row sub-row">
+        <div>道历</div>
+        <label class="switch"><input type="checkbox" id="setTaoLi"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>佛历</div>
+        <label class="switch"><input type="checkbox" id="setFoLi"><span class="slider"></span></label>
+      </div>
+      <div class="set-row">
+        <div>传统当日宜忌</div>
+        <label class="switch"><input type="checkbox" id="setYiJi"><span class="slider"></span></label>
+      </div>
+      <div class="set-row">
+        <div>今日节日</div>
+        <label class="switch"><input type="checkbox" id="setFest"><span class="slider"></span></label>
+      </div>
+      <div class="set-row">
+        <div>今日角色生日</div>
+        <label class="switch"><input type="checkbox" id="setBirth"><span class="slider"></span></label>
+      </div>
+      <div class="set-row">
+        <div>今日名人生日</div>
+        <label class="switch"><input type="checkbox" id="setCeleb"><span class="slider"></span></label>
+      </div>
+      <div class="set-row">
+        <div>属相 · 冲煞 · 吉神方位</div>
+        <label class="switch"><input type="checkbox" id="setChong"><span class="slider"></span></label>
+      </div>
+      <div class="set-row">
+        <div>历史上的今天</div>
+        <label class="switch"><input type="checkbox" id="setHistory"><span class="slider"></span></label>
+      </div>
+      <div class="set-row">
+        <div>今日八卦卦象</div>
+        <label class="switch"><input type="checkbox" id="setBagua"><span class="slider"></span></label>
+      </div>
+      <div class="set-row">
+        <div>塔罗牌区域（整体）</div>
+        <label class="switch"><input type="checkbox" id="setTarot"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>每日单牌</div>
+        <label class="switch"><input type="checkbox" id="setTarotDaily"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>往今未三牌阵</div>
+        <label class="switch"><input type="checkbox" id="setTarotSpread"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <span class="desc" style="font-size:12px;color:var(--placeholder);">宜忌按建除十二神简推，仅供民俗参考</span>
+      <button class="reset-btn" id="resetBtn">恢复默认设置</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ================= 数据与逻辑 ================= -->
+<script src="files/lunar.js"></script>
+<script src="files/festivals.js"></script>
+<script src="files/birthdays.js"></script>
+<script src="files/celebrities.js"></script>
+<script src="files/history.js"></script>
+<script src="files/yi_ji.js"></script>
+<script src="files/bagua.js"></script>
+<script src="files/tarot.js"></script>
+<script>
+'use strict';
+/* ============================================================
+ * 天依万年历 · 主逻辑
+ * ============================================================ */
+var L = window.LunarLib, F = window.FESTIVALS, B = window.BIRTHDAYS,
+    CE = window.CELEBRITIES,
+    H = window.HISTORY, YJ = window.YIJI, BG = window.BAGUA, TT = window.TAROT;
+
+/* ---------- 工具 ---------- */
+function $(id) { return document.getElementById(id); }
+function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+function daysInMonth(y, m) { return new Date(y, m, 0).getDate(); }
+function dateKey(y, m, d) { return y + '-' + pad2(m) + '-' + pad2(d); }
+
+/* ---------- 时间源 ---------- */
+var TimeSrc = {
+  mode: 'auto',           // 'auto' | 'local'
+  online: false,          // 是否已在线同步
+  offset: 0,              // 在线时间(ms) - 本地时间(ms)
+  now: function () { return Date.now() + this.offset; },
+  nowDate: function () { return new Date(this.now()); },
+  detect: function () {
+    var self = this;
+    if (self.mode === 'local') {
+      self.online = false; self.offset = 0;
+      updateTimeBadge();
+      return Promise.resolve(false);
+    }
+    setTimeBadge('detecting');
+    var apis = [
+      { url: 'https://api.bilibili.com/x/server/time', parse: function (j) { return j.data.now * 1000; } },
+      { url: 'https://worldtimeapi.org/api/timezone/Asia/Shanghai', parse: function (j) { return Date.parse(j.utc_datetime); } },
+      { url: 'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Shanghai', parse: function (j) { return Date.parse(j.dateTime); } }
+    ];
+    /* 并发竞速：任一成功即采用，全部失败才回退本地 */
+    var tries = apis.map(function (api) {
+      return fetch(api.url, { signal: AbortSignal.timeout(4000) })
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (j) {
+          var t = api.parse(j);
+          if (!t || isNaN(t)) throw 0;
+          return t;
+        });
+    });
+    return firstSuccess(tries).then(function (serverNow) {
+      self.online = true;
+      self.offset = serverNow - Date.now();
+      updateTimeBadge();
+      return true;
+    }, function () {
+      self.online = false; self.offset = 0;
+      updateTimeBadge();
+      return false;
+    });
+  }
+};
+
+function firstSuccess(promises) {
+  return new Promise(function (resolve, reject) {
+    var left = promises.length;
+    promises.forEach(function (p) {
+      p.then(resolve, function () { if (--left === 0) reject(); });
+    });
+  });
+}
+
+function setTimeBadge(state) {
+  var el = $('timeSource'), txt = $('timeSourceText');
+  el.classList.remove('online', 'local');
+  if (state === 'detecting') { txt.textContent = '检测中…'; }
+  else if (state === 'online') { el.classList.add('online'); txt.textContent = '在线时间'; }
+  else { el.classList.add('local'); txt.textContent = '本地时间'; }
+}
+function updateTimeBadge() {
+  setTimeBadge(TimeSrc.online ? 'online' : 'local');
+  var d = $('timeStatusDesc');
+  if (TimeSrc.mode === 'local') d.textContent = '仅使用本地系统时间';
+  else if (TimeSrc.online) d.textContent = '已联网校准，在线时间优先';
+  else d.textContent = '在线获取失败，已回退本地时间';
+  $('modeAuto').classList.toggle('active', TimeSrc.mode === 'auto');
+  $('modeLocal').classList.toggle('active', TimeSrc.mode === 'local');
+  $('timeModeDesc').textContent = TimeSrc.mode === 'auto'
+    ? '自动检测并优先使用在线时间，失败时回退本地时间'
+    : '仅使用电脑本地系统时间，不联网';
+}
+
+/* ---------- 设置 ---------- */
+var DEFAULT_SETTINGS = {
+  timeMode: 'auto',
+  showLunar: true,
+  showLunarDetail: true,
+  showYiJi: true,
+  showFestival: true,
+  showBirthday: true,
+  showCelebrity: true,
+  showChong: true,
+  showHistory: true,
+  showBagua: true,
+  showTarot: true,
+  showTarotDaily: true,      // 塔罗 · 每日单牌
+  showTarotSpread: true,     // 塔罗 · 往今未三牌阵
+  /* 农历详细信息单项开关 */
+  showDetailLunar: true,      // 农历
+  showDetailYearGz: true,     // 年柱
+  showDetailMonthGz: true,    // 月柱
+  showDetailDayGz: true,      // 日柱
+  showHourGz: true,           // 时柱
+  showDetailTerm: true,       // 节气（今日节气）
+  showDetailFest: true,       // 节日
+  showDetailMoon: true,       // 月相
+  showDetailMansion: true,    // 星宿
+  showLiuYao: true,           // 六曜
+  showShen: true,             // 十二神（黄道黑道）
+  showPengZu: true,           // 彭祖百忌（日干支忌）
+  showTaoLi: true,            // 道历
+  showFoLi: true              // 佛历
+};
+var settings = loadSettings();
+function loadSettings() {
+  try {
+    var raw = localStorage.getItem('tianyi-calendar-v1');
+    if (raw) {
+      var o = JSON.parse(raw);
+      var s = {};
+      for (var k in DEFAULT_SETTINGS) s[k] = (k in o) ? o[k] : DEFAULT_SETTINGS[k];
+      return s;
+    }
+  } catch (e) { /* ignore */ }
+  return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+}
+function saveSettings() {
+  try { localStorage.setItem('tianyi-calendar-v1', JSON.stringify(settings)); } catch (e) { /* ignore */ }
+}
+
+/* ---------- 状态 ---------- */
+var sel = { y: 0, m: 0, d: 0 };   // 选中日期
+var today = { y: 0, m: 0, d: 0 }; // 今天（随时间源）
+var view = { mode: 'month', year: 0, month: 0 };
+
+/* ---------- 年份范围（农历数据表 1900–2100，导航限制在此区间） ---------- */
+var MIN_YEAR = 1900, MAX_YEAR = 2100;
+function clampY(y) { return Math.min(MAX_YEAR, Math.max(MIN_YEAR, y)); }
+
+function refreshToday() {
+  var t = TimeSrc.nowDate();
+  today.y = t.getFullYear(); today.m = t.getMonth() + 1; today.d = t.getDate();
+}
+function initSel() {
+  refreshToday();
+  sel.y = today.y; sel.m = today.m; sel.d = today.d;
+  view.year = today.y; view.month = today.m;
+}
+
+/* ---------- 单日综合信息 ---------- */
+function dayInfo(y, m, d) {
+  var lunar = L.solarToLunar(y, m, d);
+  if (!isFinite(lunar.lDay) || lunar.lMonth < 1) {
+    /* 数据表边界外：1900-01-31（农历1900正月初一）之前的公历日期属农历1899年腊月，数据表未收录 */
+    lunar = { lYear: 1899, lMonth: 12, lDay: -1, isLeap: false, outOfRange: true };
+  }
+  var gzSeq = L.dayGzSeq(y, m, d);
+  var gzDay = L.gzName(gzSeq);
+  var dayZhi = ((gzSeq % 12) + 12) % 12;
+  var monthZhi = (lunar.lMonth + 1) % 12;
+  var jcIdx = ((dayZhi - monthZhi + 12) % 12);
+  var gzYear = L.gzName(L.yearGzSeq(lunar.lYear));
+  var gzMonth = L.gzName(L.monthGzSeq(lunar.lYear, lunar.lMonth));
+  var term = L.termOfDay(y, m, d);
+  var week = new Date(y, m - 1, d).getDay();
+  return {
+    lunar: lunar,
+    gzDay: gzDay, gzYear: gzYear, gzMonth: gzMonth,
+    gzSeq: gzSeq, dayZhi: dayZhi, jcIdx: jcIdx,
+    term: term,
+    week: week,
+    yearSx: L.SHENGXIAO[((lunar.lYear - 4) % 12 + 12) % 12],
+    chong: YJ.chong[dayZhi],
+    sha: YJ.sha[dayZhi]
+  };
+}
+
+/* ---------- 节日 ---------- */
+function nthWeekday(y, month, week, weekday) {
+  var first = new Date(y, month - 1, 1).getDay();
+  return 1 + ((weekday - first + 7) % 7) + (week - 1) * 7;
+}
+function festivalsOf(y, m, d) {
+  var lunar = L.solarToLunar(y, m, d);
+  var list = [];
+  var i, k;
+  if (F.solar[m + '-' + d]) {
+    for (i = 0; i < F.solar[m + '-' + d].length; i++) list.push({ name: F.solar[m + '-' + d][i], type: '公历' });
+  }
+  if (!lunar.isLeap && F.lunar[lunar.lMonth + '-' + lunar.lDay]) {
+    for (i = 0; i < F.lunar[lunar.lMonth + '-' + lunar.lDay].length; i++) list.push({ name: F.lunar[lunar.lMonth + '-' + lunar.lDay][i], type: '农历' });
+  }
+  if (lunar.lMonth === 12 && lunar.lDay === L.monthDays(lunar.lYear, 12)) {
+    list.push({ name: '除夕', type: '农历' });
+  }
+  var term = L.termOfDay(y, m, d);
+  if (term) list.push({ name: term, type: '节气' });
+  for (i = 0; i < F.move.length; i++) {
+    var mv = F.move[i];
+    if (m === mv.month && d === nthWeekday(y, mv.month, mv.week, mv.day)) list.push({ name: mv.name, type: '公历' });
+  }
+  return list;
+}
+
+/* ---------- 星座 ---------- */
+function zodiacOf(m, d) {
+  var bounds = [
+    { n: '摩羯座', b: 1222 }, { n: '射手座', b: 1123 }, { n: '天蝎座', b: 1024 },
+    { n: '天秤座', b: 923 }, { n: '处女座', b: 823 }, { n: '狮子座', b: 723 },
+    { n: '巨蟹座', b: 622 }, { n: '双子座', b: 521 }, { n: '金牛座', b: 420 },
+    { n: '白羊座', b: 321 }, { n: '双鱼座', b: 219 }, { n: '水瓶座', b: 120 }
+  ];
+  var v = m * 100 + d;
+  for (var i = 0; i < bounds.length; i++) {
+    if (v >= bounds[i].b) return bounds[i].n;
+  }
+  return '摩羯座';
+}
+
+/* ---------- 月相（按农历日近似） ---------- */
+function moonPhaseOf(ld) {
+  if (ld === 1) return '朔';
+  if (ld <= 6) return '娥眉月';
+  if (ld <= 8) return '上弦月';
+  if (ld <= 14) return '盈凸月';
+  if (ld <= 16) return '满月';
+  if (ld <= 21) return '亏凸月';
+  if (ld <= 24) return '下弦月';
+  if (ld <= 29) return '残月';
+  return '晦';
+}
+
+/* ---------- 二十八宿值日（按日序轮值，基准经官方值日表核校） ---------- */
+var MANSIONS = ['角木蛟', '亢金龙', '氐土貉', '房日兔', '心月狐', '尾火虎', '箕水豹',
+  '斗木獬', '牛金牛', '女土蝠', '虚日鼠', '危月燕', '室火猪', '壁水貐',
+  '奎木狼', '娄金狗', '胃土雉', '昴日鸡', '毕月乌', '觜火猴', '参水猿',
+  '井木犴', '鬼金羊', '柳土獐', '星日马', '张月鹿', '翼火蛇', '轸水蚓'];
+function starMansionOf(y, m, d) {
+  var days = Math.floor(Date.UTC(y, m - 1, d) / 86400000);
+  /* 基准核校：2026-09-23 箕、09-24 斗、09-25 牛、09-26 女；2026-02-17 室宿 */
+  return MANSIONS[((days % 28) + 7) % 28];
+}
+
+/* ---------- 时柱（五鼠遁推时干） ---------- */
+/* 时辰地支：23-1 子、1-3 丑、3-5 寅 … 21-23 亥 */
+function hourZhiIndex(h) {
+  return Math.floor((h + 1) / 2) % 12;
+}
+/* 日干序(甲0…癸9) -> 子时天干序（甲己起甲、乙庚起丙、丙辛起戊、丁壬起庚、戊癸起壬） */
+var WU_SHUN_GAN = [0, 2, 4, 6, 8, 0, 2, 4, 6, 8];
+function hourGzOf(y, m, d, dateObj) {
+  var gzSeq = L.dayGzSeq(y, m, d);
+  var dayGan = ((gzSeq % 10) + 10) % 10;
+  var h = dateObj ? dateObj.getHours() : new Date().getHours();
+  var zhi = hourZhiIndex(h);
+  var gan = (WU_SHUN_GAN[dayGan] + zhi) % 10;
+  return L.GAN[gan] + L.ZHI[zhi];
+}
+
+/* ---------- 六曜（日本六曜，按农历(月+日)%6，与正式黄历一致） ---------- */
+var LIU_YAO = ['大安', '赤口', '先勝', '友引', '先負', '仏滅'];
+function liuYaoOf(lunar) {
+  if (!lunar || lunar.outOfRange) return '—';
+  return LIU_YAO[((lunar.lMonth + lunar.lDay) % 6 + 6) % 6];
+}
+
+/* ---------- 黄道黑道十二神（通书口径：由月建定青龙起支，随日支轮值） ---------- */
+var SHEN_NAMES = ['青龙', '明堂', '天刑', '朱雀', '金匮', '天德',
+  '白虎', '玉堂', '天牢', '玄武', '司命', '勾陈'];
+var HUANGDAO = { 0: true, 1: true, 4: true, 5: true, 7: true, 10: true }; // 黄道六神
+/* 月支序(子0…亥11) -> 青龙起之日支序。口诀：寅申须加子、卯酉却在寅、辰戌龙位上、巳亥午上存、子午临申地、丑未戌上寻 */
+var QINGLONG_START = [8, 10, 0, 2, 4, 6, 8, 10, 0, 2, 4, 6];
+function shenOf(dayZhi, monthZhi) {
+  var start = QINGLONG_START[((monthZhi % 12) + 12) % 12];
+  var idx = (((dayZhi - start) % 12) + 12) % 12;
+  return SHEN_NAMES[idx] + (HUANGDAO[idx] ? ' · 黄道' : ' · 黑道');
+}
+
+/* ---------- 彭祖百忌（按日/时干支取天干一句 + 地支一句，与正式黄历一致） ---------- */
+var PENGZU_GAN = ['甲不开仓财物耗散', '乙不栽植千株不长', '丙不修灶必见灾殃', '丁不剃头头必生疮',
+  '戊不受田田主不祥', '己不破券二比并亡', '庚不经络织机虚张', '辛不合酱主人不尝',
+  '壬不汲水更难提防', '癸不词讼理弱敌强'];
+var PENGZU_ZHI = ['子不问卜自惹祸殃', '丑不冠带主不还乡', '寅不祭祀神鬼不尝', '卯不穿井水泉不香',
+  '辰不哭泣必主重丧', '巳不远行财物伏藏', '午不苫盖屋主更张', '未不服药毒气入肠',
+  '申不安床鬼祟入房', '酉不宴客醉坐颠狂', '戌不吃犬作怪上床', '亥不嫁娶不利新郎'];
+function pengZuOf(gzSeq) {
+  var gan = ((gzSeq % 10) + 10) % 10;
+  var zhi = ((gzSeq % 12) + 12) % 12;
+  return PENGZU_GAN[gan] + '，' + PENGZU_ZHI[zhi];
+}
+
+/* ---------- 道历 / 佛历（年月日随农历） ---------- */
+/* 道历：黄帝纪元（公元前 2697 年为元年），道历年 = 公历年 + 2697 */
+/* 佛历：释迦牟尼涅槃纪元（公元前 543 年为元年），佛历年 = 公历年 + 543 */
+function taoLiYearOf(y) { return y + 2697; }
+function foLiYearOf(y) { return y + 543; }
+
+/* ---------- 角色生日 ---------- */
+function birthdaysOf(m, d) {
+  var out = [], i;
+  for (i = 0; i < B.length; i++) if (B[i].m === m && B[i].d === d) out.push(B[i]);
+  return out;
+}
+
+/* ---------- 名人生日 ---------- */
+function celebritiesOf(m, d) {
+  var out = [], i;
+  for (i = 0; i < CE.length; i++) if (CE[i].m === m && CE[i].d === d) out.push(CE[i]);
+  return out;
+}
+
+/* ---------- 八卦（简易日卦） ---------- */
+function baguaOf(y, m, d) {
+  var up = ((y * 7 + m * 13 + d * 31) % 8 + 8) % 8;
+  var down = ((y * 11 + m * 17 + d * 7) % 8 + 8) % 8;
+  var idx = up * 8 + down;
+  return {
+    up: BG.trigrams[up], down: BG.trigrams[down], idx: idx,
+    name: BG.names[idx], note: BG.notes[idx]
+  };
+}
+
+/* ============================================================
+ * 渲染：左侧详情
+ * ============================================================ */
+function renderSidebar() {
+  var info = dayInfo(sel.y, sel.m, sel.d);
+  var lunar = info.lunar;
+  var festHtml = '';
+  if (settings.showFestival) {
+    var fests = festivalsOf(sel.y, sel.m, sel.d);
+    if (fests.length) {
+      festHtml = '<div class="fest-list">' + fests.map(function (f) {
+        var t = f.type === '节气' ? '节气' : (f.type === '农历' ? '农历' : '公历');
+        return '<span class="fest-item ' + (f.type === '节气' ? 'term' : '') + '"><span class="w">' + t + '</span>' + f.name + '</span>';
+      }).join('') + '</div>';
+    }
+  }
+  var lunarBriefTxt = lunar.outOfRange ? '1899 年 · 腊月（数据边界）' : L.lunarMonthCN(lunar.lMonth, lunar.isLeap) + L.lunarDayCN(lunar.lDay);
+  var taoFoHtml = '';
+  if (settings.showTaoLi || settings.showFoLi) {
+    taoFoHtml = '<div class="lunar-brief dao">' +
+      (settings.showTaoLi ? '道历 ' + taoLiYearOf(sel.y) + ' 年 · ' + lunarBriefTxt : '') +
+      '</div>' +
+      '<div class="lunar-brief fo">' +
+      (settings.showFoLi ? '佛历 ' + foLiYearOf(sel.y) + ' 年 · ' + lunarBriefTxt : '') +
+      '</div>';
+  }
+  $('bigDateCard').innerHTML =
+    '<div class="week">星期' + L.WEEK_CN[info.week] + '</div>' +
+    '<div class="day">' + sel.d + '</div>' +
+    '<div class="ymd">' + sel.y + ' 年 ' + sel.m + ' 月 ' + sel.d + ' 日</div>' +
+    festHtml +
+    '<div class="lunar-brief">农历 ' + lunarBriefTxt + '</div>' +
+    taoFoHtml +
+    '<div class="zodiac"><span class="w">星座</span>' + zodiacOf(sel.m, sel.d) + '</div>' +
+    '<div class="lunar-grid" id="lunarDetail"></div>';
+
+  var panels = ['panelYiJi', 'panelChong', 'panelBagua', 'panelHistory', 'panelTarot'];
+  for (var i = 0; i < panels.length; i++) {
+    var p = $(panels[i]);
+    p.style.display = settings[p.dataset.key] ? '' : 'none';
+  }
+  var pb = $('panelBirthday');
+  var showChar = settings.showBirthday, showFame = settings.showCelebrity;
+  pb.style.display = (showChar || showFame) ? '' : 'none';
+  $('charGroup').style.display = showChar ? '' : 'none';
+  $('fameGroup').style.display = showFame ? '' : 'none';
+  $('birthCols').classList.toggle('one-col', showChar !== showFame);
+  renderLunarDetail(info);
+  renderYiJi(info);
+  renderChong(info);
+  renderBagua();
+  renderBirth();
+  renderCeleb();
+  renderHistory();
+  renderTarot();
+}
+
+function renderLunarDetail(info) {
+  var lunar = info.lunar;
+  var lunarTxt = lunar.outOfRange ? '1899 年 · 数据表边界'
+    : lunar.lYear + ' 年 · ' + L.lunarMonthCN(lunar.lMonth, lunar.isLeap) + L.lunarDayCN(lunar.lDay);
+  var phaseTxt = lunar.outOfRange ? '—' : moonPhaseOf(lunar.lDay);
+  var hourTxt = hourGzOf(sel.y, sel.m, sel.d, TimeSrc.nowDate());
+  /* 节日（不含节气），无则显示"无" */
+  var festTxt = (function () {
+    var fests = festivalsOf(sel.y, sel.m, sel.d).filter(function (f) { return f.type !== '节气'; });
+    return fests.length ? fests.map(function (f) { return f.name; }).join('、') : '无';
+  })();
+  var s = settings;
+  function item(key, label, val, extraAttr) {
+    return s[key]
+      ? '<div class="lg-item"><span class="lg-label">' + label + '</span><span class="lg-val"' + (extraAttr || '') + '>' + val + '</span></div>'
+      : '';
+  }
+  /* 左列：农历/年柱/月柱/日柱/时柱；右列：节气/节日/月相/星宿/六曜/十二神 */
+  /* 月支取月柱地支（按节气换月建，更贴合通书口径） */
+  var monthZhi = (info.gzMonth ? ((L.ZHI.indexOf(info.gzMonth.charAt(1)) + 12) % 12) : ((lunar.lMonth + 1) % 12));
+  var left =
+    item('showDetailLunar', '农历', lunarTxt) +
+    item('showDetailYearGz', '年柱', info.gzYear + ' 年 · 属' + info.yearSx) +
+    item('showDetailMonthGz', '月柱', info.gzMonth + ' 月') +
+    item('showDetailDayGz', '日柱', info.gzDay + ' 日') +
+    item('showHourGz', '时柱', hourTxt + ' 时', ' data-hour');
+  var right =
+    item('showDetailTerm', '节气', info.term || '无') +
+    item('showDetailFest', '节日', festTxt) +
+    item('showDetailMoon', '月相', phaseTxt) +
+    item('showDetailMansion', '星宿', starMansionOf(sel.y, sel.m, sel.d)) +
+    item('showLiuYao', '六曜', liuYaoOf(lunar)) +
+    item('showShen', '十二神', shenOf(info.dayZhi, monthZhi)) +
+    (s.showPengZu
+      ? '<div class="lg-item"><span class="lg-label">彭祖百忌</span><span class="lg-val wrap">' + pengZuOf(info.gzSeq) + '</span></div>'
+      : '');
+  $('lunarDetail').innerHTML = '<div class="lg-col">' + left + '</div><div class="lg-col">' + right + '</div>';
+  $('lunarDetail').style.display = settings.showLunarDetail ? '' : 'none';
+}
+
+function renderYiJi(info) {
+  var jcName = YJ.jianChu[info.jcIdx];
+  $('jianChuTag').textContent = '建除十二神 · ' + jcName + '日';
+  var yiTags = YJ.yi[info.jcIdx].map(function (x) { return '<span class="chip">' + x + '</span>'; }).join('');
+  var jiTags = YJ.ji[info.jcIdx].map(function (x) { return '<span class="chip ji">' + x + '</span>'; }).join('');
+  $('yiJiBox').innerHTML =
+    '<div class="yi-row"><span class="yi-label yi">宜</span><div class="yi-tags">' + yiTags + '</div></div>' +
+    '<div class="yi-row"><span class="yi-label ji">忌</span><div class="yi-tags">' + jiTags + '</div></div>';
+}
+
+function renderBirth() {
+  var bds = birthdaysOf(sel.m, sel.d);
+  if (!bds.length) {
+    $('birthList').innerHTML = '<li class="empty">今日没有收录的角色生日</li>';
+    return;
+  }
+  $('birthList').innerHTML = bds.map(function (b) {
+    return '<li><span class="w">' + b.work + '</span>' + b.name + ' 的生日</li>';
+  }).join('');
+}
+
+function renderCeleb() {
+  var cbs = celebritiesOf(sel.m, sel.d);
+  if (!cbs.length) {
+    $('celebList').innerHTML = '<li class="empty">今日没有收录的名人生日</li>';
+    return;
+  }
+  $('celebList').innerHTML = cbs.map(function (c) {
+    return '<li><span class="w">' + c.field + '</span>' + c.name + '（' + c.y + '）</li>';
+  }).join('');
+}
+
+function renderChong(info) {
+  var gan = info.gzSeq % 10;
+  var hex = YJ.sanhe[info.dayZhi].join('、');
+  var html =
+    '<div class="chong-item">今日属相 <b>属' + info.yearSx + '</b></div>' +
+    '<div class="chong-item">冲煞 <b>冲' + info.chong + ' · 煞' + info.sha + '</b></div>' +
+    '<div class="chong-item">六合 <b>' + YJ.liuhe[info.dayZhi] + '</b></div>' +
+    '<div class="chong-item">三合 <b>' + hex + '</b></div>' +
+    '<div class="chong-item">喜神 <b>' + YJ.fangWei[YJ.xiShen[gan]] + '</b></div>' +
+    '<div class="chong-item">财神 <b>' + YJ.fangWei[YJ.caiShen[gan]] + '</b></div>' +
+    '<div class="chong-item">福神 <b>' + YJ.fangWei[YJ.fuShen[gan]] + '</b></div>';
+  $('chongBox').innerHTML = html;
+}
+
+function renderHistory() {
+  var evs = H[sel.m + '-' + sel.d];
+  if (!evs || !evs.length) {
+    $('historyList').innerHTML = '<li class="empty">今日暂无收录的历史事件</li>';
+    return;
+  }
+  $('historyList').innerHTML = evs.map(function (ev) {
+    var y = ev[0];
+    var label = y < 0 ? '公元前' + (-y) : y + '年';
+    return '<li><span class="w">' + label + '</span>' + ev[1] + '</li>';
+  }).join('');
+}
+
+function renderBagua() {
+  var bg = baguaOf(sel.y, sel.m, sel.d);
+  $('baguaBox').innerHTML =
+    '<div class="bagua-symbol">' + bg.up.symbol + bg.down.symbol + '</div>' +
+    '<div class="bagua-name">' + bg.name + '</div>' +
+    '<div class="bagua-note">' + bg.note + '</div>' +
+    '<div class="bagua-method">上' + bg.up.name + '(' + bg.up.nature + ') · 下' + bg.down.name + '(' + bg.down.nature + ') · 以当日公历数字简易起卦，仅供娱乐</div>';
+}
+
+/* ---------- 塔罗 · 三张牌牌阵（以日期为种子的即时推演） ---------- */
+function buildTarotDeck(y, m, d) {
+  /* 将所有 78 张牌展开为数组 */
+  var deck = [];
+  var i, j;
+  for (i = 0; i < TT.major.length; i++) {
+    deck.push({ name: TT.major[i].name, suit: 'major', card: TT.major[i], idx: i });
+  }
+  var suits = ['wands', 'cups', 'swords', 'coins'];
+  for (i = 0; i < suits.length; i++) {
+    for (j = 0; j < TT.minor[suits[i]].length; j++) {
+      deck.push({ name: TT.minor[suits[i]][j].name, suit: suits[i], card: TT.minor[suits[i]][j], idx: j });
+    }
+  }
+  /* 以日期播种的确定性伪随机（同一天结果稳定，换日期即变） */
+  var seed = (y * 10000 + m * 100 + d) % 2147483647;
+  if (seed <= 0) seed += 2147483646;
+  function next() {
+    seed = (seed * 16807) % 2147483647;
+    return (seed % 10000) / 10000;
+  }
+  /* 洗牌（Fisher-Yates，用种子随机） */
+  for (i = deck.length - 1; i > 0; i--) {
+    var k = Math.floor(next() * (i + 1));
+    var tmp = deck[i]; deck[i] = deck[k]; deck[k] = tmp;
+  }
+  return { deck: deck, next: next };
+}
+
+function tarotOf(y, m, d) {
+  /* 往今未三牌阵：同一日期洗牌后依次取三张，位置为 往（过去）/今（现在）/未（未来） */
+  var r = buildTarotDeck(y, m, d);
+  var deck = r.deck, next = r.next;
+  var pos = ['过去', '现在', '未来'];
+  var out = [];
+  for (var i = 0; i < 3; i++) {
+    var c = deck[i];
+    var reversed = next() < 0.5;
+    out.push({
+      pos: pos[i],
+      name: c.name,
+      reversed: reversed,
+      text: reversed ? c.card.r : c.card.u
+    });
+  }
+  return out;
+}
+
+function tarotDailyOf(y, m, d) {
+  /* 每日单牌：同一日期洗牌后取第 4 张（与三牌阵不重复），独立判定正逆位 */
+  var r = buildTarotDeck(y, m, d);
+  var deck = r.deck, next = r.next;
+  var c = deck[3];
+  var reversed = next() < 0.5;
+  return { name: c.name, reversed: reversed, text: reversed ? c.card.r : c.card.u };
+}
+
+function renderTarot() {
+  $('tarotDaily').style.display = settings.showTarotDaily ? '' : 'none';
+  $('tarotBox').style.display = settings.showTarotSpread ? '' : 'none';
+  var daily = tarotDailyOf(sel.y, sel.m, sel.d);
+  $('tarotDaily').innerHTML =
+    '<div class="tarot-card daily">' +
+      '<span class="tpos">今日单牌</span>' +
+      '<span class="tname">' + daily.name + '</span>' +
+      '<span class="tori ' + (daily.reversed ? 'reversed' : 'upright') + '">' + (daily.reversed ? '逆位' : '正位') + '</span>' +
+      '<span class="tnote">' + daily.text + '</span>' +
+    '</div>' +
+    '<div class="tarot-method">以当日日期推演的即时单牌 · 仅供娱乐</div>';
+  var cards = tarotOf(sel.y, sel.m, sel.d);
+  $('tarotBox').innerHTML =
+    '<div class="tarot-spread">' + cards.map(function (c) {
+      return '<div class="tarot-card">' +
+        '<span class="tpos">' + c.pos + '</span>' +
+        '<span class="tname">' + c.name + '</span>' +
+        '<span class="tori ' + (c.reversed ? 'reversed' : 'upright') + '">' + (c.reversed ? '逆位' : '正位') + '</span>' +
+        '<span class="tnote">' + c.text + '</span>' +
+        '</div>';
+    }).join('') + '</div>' +
+    '<div class="tarot-method">往今未三张牌阵（过去 · 现在 · 未来）· 以当日日期推演 · 仅供娱乐</div>';
+}
+
+/* ============================================================
+ * 渲染：右侧大表
+ * ============================================================ */
+function renderContent() {
+  $('prevBtn').disabled = false;
+  $('nextBtn').disabled = false;
+  if (view.mode === 'month') renderMonth();
+  else if (view.mode === 'year') renderYear();
+  else if (view.mode === 'decade') renderDecade();
+  else renderCentury();
+}
+
+/* 视图标题：可点击时用于向上跳转更粗粒度（月 → 年 → 旬） */
+function setTitle(text, handler) {
+  var el = $('toolTitle');
+  el.textContent = text;
+  el.onclick = handler || null;
+  el.classList.toggle('clickable', !!handler);
+  el.title = handler ? '点击切换到更粗粒度视图' : '';
+}
+
+function renderMonth() {
+  var y = view.year, m = view.month;
+  setTitle(y + ' 年 ' + m + ' 月', function () {
+    view.mode = 'year'; view.year = y;
+    syncTabs(); renderContent();
+  });
+  var first = new Date(y, m - 1, 1).getDay();
+  var dim = daysInMonth(y, m);
+  var heads = ['日', '一', '二', '三', '四', '五', '六'];
+  var html = '<div class="cal-grid">';
+  for (var i = 0; i < 7; i++) html += '<div class="cal-head' + (i === 0 || i === 6 ? ' weekend' : '') + '">' + heads[i] + '</div>';
+  /* 上月补位（暗色，点击跳转上月；1900 边界外以空格占位） */
+  var py = y, pm = m - 1;
+  if (pm < 1) { pm = 12; py--; }
+  if (py >= MIN_YEAR) {
+    var pdim = daysInMonth(py, pm);
+    for (i = pdim - first + 1; i <= pdim; i++) {
+      var pinfo = dayInfo(py, pm, i);
+      var plunar = settings.showLunar ? (pinfo.term ? pinfo.term : L.lunarDayCN(pinfo.lunar.lDay)) : '';
+      html += '<div class="cal-cell ghost" data-y="' + py + '" data-m="' + pm + '" data-d="' + i + '">' +
+        '<div class="d">' + i + '</div>' +
+        '<div class="lunar">' + plunar + '</div></div>';
+    }
+  } else {
+    for (i = 0; i < first; i++) html += '<div class="cal-cell blank"></div>';
+  }
+  for (var d = 1; d <= dim; d++) {
+    var info = dayInfo(y, m, d);
+    var fests = festivalsOf(y, m, d);
+    var cls = 'cal-cell';
+    if (d === today.d && m === today.m && y === today.y) cls += ' today';
+    if (d === sel.d && m === sel.m && y === sel.y) cls += ' selected';
+    if (info.week === 0 || info.week === 6) cls += ' weekend';
+    var lunarText = '';
+    if (settings.showLunar) {
+      lunarText = info.term ? info.term
+        : (info.lunar.outOfRange ? '—'
+          : (info.lunar.lDay === 1 ? L.lunarMonthCN(info.lunar.lMonth, info.lunar.isLeap) : L.lunarDayCN(info.lunar.lDay)));
+    }
+    var marks = '';
+    if (fests.length) {
+      marks = '<div class="marks">' + fests.slice(0, 2).map(function (f) {
+        return '<span class="mk ' + (f.type === '节气' ? 'term' : 'holiday') + '">' + f.name + '</span>';
+      }).join('') + '</div>';
+    }
+    html += '<div class="' + cls + '" data-y="' + y + '" data-m="' + m + '" data-d="' + d + '">' +
+      '<div class="d">' + d + '</div>' +
+      '<div class="lunar">' + lunarText + '</div>' +
+      marks + '</div>';
+  }
+  var total = first + dim;
+  var rem = total % 7;
+  /* 下月补位（暗色，点击跳转下月；2100 边界外以空格占位） */
+  var ny = y, nm = m + 1;
+  if (nm > 12) { nm = 1; ny++; }
+  var needNext = rem ? 7 - rem : 0;
+  if (ny <= MAX_YEAR) {
+    for (i = 1; i <= needNext; i++) {
+      var ninfo = dayInfo(ny, nm, i);
+      var nlunar = settings.showLunar ? (ninfo.term ? ninfo.term : L.lunarDayCN(ninfo.lunar.lDay)) : '';
+      html += '<div class="cal-cell ghost" data-y="' + ny + '" data-m="' + nm + '" data-d="' + i + '">' +
+        '<div class="d">' + i + '</div>' +
+        '<div class="lunar">' + nlunar + '</div></div>';
+    }
+  } else {
+    for (i = 0; i < needNext; i++) html += '<div class="cal-cell blank"></div>';
+  }
+  html += '</div>';
+  $('calWrap').innerHTML = html;
+}
+
+function renderYear() {
+  var y = view.year;
+  setTitle(y + ' 年', function () {
+    view.mode = 'decade'; view.year = y;
+    syncTabs(); renderContent();
+  });
+  var html = '<div class="year-view">';
+  for (var m = 1; m <= 12; m++) html += monthCard(y, m);
+  html += '</div>';
+  $('calWrap').innerHTML = html;
+}
+
+function monthCard(y, m) {
+  var first = new Date(y, m - 1, 1).getDay();
+  var dim = daysInMonth(y, m);
+  var heads = ['日', '一', '二', '三', '四', '五', '六'];
+  var cells = '';
+  for (var i = 0; i < first; i++) cells += '<div class="mc-day blank"></div>';
+  for (var d = 1; d <= dim; d++) {
+    var info = dayInfo(y, m, d);
+    var cls = 'mc-day';
+    if (d === today.d && m === today.m && y === today.y) cls += ' today';
+    else {
+      var fests = festivalsOf(y, m, d);
+      if (fests.length) cls += ' hl';
+      else if (info.term) cls += ' term';
+      else if (info.lunar.lDay === 1) cls += ' hl';
+    }
+    cells += '<div class="' + cls + '">' + d + '</div>';
+  }
+  return '<div class="month-card" data-y="' + y + '" data-m="' + m + '">' +
+    '<div class="mc-title"><span>' + m + '月</span><span class="cnt">' + dim + '天</span></div>' +
+    '<div class="mini-cal">' +
+    heads.map(function (h) { return '<div class="mc-head">' + h + '</div>'; }).join('') +
+    cells + '</div></div>';
+}
+
+function renderDecade() {
+  var start = Math.floor(view.year / 10) * 10;
+  if (start < 1900) start = 1900;
+  if (start > 2090) start = 2090;
+  setTitle(start + ' – ' + Math.min(start + 9, 2099) + ' 年', function () {
+    view.mode = 'century'; view.year = start;
+    syncTabs(); renderContent();
+  });
+  var html = '<div class="decade-view">';
+  for (var y = start; y < start + 10; y++) html += yearCard(y);
+  if (start === 2090) {
+    /* 2100 单年卡（边界年份，点击进入 2100 年视图） */
+    html += yearCard(2100).replace('class="year-card"', 'class="year-card single"');
+  }
+  html += '</div>';
+  $('calWrap').innerHTML = html;
+}
+
+/* 世纪视图：类似十年结构 —— 世纪卡（标题=世纪）+ 卡内十年区间行 */
+function renderCentury() {
+  setTitle('1900 – 2100 年', null);
+  var html = '<div class="century-view">';
+  function sCard(name, s, e, rowsArr, single) {
+    var gzS = L.gzName(L.yearGzSeq(s));
+    var gzE = L.gzName(L.yearGzSeq(e));
+    var hasNow = (today.y >= s && today.y <= e) ? '<span class="is-cur">今</span>' : '';
+    var cur = (view.year >= s && view.year <= e) ? ' is-cur' : '';
+    var cls = 'decade-card' + cur + (single ? ' single' : '');
+    var rows = '';
+    for (var i = 0; i < rowsArr.length; i++) {
+      var a = rowsArr[i][0], b = rowsArr[i][1];
+      var inCur = (view.year >= a && view.year <= b);
+      rows += '<div class="drow' + (inCur ? ' cur-y' : '') + '" data-y="' + a + '">' +
+        '<span class="dy">' + a + ' – ' + b + '</span><span class="dg">' +
+        L.gzName(L.yearGzSeq(a)) + '–' + L.gzName(L.yearGzSeq(b)) + '</span></div>';
+    }
+    return '<div class="' + cls + '" data-y="' + s + '"' + (single ? ' data-single="1"' : '') + '>' +
+      '<div class="dc-title">' + name + '<span class="gz">' + gzS + '–' + gzE + '</span>' + hasNow + '</div>' +
+      '<div class="drows">' + rows + '</div></div>';
+  }
+  var rows20 = [], rows21 = [];
+  for (var d = 0; d < 10; d++) {
+    rows20.push([1900 + d * 10, 1909 + d * 10]);
+    rows21.push([2000 + d * 10, 2009 + d * 10]);
+  }
+  html += sCard('二十世纪', 1900, 1999, rows20, false);
+  html += sCard('二十一世纪', 2000, 2099, rows21, false);
+  html += sCard('2100', 2100, 2100, [[2100, 2100]], true);
+  html += '</div>';
+  $('calWrap').innerHTML = html;
+  /* 世纪总览已覆盖全部范围（1900–2100），禁用前后翻页 */
+  $('prevBtn').disabled = true;
+  $('nextBtn').disabled = true;
+}
+
+function yearCard(y) {
+  var gz = L.gzName(L.yearGzSeq(y));
+  var rows = '';
+  for (var m = 1; m <= 12; m++) {
+    var b = monthBrief(y, m);
+    var cur = (y === today.y && m === today.m) ? ' cur-month' : '';
+    var info = b.dim + '天 · 周' + L.WEEK_CN[b.w1];
+    if (b.terms.length) info += ' · ' + b.terms.map(function (t) { return t.name + t.day; }).join(' ');
+    if (b.fests.length) info += ' · ' + b.fests.join(' ');
+    rows += '<div class="months-row' + cur + '" data-y="' + y + '" data-m="' + m + '">' +
+      '<span class="m">' + m + '月</span>' +
+      '<span class="info">' + info + '</span></div>';
+  }
+  return '<div class="year-card">' +
+    '<div class="yc-title" data-y="' + y + '">' + y + '<span class="gz">' + gz + '</span>' +
+    (y === today.y ? '<span class="is-cur">今年</span>' : '') + '</div>' +
+    '<div class="months-list">' + rows + '</div></div>';
+}
+
+function monthBrief(y, m) {
+  var dim = daysInMonth(y, m);
+  var w1 = new Date(y, m - 1, 1).getDay();
+  var terms = L.solarTermsOfYear(y).filter(function (t) { return t.month === m; });
+  var fests = [];
+  for (var k in F.lunar) {
+    if (!F.lunar.hasOwnProperty(k)) continue;
+    var p = k.split('-');
+    var lm = +p[0], ld = +p[1];
+    if (lm > 12) continue;
+    var dt = L.lunarToSolar(y, lm, ld, false);
+    if (dt.getFullYear() === y && dt.getMonth() + 1 === m) fests.push(F.lunar[k][0] + dt.getDate() + '日');
+  }
+  return { dim: dim, w1: w1, terms: terms, fests: fests };
+}
+
+/* ============================================================
+ * 事件绑定
+ * ============================================================ */
+var viewTabs = document.querySelectorAll('.view-tab');
+for (var ti = 0; ti < viewTabs.length; ti++) {
+  viewTabs[ti].addEventListener('click', function () {
+    view.mode = this.dataset.mode;
+    for (var j = 0; j < viewTabs.length; j++) viewTabs[j].classList.toggle('active', viewTabs[j] === this);
+    renderContent();
+  });
+}
+
+$('prevBtn').addEventListener('click', function () {
+  if (view.mode === 'month') {
+    view.month--;
+    if (view.month < 1) { view.month = 12; view.year--; }
+    if (view.year < MIN_YEAR) { view.year = MIN_YEAR; view.month = 1; }
+  }
+  else if (view.mode === 'year') { view.year = clampY(view.year - 1); }
+  else if (view.mode === 'decade') { view.year = clampY(view.year - 10); }
+  else { view.year = clampY(view.year - 100); }
+  renderContent();
+});
+$('nextBtn').addEventListener('click', function () {
+  if (view.mode === 'month') {
+    view.month++;
+    if (view.month > 12) { view.month = 1; view.year++; }
+    if (view.year > MAX_YEAR) { view.year = MAX_YEAR; view.month = 12; }
+  }
+  else if (view.mode === 'year') { view.year = clampY(view.year + 1); }
+  else if (view.mode === 'decade') { view.year = clampY(view.year + 10); }
+  else { view.year = clampY(view.year + 100); }
+  renderContent();
+});
+$('todayBtn').addEventListener('click', function () {
+  sel.y = today.y; sel.m = today.m; sel.d = today.d;
+  view.year = today.y; view.month = today.m;
+  view.mode = 'month';
+  syncTabs();
+  renderAll();
+});
+
+$('calWrap').addEventListener('click', function (e) {
+  var t = e.target.closest('[data-y]');
+  if (!t) return;
+  var y = +t.dataset.y, m = t.dataset.m ? +t.dataset.m : 0, d = t.dataset.d ? +t.dataset.d : 0;
+  if (t.classList.contains('cal-cell')) {
+    sel.y = y; sel.m = m; sel.d = d;
+    /* 点击暗色的上月/下月日期：跳转到对应月份 */
+    if (t.classList.contains('ghost')) {
+      view.mode = 'month'; view.year = y; view.month = m;
+    }
+    renderAll();
+  } else if (t.classList.contains('month-card') || t.classList.contains('months-row')) {
+    view.mode = 'month'; view.year = y; view.month = m;
+    syncTabs(); renderAll();
+  } else if (t.classList.contains('yc-title')) {
+    view.mode = 'year'; view.year = y;
+    syncTabs(); renderAll();
+  } else if (t.classList.contains('drow')) {
+    view.mode = (y === 2100) ? 'year' : 'decade';
+    view.year = y;
+    syncTabs(); renderAll();
+  } else if (t.classList.contains('decade-card')) {
+    if (t.dataset.single) { view.mode = 'year'; view.year = y; }
+    else { view.mode = 'decade'; view.year = y; }
+    syncTabs(); renderAll();
+  }
+});
+function syncTabs() {
+  for (var j = 0; j < viewTabs.length; j++) viewTabs[j].classList.toggle('active', viewTabs[j].dataset.mode === view.mode);
+}
+
+/* ---------- 农历快捷开关 ---------- */
+$('quickLunar').checked = settings.showLunar;
+$('quickLunar').addEventListener('change', function () {
+  settings.showLunar = this.checked;
+  saveSettings();
+  $('setShowLunar').checked = settings.showLunar;
+  renderContent();
+});
+
+/* ---------- 设置面板 ---------- */
+function openSettings() { $('modalMask').classList.add('open'); syncSettingsUI(); }
+function closeSettings() { $('modalMask').classList.remove('open'); }
+$('settingsBtn').addEventListener('click', openSettings);
+$('modalClose').addEventListener('click', closeSettings);
+$('modalMask').addEventListener('click', function (e) { if (e.target === this) closeSettings(); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSettings(); });
+
+function syncSettingsUI() {
+  $('setShowLunar').checked = settings.showLunar;
+  $('setLunarDetail').checked = settings.showLunarDetail;
+  $('setDetailLunar').checked = settings.showDetailLunar;
+  $('setDetailYearGz').checked = settings.showDetailYearGz;
+  $('setDetailMonthGz').checked = settings.showDetailMonthGz;
+  $('setDetailDayGz').checked = settings.showDetailDayGz;
+  $('setHourGz').checked = settings.showHourGz;
+  $('setDetailTerm').checked = settings.showDetailTerm;
+  $('setDetailFest').checked = settings.showDetailFest;
+  $('setDetailMoon').checked = settings.showDetailMoon;
+  $('setDetailMansion').checked = settings.showDetailMansion;
+  $('setLiuYao').checked = settings.showLiuYao;
+  $('setShen').checked = settings.showShen;
+  $('setPengZu').checked = settings.showPengZu;
+  $('setTaoLi').checked = settings.showTaoLi;
+  $('setFoLi').checked = settings.showFoLi;
+  $('setYiJi').checked = settings.showYiJi;
+  $('setFest').checked = settings.showFestival;
+  $('setBirth').checked = settings.showBirthday;
+  $('setCeleb').checked = settings.showCelebrity;
+  $('setChong').checked = settings.showChong;
+  $('setHistory').checked = settings.showHistory;
+  $('setBagua').checked = settings.showBagua;
+  $('setTarot').checked = settings.showTarot;
+  $('setTarotDaily').checked = settings.showTarotDaily;
+  $('setTarotSpread').checked = settings.showTarotSpread;
+  $('modeAuto').classList.toggle('active', TimeSrc.mode === 'auto');
+  $('modeLocal').classList.toggle('active', TimeSrc.mode === 'local');
+}
+
+var SET_KEY = {
+  setShowLunar: 'showLunar', setLunarDetail: 'showLunarDetail', setYiJi: 'showYiJi',
+  setFest: 'showFestival', setBirth: 'showBirthday', setCeleb: 'showCelebrity',
+  setChong: 'showChong',
+  setHistory: 'showHistory', setBagua: 'showBagua', setTarot: 'showTarot',
+  setTarotDaily: 'showTarotDaily', setTarotSpread: 'showTarotSpread',
+  setDetailLunar: 'showDetailLunar', setDetailYearGz: 'showDetailYearGz',
+  setDetailMonthGz: 'showDetailMonthGz', setDetailDayGz: 'showDetailDayGz',
+  setHourGz: 'showHourGz', setDetailTerm: 'showDetailTerm',
+  setDetailFest: 'showDetailFest', setDetailMoon: 'showDetailMoon',
+  setDetailMansion: 'showDetailMansion', setLiuYao: 'showLiuYao',
+  setShen: 'showShen', setPengZu: 'showPengZu', setTaoLi: 'showTaoLi', setFoLi: 'showFoLi'
+};
+for (var sk in SET_KEY) {
+  (function (id, key) {
+    $(id).addEventListener('change', function () {
+      settings[key] = this.checked;
+      saveSettings();
+      $('quickLunar').checked = settings.showLunar;
+      renderAll();
+    });
+  })(sk, SET_KEY[sk]);
+}
+
+function setMode(mode) {
+  TimeSrc.mode = mode;
+  settings.timeMode = mode;
+  saveSettings();
+  syncSettingsUI();
+  TimeSrc.detect();
+}
+$('modeAuto').addEventListener('click', function () { setMode('auto'); });
+$('modeLocal').addEventListener('click', function () { setMode('local'); });
+
+$('redetectBtn').addEventListener('click', function () {
+  TimeSrc.detect().then(function (ok) {
+    toast(ok ? '时间源已在线校准' : '在线获取失败，使用本地时间');
+  });
+});
+$('timeSource').addEventListener('click', function () {
+  TimeSrc.detect().then(function (ok) {
+    toast(ok ? '时间源已在线校准' : '在线获取失败，使用本地时间');
+  });
+});
+
+$('resetBtn').addEventListener('click', function () {
+  settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+  TimeSrc.mode = settings.timeMode;
+  saveSettings();
+  syncSettingsUI();
+  $('quickLunar').checked = settings.showLunar;
+  renderAll();
+  toast('已恢复默认设置');
+});
+
+/* ---------- Toast ---------- */
+var toastTimer = null;
+function toast(msg) {
+  var el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2400);
+}
+
+/* ---------- 启动 ---------- */
+function renderAll() {
+  /* 切换过渡动画：内容重绘期间轻微淡化，随后平滑恢复 */
+  var sb = $('sidebar'), cw = $('calWrap');
+  sb.classList.add('animating');
+  cw.classList.add('animating');
+  renderSidebar();
+  renderContent();
+  setTimeout(function () {
+    sb.classList.remove('animating');
+    cw.classList.remove('animating');
+  }, 30);
+}
+
+TimeSrc.mode = settings.timeMode;
+initSel();
+syncSettingsUI();
+updateTimeBadge();
+renderAll();
+TimeSrc.detect();
+
+/* 跨天检测 */
+setInterval(function () {
+  var oldKey = dateKey(today.y, today.m, today.d);
+  refreshToday();
+  if (dateKey(today.y, today.m, today.d) !== oldKey) {
+    renderAll();
+    toast('已是新的一天：' + today.m + '月' + today.d + '日');
+  }
+}, 30000);
+
+/* 时柱自动刷新（随当前时辰每分钟更新） */
+setInterval(function () {
+  if (!settings.showLunarDetail || !settings.showHourGz) return;
+  var el = $('lunarDetail');
+  if (!el) return;
+  var span = el.querySelector('.lg-val[data-hour]');
+  if (span) span.textContent = hourGzOf(sel.y, sel.m, sel.d, TimeSrc.nowDate()) + ' 时';
+}, 30000);
+</script>
+</body>
+</html>

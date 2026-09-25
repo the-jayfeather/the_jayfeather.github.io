@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>中秋博饼 · 在线博饼</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='20' height='20' rx='5' fill='%2366CCFF'/%3E%3Ccircle cx='8' cy='8' r='2.2' fill='%23113355'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23113355'/%3E%3Ccircle cx='12' cy='12' r='2.2' fill='%23113355'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=LXGW+WenKai&display=swap">
+<style>
+/* ============================================================
+ * 中秋博饼 · 在线博饼
+ * 配色沿用站点 style.css：
+ * 深海蓝 #062742 / 导航蓝 #225588 / 天依蓝 #66CCFF
+ * 浅冰蓝 #BBEEFF / 亮蓝 #99DDFF / 云白 #E0F5FF / 墨蓝 #113355
+ * 状元金 #FFD98A（与站点选中日期的暖金同系）
+ * ============================================================ */
+:root {
+  --bg:#062742; --nav:#225588; --tianyi:#66CCFF; --ice:#BBEEFF;
+  --sky:#99DDFF; --cyan:#88DDFF; --cloud:#E0F5FF; --ink:#113355; --ink-deep:#032138;
+  --card-bg:rgba(187,238,255,.20);
+  --card-solid:rgba(187,238,255,.85);
+  --border:rgba(102,204,255,.18);
+  --border-strong:rgba(102,204,255,.22);
+  --shadow:rgba(34,85,136,.28);
+  --bar:rgba(20,35,55,.92);
+  --select-bg:rgba(40,70,105,.6);
+  --scroll:#44688C; --placeholder:#739CBF;
+  --warn-bg:rgba(255,168,148,.78);
+  --gold:#FFD98A; --gold-soft:#FFE3AE; --gold-deep:#F4C96B;
+  --radius:18px;
+}
+
+* { box-sizing:border-box; }
+[hidden] { display:none !important; }
+
+html { height:100%; }
+
+body {
+  min-height:100%; margin:0;
+  background:var(--bg); color:var(--cloud);
+  font-family:'LXGW WenKai','霞鹜文楷','Kaiti SC','STKaiti','KaiTi','楷体','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--scroll); border-radius:4px; }
+::-webkit-scrollbar-thumb:hover { background:var(--tianyi); }
+
+/* ==================== 顶部导航栏 ==================== */
+.navbar {
+  position:fixed; top:0; left:0; right:0; height:64px;
+  background-color:var(--nav);
+  box-shadow:0 2px 10px rgba(34,85,136,.4);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 22px; z-index:1000;
+}
+.brand { display:flex; align-items:center; gap:12px; user-select:none; }
+.brand-icon {
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(102,204,255,.18);
+  border:1px solid rgba(102,204,255,.35);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.brand-icon svg { width:22px; height:22px; }
+.brand-name {
+  font-family:'Microsoft YaHei','微软雅黑',sans-serif;
+  font-size:24px; font-weight:bold; color:var(--sky); letter-spacing:2px;
+}
+.brand-sub { font-size:12px; color:rgba(187,238,255,.65); margin-left:2px; align-self:flex-end; padding-bottom:4px; }
+.nav-right { display:flex; align-items:center; gap:14px; }
+
+.view-tabs {
+  display:flex; background:var(--bar);
+  border:1px solid var(--border-strong); border-radius:9999px; padding:4px; gap:4px;
+}
+.view-tab {
+  border:none; background:transparent; color:var(--ice);
+  font-family:inherit; font-size:14px; padding:6px 18px; border-radius:9999px;
+  cursor:pointer; transition:all .2s ease; white-space:nowrap;
+}
+.view-tab:hover { background:rgba(102,204,255,.18); }
+.view-tab.active { background:var(--tianyi); color:var(--ink-deep); }
+
+/* ==================== 主布局 ==================== */
+.main {
+  padding-top:64px; display:flex; gap:18px;
+  min-height:100vh; align-items:flex-start;
+}
+/* 视图容器：游戏视图双栏（左内容 · 右摇骰记录） */
+.view { flex:1; min-width:0; display:flex; gap:18px; }
+.view .content { flex:1; min-width:0; padding:18px 20px 24px 0; }
+.content { flex:1; min-width:0; padding:18px 20px 24px 0; }
+.sidebar {
+  width:420px; flex-shrink:0; padding:18px 20px 24px 16px;
+  position:sticky; top:76px; height:calc(100vh - 88px); overflow:auto;
+}
+.rules-content { max-width:1080px; }
+
+/* ==================== 通用卡片 ==================== */
+.panel {
+  background-color:var(--card-bg); border-radius:var(--radius);
+  border:1px solid var(--border); box-shadow:0 6px 22px var(--shadow);
+  padding:16px 20px; margin-bottom:16px;
+}
+.panel-title {
+  font-size:17px; color:var(--ice); margin:0 0 12px 0;
+  display:flex; align-items:center; gap:8px; letter-spacing:1px;
+}
+.panel-title::before {
+  content:''; width:9px; height:9px; border-radius:50%;
+  background-color:var(--tianyi); flex-shrink:0;
+}
+.panel-title .tiny-tag {
+  margin-left:auto; font-size:12px; color:rgba(187,238,255,.55); font-weight:normal;
+}
+
+/* ==================== 输入控件 ==================== */
+.inp {
+  background:var(--select-bg); border:1px solid var(--border-strong);
+  border-radius:10px; color:var(--cloud); font-family:inherit; font-size:15px;
+  padding:8px 12px; outline:none; min-width:0;
+  transition:border .18s ease, box-shadow .18s ease;
+}
+.inp:focus { border-color:var(--tianyi); box-shadow:0 0 0 3px rgba(102,204,255,.18); }
+.inp.num { width:74px; text-align:center; flex-shrink:0; }
+.inp.num.big { width:96px; font-size:18px; padding:9px 12px; }
+/* ==================== 设置面板 ==================== */
+.setup-row { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.setup-label { font-size:15px; color:var(--sky); letter-spacing:1px; }
+.setup-unit { font-size:14px; color:var(--placeholder); }
+.setup-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.prize-card {
+  background:rgba(102,204,255,.07); border:1px solid var(--border);
+  border-radius:14px; padding:12px; display:flex; flex-direction:column; gap:8px; min-width:0;
+  transition:border .18s ease;
+}
+.prize-card:hover { border-color:var(--border-strong); }
+.prize-card.zhuangyuan { border-color:rgba(255,217,138,.4); background:rgba(255,217,138,.08); }
+.pc-head { display:flex; align-items:baseline; gap:8px; min-width:0; }
+.pc-name { font-size:15px; color:var(--ice); font-weight:bold; letter-spacing:1px; flex-shrink:0; }
+.pc-desc { font-size:12px; color:var(--placeholder); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pc-row { display:flex; gap:6px; align-items:center; }
+.pc-row .inp { flex:1 1 auto; }
+.pc-unit { font-size:12px; color:var(--placeholder); flex-shrink:0; }
+.setup-note { margin-top:12px; font-size:13px; color:var(--placeholder); line-height:1.6; }
+.setup-foot { margin-top:14px; text-align:center; }
+
+/* ==================== 按钮 ==================== */
+.tool-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:36px; height:38px; padding:0 18px; border-radius:12px;
+  background:var(--select-bg); border:1px solid var(--border-strong);
+  color:var(--ice); font-family:inherit; font-size:15px; cursor:pointer;
+  transition:all .2s ease; letter-spacing:1px;
+}
+.tool-btn:hover { background:rgba(102,204,255,.25); border-color:var(--tianyi); }
+.tool-btn:disabled { opacity:.38; cursor:not-allowed; background:var(--select-bg); border-color:var(--border); box-shadow:none; }
+.tool-btn.primary { background:var(--tianyi); color:var(--ink-deep); font-weight:bold; }
+.tool-btn.primary:hover { background:var(--ice); }
+.tool-btn.big-start { height:46px; padding:0 42px; font-size:17px; border-radius:9999px; box-shadow:0 6px 18px rgba(102,204,255,.35); }
+.reset-btn {
+  border:1px solid var(--border-strong); background:transparent; color:var(--placeholder);
+  font-family:inherit; font-size:13px; padding:7px 14px; border-radius:10px;
+  cursor:pointer; transition:all .18s ease;
+}
+.reset-btn:hover { color:#FFC9BC; border-color:rgba(255,168,148,.5); }
+.tool-spacer { flex:1; }
+
+/* ==================== 设置按钮 ==================== */
+.settings-btn {
+  display:flex; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:12px; flex-shrink:0;
+  background:var(--select-bg); border:1px solid var(--border-strong);
+  cursor:pointer; transition:all .2s ease; color:var(--ice);
+}
+.settings-btn svg { width:20px; height:20px; }
+.settings-btn:hover {
+  background:var(--tianyi); color:var(--ink-deep);
+  box-shadow:0 4px 14px rgba(102,204,255,.4);
+}
+
+/* ==================== 设置面板行 ==================== */
+.set-row {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:14px; padding:8px 4px; font-size:14px; color:var(--cloud);
+}
+.set-note { font-size:12px; color:var(--placeholder); padding:0 4px 6px; line-height:1.6; }
+.switch { position:relative; display:inline-block; width:40px; height:22px; flex-shrink:0; cursor:pointer; }
+.switch input { opacity:0; width:0; height:0; }
+.switch .slider {
+  position:absolute; inset:0;
+  background:var(--select-bg); border:1px solid var(--border-strong);
+  border-radius:9999px; transition:all .22s ease;
+}
+.switch .slider::before {
+  content:''; position:absolute; left:2px; top:2px;
+  width:16px; height:16px; border-radius:50%;
+  background:var(--placeholder); transition:all .22s ease;
+}
+.switch input:checked + .slider { background:var(--tianyi); border-color:var(--tianyi); }
+.switch input:checked + .slider::before { transform:translateX(18px); background:var(--ink-deep); }
+
+/* ==================== 骰子面主题 ==================== */
+/* 经典白：默认（白面 · 墨点，4/1 红点） */
+/* 发财红：红面 · 白点，4/1 金点 */
+body[data-dice-theme="red"] .die { background:linear-gradient(145deg,#F2564E,#D2403A); }
+body[data-dice-theme="red"] .die .pip.on { background:#FFF8F5; box-shadow:inset 0 1px 2px rgba(0,0,0,.28); }
+body[data-dice-theme="red"] .die.red .pip.on { background:var(--gold); box-shadow:inset 0 1px 2px rgba(0,0,0,.28); }
+/* 天依蓝：天依蓝面 · 白点改为黑灰点，4/1 红点（呼应界面主色） */
+body[data-dice-theme="blue"] .die { background:linear-gradient(145deg,#7ED4FF,#4DA6E8); }
+body[data-dice-theme="blue"] .die .pip.on { background:#2C3644; box-shadow:inset 0 1px 2px rgba(0,0,0,.35); }
+body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:inset 0 1px 2px rgba(0,0,0,.3); }
+
+/* ==================== 设置面板：主题选择 ==================== */
+.dice-line { display:flex; gap:3px; flex-wrap:wrap; align-items:center; }
+.set-title { font-size:14px; color:var(--sky); padding:8px 4px 2px; letter-spacing:1px; }
+.set-sep { border-top:1px dashed rgba(102,204,255,.25); margin:14px 0 4px; }
+.theme-preview { display:flex; justify-content:center; align-items:center; padding:12px 0 8px; min-height:48px; }
+.radio-group { display:flex; gap:8px; flex-wrap:wrap; padding:0 4px; }
+.radio-pill {
+  padding:6px 16px; border-radius:9999px; border:1px solid var(--border-strong);
+  background:var(--select-bg); color:var(--ice); font-size:13px; font-family:inherit;
+  cursor:pointer; transition:all .18s ease;
+}
+.radio-pill:hover { background:rgba(102,204,255,.25); }
+.radio-pill.active { background:var(--tianyi); color:var(--ink-deep); border-color:var(--tianyi); }
+
+/* ==================== 游戏状态栏 ==================== */
+.game-status { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+.phase-badge {
+  padding:4px 14px; border-radius:9999px; font-size:13px; letter-spacing:2px;
+  background:var(--select-bg); border:1px solid var(--border-strong); color:var(--ice);
+}
+.phase-badge.final { background:rgba(255,217,138,.18); border-color:var(--gold); color:var(--gold-soft); }
+.phase-badge.elim { background:rgba(255,217,138,.24); border-color:var(--gold); color:#FFF3DC; }
+.status-main { font-size:17px; color:var(--ice); letter-spacing:1px; }
+.status-main b { color:var(--tianyi); font-size:21px; }
+.cand-bar { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:10px; font-size:13px; color:var(--placeholder); }
+.chip {
+  font-size:12px; padding:2px 10px; border-radius:9999px;
+  background:rgba(102,204,255,.16); border:1px solid rgba(102,204,255,.28);
+  color:var(--ice); white-space:nowrap; display:inline-flex; align-items:center; gap:6px;
+}
+.chip .cnt { color:var(--tianyi); font-weight:bold; }
+.chip.out { opacity:.42; text-decoration:line-through; }
+.chip.finale { border-color:var(--gold); color:var(--gold-soft); background:rgba(255,217,138,.12); }
+.chip.finale .cnt { color:var(--gold); }
+.chip.cand { padding:2px 9px; opacity:.75; }
+.chip.cand.cur { opacity:1; border-color:var(--tianyi); background:rgba(102,204,255,.28); color:#FFF; }
+
+/* ==================== 骰子区 ==================== */
+.dice-stage {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+  min-height:190px; padding:22px 14px;
+  background:radial-gradient(ellipse at 50% 40%, rgba(102,204,255,.14), rgba(6,39,66,.22) 72%);
+  border:1px solid var(--border); border-radius:22px; position:relative;
+}
+.dice-area { display:flex; gap:14px; align-items:center; justify-content:center; flex-wrap:wrap; user-select:none; }
+.dice-hint { font-size:13px; color:var(--placeholder); letter-spacing:1px; }
+
+.die {
+  display:inline-grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr);
+  width:60px; height:60px; background:linear-gradient(145deg,#F4FBFF,#CFE9F7);
+  border-radius:12px; padding:9px; flex-shrink:0;
+  box-shadow:0 4px 10px rgba(3,33,56,.45), inset 0 1px 0 rgba(255,255,255,.75);
+}
+.die.mini { width:31px; height:31px; border-radius:7px; padding:5px; box-shadow:0 2px 5px rgba(3,33,56,.4), inset 0 1px 0 rgba(255,255,255,.7); }
+.die .pip { width:9px; height:9px; border-radius:50%; background:transparent; place-self:center; }
+.die.mini .pip { width:5px; height:5px; }
+.die .pip.on { background:var(--ink); box-shadow:inset 0 1px 2px rgba(0,0,0,.35); }
+/* 四点 / 一点骰子：点为红色，骰面保持原色 */
+.die.red .pip.on { background:#D8403A; box-shadow:inset 0 1px 2px rgba(0,0,0,.3); }
+
+@keyframes diceShake {
+  0%   { transform:rotate(0deg) translate(0,0); }
+  25%  { transform:rotate(14deg) translate(2px,-3px); }
+  50%  { transform:rotate(-16deg) translate(-3px,2px); }
+  75%  { transform:rotate(10deg) translate(3px,2px); }
+  100% { transform:rotate(-9deg) translate(-2px,-2px); }
+}
+@keyframes bowlWobble {
+  0%,100% { transform:rotate(0deg); }
+  30% { transform:rotate(-1.2deg); }
+  70% { transform:rotate(1.2deg); }
+}
+.dice-stage.shaking { animation:bowlWobble .14s ease-in-out infinite alternate; }
+.dice-stage.shaking .die { animation:diceShake .11s linear infinite alternate; }
+
+/* ==================== 摇骰按钮 ==================== */
+.roll-wrap { margin-top:16px; text-align:center; }
+.roll-btn {
+  width:100%; max-width:420px; height:58px; border-radius:9999px; border:none; cursor:pointer;
+  background:linear-gradient(120deg, var(--tianyi), #4FB8E8);
+  color:var(--ink-deep); font-family:inherit; font-size:20px; font-weight:bold; letter-spacing:5px;
+  box-shadow:0 6px 20px rgba(102,204,255,.35);
+  transition:all .18s ease;
+}
+.roll-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 10px 26px rgba(102,204,255,.45); }
+.roll-btn:active:not(:disabled) { transform:translateY(0); }
+.roll-btn:disabled { opacity:.5; cursor:not-allowed; box-shadow:none; }
+
+/* ==================== 结果横幅 ==================== */
+.result-banner {
+  margin-top:16px; min-height:62px; border-radius:16px; padding:14px 18px;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  font-size:16px; letter-spacing:1px; color:var(--ice); line-height:1.6;
+  background:rgba(102,204,255,.10); border:1px solid var(--border);
+  opacity:0; transition:opacity .25s ease;
+}
+.result-banner.show { opacity:1; animation:popIn .4s ease; }
+.result-banner.win { background:rgba(255,217,138,.14); border-color:rgba(255,217,138,.45); color:var(--gold-soft); }
+.result-banner.zy {
+  background:linear-gradient(120deg, rgba(255,217,138,.22), rgba(102,204,255,.14));
+  border-color:var(--gold); color:#FFF3DC; font-size:19px;
+  box-shadow:0 0 22px rgba(255,217,138,.22);
+}
+.result-banner.none { background:rgba(115,156,191,.10); border-color:var(--border); color:var(--placeholder); }
+.result-banner.info { background:rgba(102,204,255,.10); border-color:var(--border-strong); }
+@keyframes popIn {
+  from { transform:scale(.92); opacity:0; }
+  to   { transform:scale(1); opacity:1; }
+}
+
+/* ==================== 最佳状元 / 奖品余量 ==================== */
+.best-zy { margin-top:14px; font-size:13px; color:var(--placeholder); }
+.best-zy b { color:var(--gold); }
+.prize-stock { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.stock-cap { font-size:13px; color:var(--sky); margin-right:2px; }
+
+/* ==================== 摇骰记录表 ==================== */
+.records-wrap { overflow:auto; max-height:calc(100vh - 300px); border-radius:12px; }
+.records-table { width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; font-size:12.5px; }
+.records-table th {
+  position:sticky; top:0; z-index:1; background:var(--bar); color:var(--ice);
+  font-weight:normal; letter-spacing:1px; padding:8px 6px; text-align:left;
+  border-bottom:1px solid var(--border-strong);
+}
+.records-table td { padding:7px 6px; border-bottom:1px solid var(--border); color:var(--cloud); vertical-align:middle; word-break:break-all; }
+.records-table tr.row-zy td { color:var(--gold-soft); font-weight:bold; background:rgba(255,217,138,.08); }
+.records-table .d4, .records-table .d1 { color:#E4574F; font-weight:bold; }
+.records-empty { padding:26px 10px; text-align:center; color:var(--placeholder); font-size:13px; }
+
+/* ==================== 规则表 ==================== */
+.table-wrap { overflow-x:auto; }
+.rules-table { width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; font-size:13px; }
+.rules-table th {
+  background:var(--bar); color:var(--ice); font-weight:normal; letter-spacing:2px;
+  padding:10px 8px; text-align:left; border-bottom:1px solid var(--border-strong);
+}
+.rules-table td { padding:10px 8px; border-bottom:1px solid var(--border); color:var(--cloud); vertical-align:middle; }
+.rules-table tr:last-child td { border-bottom:none; }
+.rules-table .c-name { color:var(--ice); font-weight:bold; }
+.rules-table .c-rank { color:var(--sky); letter-spacing:1px; }
+.rules-table .c-desc { color:var(--cloud); }
+.rules-table .zy-row .c-name, .rules-table .zy-row .c-rank { color:var(--gold-soft); }
+.rules-table .dice-line { display:flex; gap:3px; flex-wrap:wrap; }
+.intro-p { font-size:14px; line-height:1.9; margin:0; color:var(--cloud); }
+.info-list { list-style:none; margin:0; padding:0; }
+.info-list li {
+  position:relative; padding:6px 0 6px 16px; font-size:14px; line-height:1.7; color:var(--cloud);
+}
+.info-list li::before {
+  content:''; position:absolute; left:2px; top:15px; width:5px; height:5px; border-radius:50%; background:var(--tianyi);
+}
+.info-list li b { color:var(--gold-soft); font-weight:bold; }
+
+/* ==================== 模态框 ==================== */
+.modal-mask {
+  position:fixed; inset:0; background:rgba(4,22,40,.72); backdrop-filter:blur(6px);
+  z-index:1100; display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .22s ease;
+}
+.modal-mask.open { opacity:1; pointer-events:auto; }
+.modal {
+  width:540px; max-width:calc(100vw - 32px); max-height:84vh; overflow-y:auto;
+  background:#0A3352; border:1px solid var(--border-strong); border-radius:20px;
+  box-shadow:0 16px 50px rgba(4,22,40,.6); padding:22px 24px;
+  transform:translateY(14px) scale(.98); transition:transform .22s ease;
+}
+.modal-mask.open .modal { transform:none; }
+.modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.modal-head h2 {
+  margin:0; font-size:20px; color:var(--ice); letter-spacing:2px;
+  display:flex; align-items:center; gap:8px;
+}
+.modal-head h2::before { content:''; width:10px; height:10px; border-radius:50%; background:var(--gold); }
+.modal-close {
+  width:34px; height:34px; border-radius:10px; border:1px solid var(--border-strong);
+  background:var(--select-bg); color:var(--ice); font-size:18px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:all .2s ease;
+}
+.modal-close:hover { background:var(--tianyi); color:var(--ink-deep); }
+.modal-body { font-size:15px; color:var(--cloud); line-height:1.9; }
+.modal-body b { color:var(--gold-soft); }
+.modal-foot { display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+
+/* ==================== Toast ==================== */
+.toast {
+  position:fixed; left:50%; bottom:36px;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--bar); border:1px solid var(--border-strong); color:var(--ice);
+  padding:10px 22px; border-radius:9999px; font-size:14px;
+  box-shadow:0 8px 26px rgba(4,22,40,.55);
+  opacity:0; pointer-events:none; transition:all .28s ease;
+  z-index:1300; max-width:80vw; text-align:center;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ==================== 页脚 ==================== */
+.footer {
+  margin-top:auto; padding:16px 0 24px; text-align:center;
+  color:var(--sky); font-size:12.5px; border-top:1px solid var(--border);
+}
+.footer a { color:var(--ice); text-decoration:none; }
+.footer a:hover { color:var(--tianyi); }
+
+/* ==================== 响应式 ==================== */
+@media (max-width:1024px) {
+  .main { flex-direction:column; }
+  .view { flex-direction:column; }
+  .content { padding:14px 14px 0; }
+  .sidebar { width:100%; position:static; height:auto; padding:0 14px 20px; overflow:visible; }
+  .records-wrap { max-height:none; }
+  .setup-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:640px) {
+  .brand-sub { display:none; }
+  .brand-name { font-size:20px; }
+  .view-tab { padding:8px 14px; font-size:14px; min-width:44px; min-height:44px; }
+  .modal-close { width:40px; height:40px; }
+  .settings-btn { width:44px; height:44px; }
+  .inp { font-size:16px; }
+  .die { width:52px; height:52px; padding:8px; }
+  .dice-area { gap:10px; }
+  .roll-btn { letter-spacing:3px; }
+  .status-main b { font-size:19px; }
+  .rules-table, .records-table { font-size:12px; }
+}
+@media (max-width:520px) {
+  .setup-grid { grid-template-columns:1fr; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { transition:none !important; animation:none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 顶部导航 ==================== -->
+<nav class="navbar">
+  <div class="brand">
+    <span class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#66CCFF" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="4"/>
+        <circle cx="7.5" cy="7.5" r="1.7" fill="#66CCFF" stroke="none"/>
+        <circle cx="16.5" cy="16.5" r="1.7" fill="#66CCFF" stroke="none"/>
+        <circle cx="12" cy="12" r="1.7" fill="#66CCFF" stroke="none"/>
+      </svg>
+    </span>
+    <span class="brand-name">中秋博饼</span>
+    <span class="brand-sub">闽南中秋 · 骰子博状元</span>
+  </div>
+  <div class="nav-right">
+    <div class="view-tabs" id="viewTabs">
+      <button class="view-tab active" data-view="game">在线博饼</button>
+      <button class="view-tab" data-view="rules">博饼规则</button>
+    </div>
+    <button class="settings-btn" id="settingsBtn" type="button" aria-label="设置">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3.2"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- ==================== 视图：在线博饼 ==================== -->
+  <section id="view-game" class="view" data-view="game">
+    <div class="content">
+      <!-- 开局设置 -->
+      <div class="panel" id="setupPanel">
+        <h3 class="panel-title">开局设置 <span class="tiny-tag">可修改后重新开始</span></h3>
+        <div class="setup-row">
+          <label class="setup-label" for="inputPlayers">博饼总人数</label>
+          <input class="inp num big" id="inputPlayers" type="number" min="2" max="50" value="6">
+          <span class="setup-unit">人</span>
+        </div>
+        <div class="setup-grid" id="setupRows"></div>
+        <div class="setup-note">数量默认沿用闽南传统「63 博」：一秀 32 · 二举 16 · 四进 8 · 三红 4 · 对堂 2 · 状元 1。奖品名称与数量均可修改；状元奖品保留至最后角逐，决赛时颁发给最大状元。</div>
+        <div class="setup-foot"><button class="tool-btn primary big-start" id="startBtn">开始博饼</button></div>
+      </div>
+
+      <!-- 博饼主界面 -->
+      <div class="panel" id="gamePanel" hidden>
+        <div class="game-status">
+          <span class="phase-badge" id="phaseBadge">正式轮</span>
+          <span class="status-main"><span id="statusRound">第 1 轮</span> · <span id="statusWho">轮到 玩家 <b>1</b></span></span>
+          <span class="tool-spacer"></span>
+          <button class="reset-btn" id="restartBtn">重新设置</button>
+        </div>
+        <div class="cand-bar" id="candBar" hidden></div>
+        <div class="dice-stage" id="diceStage">
+          <div class="dice-area" id="diceArea"></div>
+          <div class="dice-hint" id="diceHint"></div>
+        </div>
+        <div class="roll-wrap"><button class="roll-btn" id="rollBtn">摇骰子</button></div>
+        <div class="result-banner" id="resultBanner"></div>
+        <div class="best-zy" id="bestZY"></div>
+        <div class="prize-stock" id="prizeStock"></div>
+      </div>
+    </div>
+
+    <!-- 右侧：摇骰记录（获奖历史），仅游戏进行时显示 -->
+    <aside class="sidebar" id="recordSidebar" hidden>
+      <div class="panel">
+        <h3 class="panel-title">摇骰记录 <span class="tiny-tag">按时间排序 · 状元加粗</span></h3>
+        <div class="records-wrap">
+          <table class="records-table">
+            <colgroup>
+              <col style="width:14%"><col style="width:13%"><col style="width:13%"><col style="width:28%"><col style="width:32%">
+            </colgroup>
+            <thead>
+              <tr><th>时间</th><th>轮次</th><th>玩家</th><th>骰子</th><th>结果</th></tr>
+            </thead>
+            <tbody id="recordsBody"></tbody>
+          </table>
+          <div class="records-empty" id="recordsEmpty">还没有摇骰记录</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ==================== 视图：博饼规则 ==================== -->
+  <section id="view-rules" class="view" data-view="rules" hidden>
+    <div class="content rules-content">
+      <div class="panel">
+        <h3 class="panel-title">中秋博饼 · 玩法简介</h3>
+        <p class="intro-p">博饼（跋饼）是闽南地区中秋佳节的传统民俗游戏，相传起源于郑成功军中。游戏用六颗骰子，以掷出的点数组合对应科举功名：一秀、二举、四进、三红、对堂、状元，由低到高依次得彩。本工具支持完整博饼流程：轮流掷骰、自动判奖、扣减奖品，并在非状元奖品摇完后进入最后一轮角逐状元。</p>
+      </div>
+      <div class="panel">
+        <h3 class="panel-title">博饼规则对照表 <span class="tiny-tag">参照常用博饼规则</span></h3>
+        <div class="table-wrap">
+          <table class="rules-table">
+            <colgroup>
+              <col style="width:20%"><col style="width:26%"><col style="width:34%"><col style="width:20%">
+            </colgroup>
+            <thead>
+              <tr><th>常用名</th><th>图示</th><th>规则说明</th><th>科举</th></tr>
+            </thead>
+            <tbody id="rulesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <h3 class="panel-title">状元角逐规则</h3>
+        <ul class="info-list">
+          <li>状元奖品保留至全场结束，由摇出的<b>最大状元</b>夺得：状元插金花 &gt; 满堂红 &gt; 遍地锦 &gt; 六勃黑 &gt; 五王 &gt; 五子登科 &gt; 状元。</li>
+          <li>同级状元比较<b>剩余骰子点数之和</b>，点数大者胜；仍相同则先摇者胜。</li>
+          <li>所有非状元奖品摇完后进入<b>最后一轮</b>，每位玩家再掷一次；若全程无人摇出状元，则进入加赛。</li>
+          <li>加赛阶段每轮<b>点数总和最大者留下</b>，其余淘汰，重复至只剩一人，即为状元。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">中秋博饼 · 传统玩法电子化 · 仅供娱乐</footer>
+
+<!-- ==================== 模态框 ==================== -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">提示</h2>
+      <button class="modal-close" id="modalClose" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="reset-btn" id="modalCancel" hidden>取消</button>
+      <button class="tool-btn primary" id="modalOk">知道了</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ==================== 基础工具 ==================== */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const countOf = dice => { const c = [0,0,0,0,0,0,0]; dice.forEach(v => c[v]++); return c; };
+const sumOf = dice => dice.reduce((a, b) => a + b, 0);
+const rand = n => 1 + Math.floor(Math.random() * n);
+const rollDice = () => Array.from({ length: 6 }, () => rand(6));
+
+/* ==================== 牌型定义（按博饼规则图，从高到低） ==================== */
+const TIERS = [
+  { key:'zhuangyuan_jin', name:'状元插金花', desc:'四个4，两个1',        rank:1, rankTitle:'状元', isZhuangyuan:true },
+  { key:'man_tang_hong',  name:'满堂红',     desc:'六个4',               rank:2, rankTitle:'状元', isZhuangyuan:true },
+  { key:'bian_di_jin',    name:'遍地锦',     desc:'六个1',               rank:3, rankTitle:'状元', isZhuangyuan:true },
+  { key:'liu_bo_hei',     name:'六勃黑',     desc:'六个相同',            rank:4, rankTitle:'状元', isZhuangyuan:true },
+  { key:'wu_wang',        name:'五王',       desc:'五个4加任意',         rank:5, rankTitle:'状元', isZhuangyuan:true },
+  { key:'wu_zi_deng_ke',  name:'五子登科',   desc:'五个相同加任意',      rank:6, rankTitle:'状元', isZhuangyuan:true },
+  { key:'zhuangyuan',     name:'状元',       desc:'四个4加任意',         rank:7, rankTitle:'状元', isZhuangyuan:true },
+  { key:'dui_tang',       name:'对堂',       desc:'123456',              rank:8, rankTitle:'榜眼', prize:'duitang' },
+  { key:'san_hong',       name:'三红',       desc:'三个4',               rank:9, rankTitle:'探花', prize:'sanhong' },
+  { key:'si_jin',         name:'四进',       desc:'四个相同（除4外）',   rank:10, rankTitle:'进士', prize:'sijin' },
+  { key:'er_ju',          name:'二举',       desc:'两个4',               rank:11, rankTitle:'举人', prize:'erju' },
+  { key:'yi_xiu',         name:'一秀',       desc:'一个4',               rank:12, rankTitle:'秀才', prize:'yixiu' }
+];
+const TIER_BY_KEY = Object.fromEntries(TIERS.map(t => [t.key, t]));
+
+/* 奖品配置（数量默认沿用「63 博」） */
+const PRIZE_DEFS = [
+  { key:'yixiu',     label:'一秀', desc:'一个4',             qty:32, finale:false },
+  { key:'erju',      label:'二举', desc:'两个4',             qty:16, finale:false },
+  { key:'sijin',     label:'四进', desc:'四个相同（除4外）', qty:8,  finale:false },
+  { key:'sanhong',   label:'三红', desc:'三个4',             qty:4,  finale:false },
+  { key:'duitang',   label:'对堂', desc:'123456',            qty:2,  finale:false },
+  { key:'zhuangyuan',label:'状元', desc:'决赛角逐',          qty:1,  finale:true  }
+];
+
+/* 规则表图示 */
+const ILLUS = {
+  zhuangyuan_jin: [4,4,4,4,1,1],
+  man_tang_hong:  [4,4,4,4,4,4],
+  bian_di_jin:    [1,1,1,1,1,1],
+  liu_bo_hei:     [2,2,2,2,2,2],
+  wu_wang:        [4,4,4,4,4,2],
+  wu_zi_deng_ke:  [3,3,3,3,3,2],
+  zhuangyuan:     [4,4,4,4,2,3],
+  dui_tang:       [1,2,3,4,5,6],
+  san_hong:       [4,4,4,2,3,5],
+  si_jin:         [5,5,5,5,2,3],
+  er_ju:          [4,4,2,3,5,6],
+  yi_xiu:         [4,1,1,2,3,5]
+};
+
+const PITY = ['未中奖，可惜了！', '差一点点，好运下次再来！', '手气欠佳，继续加油！', '未中奖，愿赌服输～', '这次没中，下一位玩家上！'];
+
+/* ==================== 牌型判定 ==================== */
+function judge(dice) {
+  const c = countOf(dice);
+  if (c[4] === 6) return TIER_BY_KEY.man_tang_hong;                                  // 满堂红：六个4
+  if (c[1] === 6) return TIER_BY_KEY.bian_di_jin;                                    // 遍地锦：六个1
+  for (let n = 2; n <= 6; n++) { if (n !== 4 && c[n] === 6) return TIER_BY_KEY.liu_bo_hei; } // 六勃黑：六个相同
+  if (c[4] === 5) return TIER_BY_KEY.wu_wang;                                        // 五王：五个4加任意
+  for (let n = 1; n <= 6; n++) { if (n !== 4 && c[n] === 5) return TIER_BY_KEY.wu_zi_deng_ke; } // 五子登科
+  if (c[4] === 4 && c[1] === 2) return TIER_BY_KEY.zhuangyuan_jin;                   // 状元插金花：四个4两个1
+  if (c[4] === 4) return TIER_BY_KEY.zhuangyuan;                                     // 状元：四个4加任意
+  if (c[1] && c[2] && c[3] && c[4] && c[5] && c[6]) return TIER_BY_KEY.dui_tang;     // 对堂：123456
+  if (c[4] === 3) return TIER_BY_KEY.san_hong;                                       // 三红：三个4
+  for (let n = 1; n <= 6; n++) { if (n !== 4 && c[n] === 4) return TIER_BY_KEY.si_jin; } // 四进
+  if (c[4] === 2) return TIER_BY_KEY.er_ju;                                          // 二举：两个4
+  if (c[4] === 1) return TIER_BY_KEY.yi_xiu;                                         // 一秀：一个4
+  return null;                                                                       // 无奖
+}
+
+/* 状元级牌型的「剩余点数」：同级比较用 */
+function zyExtra(dice, tier) {
+  const c = countOf(dice);
+  switch (tier.key) {
+    case 'zhuangyuan_jin': return 2; // 两个1
+    case 'wu_wang':        { const i = dice.find(v => v !== 4); return i || 0; }
+    case 'wu_zi_deng_ke':  { const g = [1,2,3,5,6].find(n => c[n] === 5); return dice.find(v => v !== g) || 0; }
+    case 'zhuangyuan':     return dice.filter(v => v !== 4).reduce((a, b) => a + b, 0);
+    default:               return 0;
+  }
+}
+/* 返回 b 是否胜过 a（先摇者胜用于同级再相同） */
+function betterZY(a, b) {
+  if (!a) return true;
+  if (b.tier.rank !== a.tier.rank) return b.tier.rank < a.tier.rank;
+  if (b.extra !== a.extra) return b.extra > a.extra;
+  return false;
+}
+
+/* ==================== 骰子渲染 ==================== */
+const PIP_POS = { 1:[5], 2:[1,9], 3:[1,5,9], 4:[1,3,7,9], 5:[1,3,5,7,9], 6:[1,3,4,6,7,9] };
+function dieHTML(v, mini) {
+  const pos = PIP_POS[v] || [];
+  let cells = '';
+  for (let i = 1; i <= 9; i++) cells += '<i class="pip' + (pos.includes(i) ? ' on' : '') + '"></i>';
+  const red = (v === 4 || v === 1) ? ' red' : '';
+  return '<span class="die' + (mini ? ' mini' : '') + red + '">' + cells + '</span>';
+}
+function diceRowHTML(dice, mini) { return dice.map(v => dieHTML(v, mini)).join(''); }
+
+/* ==================== 视图切换 ==================== */
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => { v.hidden = (v.dataset.view !== name); });
+  document.querySelectorAll('.view-tab').forEach(t => { t.classList.toggle('active', t.dataset.view === name); });
+  if (location.hash !== '#' + name) location.hash = name;
+}
+
+/* ==================== 模态框 / Toast ==================== */
+let modalOK = null;
+let modalCancel = null;
+function openModal(title, bodyHTML, okText, onOk, cancelText, onCancel) {
+  $('modalTitle').textContent = title;
+  $('modalBody').innerHTML = bodyHTML;
+  modalOK = onOk || closeModal;
+  modalCancel = onCancel || null;
+  $('modalOk').textContent = okText || '知道了';
+  const cb = $('modalCancel');
+  if (cancelText) { cb.textContent = cancelText; cb.hidden = false; } else { cb.hidden = true; }
+  $('modalMask').classList.add('open');
+}
+function closeModal() { modalOK = null; modalCancel = null; $('modalMask').classList.remove('open'); }
+
+let toastTimer = null;
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ==================== 音效（Web Audio 本地合成骰子声） ==================== */
+function loadSfx() { try { return (localStorage.getItem('bb_sfx') || '1') !== '0'; } catch (e) { return true; } }
+function saveSfx(v) { try { localStorage.setItem('bb_sfx', v ? '1' : '0'); } catch (e) {} }
+let sfxEnabled = loadSfx();
+let audioCtx = null;
+
+function getAudioCtx() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  if (!audioCtx) { try { audioCtx = new AC(); } catch (e) { return null; } }
+  if (audioCtx.state === 'suspended') { try { audioCtx.resume(); } catch (e) {} }
+  return audioCtx;
+}
+/* 一颗骰子撞击：宽带噪声 + 碗体共振，指数衰减（模拟真实骰子碰碗） */
+function diceHit(ctx, time, vol) {
+  const sr = ctx.sampleRate;
+  const dur = 0.035 + Math.random() * 0.03;
+  const n = Math.max(1, Math.floor(sr * dur));
+  const buf = ctx.createBuffer(1, n, sr);
+  const d = buf.getChannelData(0);
+  const decay = 0.004 + Math.random() * 0.008;
+  const f = 480 + Math.random() * 620;
+  for (let i = 0; i < n; i++) {
+    const t = i / sr;
+    const env = Math.exp(-t / decay);
+    const noise = Math.random() * 2 - 1;
+    const tone = Math.sin(2 * Math.PI * f * t);
+    d[i] = (noise * 0.85 + tone * 0.3) * env * vol;
+  }
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass'; hp.frequency.value = 800;
+  const g = ctx.createGain(); g.gain.value = 1;
+  src.connect(hp); hp.connect(g); g.connect(ctx.destination);
+  src.start(time);
+}
+/* 清脆收尾敲击：更短、更高频 */
+function diceClack(ctx, time, vol) {
+  const sr = ctx.sampleRate;
+  const n = Math.max(1, Math.floor(sr * 0.022));
+  const buf = ctx.createBuffer(1, n, sr);
+  const d = buf.getChannelData(0);
+  const f = 1300 + Math.random() * 600;
+  for (let i = 0; i < n; i++) {
+    const t = i / sr;
+    const env = Math.exp(-t / 0.0032);
+    const noise = Math.random() * 2 - 1;
+    const tone = Math.sin(2 * Math.PI * f * t);
+    d[i] = (noise * 0.6 + tone * 0.5) * env * vol;
+  }
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass'; hp.frequency.value = 1100;
+  const g = ctx.createGain(); g.gain.value = 1;
+  src.connect(hp); hp.connect(g); g.connect(ctx.destination);
+  src.start(time);
+}
+/* 摇骰子音效：随机撞击序列（含多颗连撞）+ 落定清响 */
+function playShakeSound(ms) {
+  if (!sfxEnabled) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const start = ctx.currentTime + 0.02;
+  const end = start + ms / 1000;
+  let t = start;
+  while (t < end - 0.06) {
+    diceHit(ctx, t, 0.10 + Math.random() * 0.13);
+    if (Math.random() < 0.4) diceHit(ctx, t + 0.012, 0.07 + Math.random() * 0.09);
+    if (Math.random() < 0.16) diceHit(ctx, t + 0.024, 0.06 + Math.random() * 0.08);
+    t += 0.028 + Math.random() * 0.11;
+  }
+  diceHit(ctx, end, 0.22);
+  diceHit(ctx, end + 0.018, 0.14);
+  diceClack(ctx, end + 0.05, 0.5);
+}
+
+/* ==================== 骰子面主题 ==================== */
+const THEME_NAMES = { classic: '经典白', red: '发财红', blue: '天依蓝' };
+function loadTheme() { try { const v = localStorage.getItem('bb_dice_theme'); return (v === 'red' || v === 'blue') ? v : 'classic'; } catch (e) { return 'classic'; } }
+function saveTheme(t) { try { localStorage.setItem('bb_dice_theme', t); } catch (e) {} }
+let diceTheme = loadTheme();
+
+/* ==================== 设置面板 ==================== */
+function openSettings() {
+  if (G && G.rolling) { toast('请等待本次摇骰结束'); return; }
+  const pills = ['classic', 'red', 'blue'].map(t =>
+    '<button class="radio-pill' + (t === diceTheme ? ' active' : '') + '" data-theme="' + t + '" type="button">' + THEME_NAMES[t] + '</button>'
+  ).join('');
+  openModal('设置',
+    '<div class="set-title">骰子面主题</div>' +
+    '<div class="theme-preview" id="themePreview"><span class="dice-line">' + diceRowHTML([4, 3, 5, 1, 6, 2], true) + '</span></div>' +
+    '<div class="radio-group" id="diceThemeGroup">' + pills + '</div>' +
+    '<div class="set-sep"></div>' +
+    '<div class="set-row"><span>摇骰子音效</span><label class="switch"><input type="checkbox" id="sfxToggle"' + (sfxEnabled ? ' checked' : '') + '><span class="slider"></span></label></div>' +
+    '<div class="set-note">开启后，点击「摇骰子」时播放骰子碰撞音效（本地合成，无需网络）。</div>',
+    '完成', closeModal);
+  document.querySelectorAll('#diceThemeGroup .radio-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      diceTheme = btn.dataset.theme;
+      saveTheme(diceTheme);
+      document.body.dataset.diceTheme = diceTheme;
+      document.querySelectorAll('#diceThemeGroup .radio-pill').forEach(b => b.classList.toggle('active', b === btn));
+      const prev = $('themePreview');
+      if (prev) prev.innerHTML = '<span class="dice-line">' + diceRowHTML([4, 3, 5, 1, 6, 2], true) + '</span>';
+    });
+  });
+  const tg = $('sfxToggle');
+  tg.addEventListener('change', () => {
+    sfxEnabled = tg.checked;
+    saveSfx(sfxEnabled);
+    toast(sfxEnabled ? '摇骰子音效已开启' : '摇骰子音效已关闭');
+  });
+}
+
+/* ==================== 游戏状态 ==================== */
+let G = null;          // 当前游戏状态
+let shakeToken = 0;    // 打断动画令牌
+
+function nonZYTotal(prizes) {
+  return ['yixiu','erju','sijin','sanhong','duitang'].reduce((s, k) => s + prizes[k].qty, 0);
+}
+function roundText() {
+  if (!G) return '';
+  if (G.phase === 'elim') return '加赛·第' + G.elimRound + '轮';
+  if (G.phase === 'final') return '第' + G.round + '轮·末';
+  return '第' + G.round + '轮';
+}
+
+/* ==================== 设置面板 ==================== */
+function renderSetupRows() {
+  $('setupRows').innerHTML = PRIZE_DEFS.map(d =>
+    '<div class="prize-card' + (d.finale ? ' zhuangyuan' : '') + '">' +
+      '<div class="pc-head"><span class="pc-name">' + d.label + '</span><span class="pc-desc">' + d.desc + '</span></div>' +
+      '<div class="pc-row">' +
+        '<input class="inp" id="pname_' + d.key + '" maxlength="12" value="' + d.label + '" placeholder="奖品名">' +
+        '<input class="inp num" id="pqty_' + d.key + '" type="number" min="0" max="999" value="' + d.qty + '">' +
+        '<span class="pc-unit">个</span>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+
+function startGame() {
+  const N = parseInt($('inputPlayers').value, 10);
+  if (!N || N < 2) { toast('请设置至少 2 名玩家'); return; }
+  if (N > 50) { toast('人数过多，最多 50 人'); return; }
+  const prizes = {};
+  PRIZE_DEFS.forEach(d => {
+    const nameEl = $('pname_' + d.key);
+    const qtyEl = $('pqty_' + d.key);
+    const q = parseInt(qtyEl.value, 10);
+    prizes[d.key] = { name: (nameEl.value || '').trim() || d.label, qty: Number.isFinite(q) && q > 0 ? q : 0 };
+  });
+  G = {
+    N, round: 1, cur: 1,
+    phase: 'main',
+    finalRolled: 0,
+    elimPlayers: [], elimRound: 0, elimRolled: 0, elimRoundSize: 0, elimRolls: [],
+    prizes, records: [], zyRolls: [], bestZY: null,
+    rolling: false, winner: null, winnerTier: null
+  };
+  $('setupPanel').hidden = true;
+  $('gamePanel').hidden = false;
+  $('recordSidebar').hidden = false;
+  $('recordsBody').innerHTML = '';
+  $('recordsEmpty').hidden = false;
+  $('resultBanner').className = 'result-banner';
+  $('resultBanner').innerHTML = '';
+  $('diceArea').innerHTML = diceRowHTML([1, 1, 1, 1, 1, 1]);
+  renderStock();
+  renderBestZY();
+  renderRecords();
+  renderStatus();
+  // 开局即无非状元奖品 → 直接进入最后一轮
+  if (nonZYTotal(G.prizes) === 0) enterFinalPhase();
+}
+
+function restartConfirm() {
+  if (G && G.rolling) { toast('请等待本次摇骰结束'); return; }
+  openModal('重新设置', '确定要重新设置并清空所有摇骰记录吗？', '重新开始', restart, '取消');
+}
+function restart() {
+  shakeToken++;
+  closeModal();
+  G = null;
+  $('gamePanel').hidden = true;
+  $('setupPanel').hidden = false;
+  $('recordSidebar').hidden = true;
+  $('recordsBody').innerHTML = '';
+  $('recordsEmpty').hidden = false;
+  $('diceArea').innerHTML = diceRowHTML([1, 1, 1, 1, 1, 1]);
+  $('resultBanner').className = 'result-banner';
+  $('resultBanner').innerHTML = '';
+  $('rollBtn').disabled = false;
+  $('rollBtn').textContent = '摇骰子';
+  $('candBar').hidden = true;
+  $('diceHint').textContent = '点击「摇骰子」开始游戏';
+}
+
+/* ==================== 摇骰子 ==================== */
+function doRoll() {
+  if (!G) return;
+  if (G.phase === 'done') { restartConfirm(); return; }
+  if (G.rolling) return;
+  G.rolling = true;
+  playShakeSound(1520);
+  const btn = $('rollBtn');
+  btn.disabled = true;
+  const dice = rollDice();                       // 结果先定，动画后揭晓
+  const area = $('diceArea');
+  const stage = $('diceStage');
+  const token = ++shakeToken;
+  stage.classList.add('shaking');
+  let t = 0;
+  const iv = setInterval(() => {
+    if (token !== shakeToken) { clearInterval(iv); return; }
+    area.innerHTML = diceRowHTML(rollDice());
+    t += 90;
+    if (t >= 1560) {
+      clearInterval(iv);
+      area.innerHTML = diceRowHTML(dice);
+      stage.classList.remove('shaking');
+      setTimeout(() => {
+        if (token !== shakeToken) return;
+        G.rolling = false;
+        btn.disabled = false;
+        processRoll(dice);
+      }, 150);
+    }
+  }, 90);
+}
+
+/* ==================== 结算一次摇骰 ==================== */
+function processRoll(dice) {
+  if (!G) return;
+  const tier = judge(dice);
+  const who = (G.phase === 'elim') ? G.elimPlayers[0] : G.cur;
+  const now = new Date();
+  const timeStr = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  const rec = { time: timeStr, round: roundText(), player: who, dice: [...dice], tier, sum: sumOf(dice), prize: null };
+  G.records.push(rec);
+
+  if (G.phase === 'elim') {
+    G.elimRolls.push({ player: who, sum: sumOf(dice), tier });
+    showResult(tier
+      ? '玩家 ' + who + ' 摇出「' + tier.name + '」 · ' + sumOf(dice) + ' 点'
+      : '玩家 ' + who + ' · ' + sumOf(dice) + ' 点', 'info');
+  } else if (tier && tier.isZhuangyuan) {
+    const extra = zyExtra(dice, tier);
+    G.zyRolls.push({ player: who, tier, extra, sum: sumOf(dice), time: timeStr });
+    if (betterZY(G.bestZY, G.zyRolls[G.zyRolls.length - 1])) G.bestZY = G.zyRolls[G.zyRolls.length - 1];
+    showResult('玩家 ' + who + ' 摇出「' + tier.name + '」！状元角逐中 · 全场最佳：玩家 ' + G.bestZY.player, 'zy');
+  } else if (tier) {
+    const p = G.prizes[tier.prize];
+    if (p.qty > 0) {
+      p.qty--;
+      rec.prize = p.name;
+      showResult('恭喜 玩家 ' + who + ' 获得「' + p.name + '」！该奖品剩余 ' + p.qty + ' 个', 'win');
+    } else {
+      showResult('玩家 ' + who + ' 摇出「' + tier.name + '」，但「' + p.name + '」已无剩余', 'none');
+    }
+  } else {
+    showResult(PITY[Math.floor(Math.random() * PITY.length)] + ' · 玩家 ' + who + ' 未中奖', 'none');
+  }
+
+  renderRecords();
+  renderStock();
+  renderBestZY();
+  renderStatus();
+  advance();
+}
+
+/* ==================== 阶段推进 ==================== */
+function nextPlayer() {
+  G.cur++;
+  if (G.cur > G.N) { G.cur = 1; G.round++; }
+}
+
+function advance() {
+  if (G.phase === 'main') {
+    if (nonZYTotal(G.prizes) === 0) { enterFinalPhase(); return; }
+    nextPlayer();
+    renderStatus();
+    return;
+  }
+  if (G.phase === 'final') {
+    G.finalRolled++;
+    if (G.finalRolled >= G.N) { resolveFinale(); return; }
+    nextPlayer();
+    renderStatus();
+    return;
+  }
+  if (G.phase === 'elim') {
+    G.elimRolled++;
+    G.elimPlayers.push(G.elimPlayers.shift());
+    if (G.elimRolled >= G.elimRoundSize) { resolveElimRound(); return; }
+    renderStatus();
+    return;
+  }
+}
+
+/* 进入最后一轮 */
+function enterFinalPhase() {
+  if (!G) return;
+  G.phase = 'final';
+  G.finalRolled = 0;
+  G.round++;
+  G.cur = 1;
+  renderStatus();
+  openModal('最后一轮！', '所有非状元奖项已全部摇完，现在进入<b>最后一轮</b>（第 ' + G.round + ' 轮）。每位玩家再掷一次，由全场<b>最大状元</b>夺得「' + G.prizes.zhuangyuan.name + '」！', '开始最后一轮');
+}
+
+/* 最后一轮结束：判定状元 */
+function resolveFinale() {
+  if (!G) return;
+  if (G.bestZY) {
+    const b = G.bestZY;
+    G.phase = 'done';
+    G.winner = b.player;
+    G.winnerTier = b.tier;
+    renderStatus();
+    openModal('状元揭晓！', '全场共摇出 ' + G.zyRolls.length + ' 次状元级牌型。<br>最大状元：<b>玩家 ' + b.player + '</b>，牌型「' + b.tier.name + '」！<br>夺得状元奖品「' + G.prizes.zhuangyuan.name + '」！', '再来一局', restart);
+  } else {
+    G.phase = 'elim';
+    G.elimPlayers = Array.from({ length: G.N }, (_, i) => i + 1);
+    G.elimRound = 1;
+    G.elimRolled = 0;
+    G.elimRoundSize = G.N;
+    G.elimRolls = [];
+    renderStatus();
+    openModal('无人摇出状元！', '整场（含最后一轮）都无人摇出状元，进入<b>加赛淘汰</b>。<br>每轮<b>点数总和最大者</b>留下，其余淘汰，直到只剩最后一人即为状元！', '开始加赛');
+  }
+}
+
+/* 加赛一轮结束：保留点数最大者 */
+function resolveElimRound() {
+  if (!G) return;
+  const maxSum = Math.max(...G.elimRolls.map(r => r.sum));
+  const adv = G.elimRolls.filter(r => r.sum === maxSum).map(r => r.player);
+  if (adv.length === 1) {
+    const winner = adv[0];
+    G.phase = 'done';
+    G.winner = winner;
+    G.winnerTier = null;
+    renderStatus();
+    openModal('状元诞生！', '加赛第 ' + G.elimRound + ' 轮，玩家 <b>' + winner + '</b> 以 ' + maxSum + ' 点成为最后一人！<br>荣登状元，夺得「' + G.prizes.zhuangyuan.name + '」！', '再来一局', restart);
+  } else {
+    openModal('加赛第 ' + G.elimRound + ' 轮结果', '本轮最高 ' + maxSum + ' 点：玩家 <b>' + adv.join('、') + '</b> 并列最大，晋级下一轮。', '继续加赛');
+    G.elimPlayers = adv;
+    G.elimRound++;
+    G.elimRolled = 0;
+    G.elimRoundSize = adv.length;
+    G.elimRolls = [];
+    renderStatus();
+  }
+}
+
+/* ==================== 渲染 ==================== */
+function showResult(msg, kind) {
+  const b = $('resultBanner');
+  b.className = 'result-banner show ' + kind;
+  b.innerHTML = msg;
+}
+function setHint(msg) { $('diceHint').textContent = msg; }
+
+function renderStatus() {
+  if (!G) return;
+  const badge = $('phaseBadge');
+  const roundEl = $('statusRound');
+  const whoEl = $('statusWho');
+  const btn = $('rollBtn');
+  const candBar = $('candBar');
+  if (G.phase === 'elim') {
+    badge.textContent = '状元加赛';
+    badge.className = 'phase-badge elim';
+    roundEl.textContent = '第 ' + G.elimRound + ' 轮';
+    whoEl.innerHTML = '轮到 玩家 <b>' + G.elimPlayers[0] + '</b>';
+    candBar.hidden = false;
+    candBar.innerHTML = '候选：' + G.elimPlayers.map((p, i) => '<span class="chip cand' + (i === 0 ? ' cur' : '') + '">玩家 ' + p + '</span>').join('');
+    setHint('点数总和最大者留下 · 本轮已摇 ' + G.elimRolled + ' / ' + G.elimRoundSize + ' 人');
+    btn.textContent = '摇骰子（争取晋级）';
+  } else if (G.phase === 'final') {
+    badge.textContent = '最后一轮';
+    badge.className = 'phase-badge final';
+    roundEl.textContent = '第 ' + G.round + ' 轮';
+    whoEl.innerHTML = '轮到 玩家 <b>' + G.cur + '</b>';
+    candBar.hidden = true;
+    setHint('最后一轮 · 已摇 ' + G.finalRolled + ' / ' + G.N + ' 人 · 角逐最大状元');
+    btn.textContent = '摇骰子';
+  } else if (G.phase === 'done') {
+    badge.textContent = '已结束';
+    badge.className = 'phase-badge';
+    roundEl.textContent = '第 ' + G.round + ' 轮';
+    whoEl.innerHTML = G.winnerTier
+      ? '状元：玩家 <b>' + G.winner + '</b>（' + G.winnerTier.name + '）'
+      : '状元：玩家 <b>' + G.winner + '</b>';
+    candBar.hidden = true;
+    setHint('本局已结束，点击「本局已结束」或右上「重新设置」再来一局');
+    btn.textContent = '本局已结束';
+  } else {
+    badge.textContent = '正式轮';
+    badge.className = 'phase-badge';
+    roundEl.textContent = '第 ' + G.round + ' 轮';
+    whoEl.innerHTML = '轮到 玩家 <b>' + G.cur + '</b>';
+    candBar.hidden = true;
+    setHint('点击「摇骰子」掷出你的点数');
+    btn.textContent = '摇骰子';
+  }
+}
+
+function renderStock() {
+  if (!G) { $('prizeStock').innerHTML = ''; return; }
+  $('prizeStock').innerHTML = '<span class="stock-cap">奖品余量：</span>' + PRIZE_DEFS.map(d => {
+    const p = G.prizes[d.key];
+    if (d.finale) return '<span class="chip finale">状元 · ' + p.name + '<span class="cnt">决赛颁发</span></span>';
+    return '<span class="chip' + (p.qty === 0 ? ' out' : '') + '">' + p.name + '<span class="cnt">×' + p.qty + '</span></span>';
+  }).join('');
+}
+
+function renderBestZY() {
+  if (!G) { $('bestZY').innerHTML = ''; return; }
+  $('bestZY').innerHTML = G.bestZY
+    ? '当前最佳状元：<b>玩家 ' + G.bestZY.player + '</b>（' + G.bestZY.tier.name + '）· 状元奖品「' + G.prizes.zhuangyuan.name + '」等待角逐'
+    : '当前尚无状元 · 状元奖品「' + G.prizes.zhuangyuan.name + '」等待角逐';
+}
+
+function renderRecords() {
+  const tb = $('recordsBody');
+  if (!G || G.records.length === 0) { $('recordsEmpty').hidden = false; tb.innerHTML = ''; return; }
+  $('recordsEmpty').hidden = true;
+  tb.innerHTML = G.records.map(r => {
+    const isZY = !!(r.tier && r.tier.isZhuangyuan);
+    const res = isZY
+      ? '<b>' + r.tier.name + '</b>'
+      : (r.prize ? r.prize : (r.tier ? r.tier.name : '未中奖'));
+    const diceTxt = r.dice.map(v => v === 4 ? '<b class="d4">4</b>' : v === 1 ? '<b class="d1">1</b>' : v).join('·');
+    return '<tr class="' + (isZY ? 'row-zy' : '') + '">' +
+      '<td>' + r.time + '</td>' +
+      '<td>' + r.round + '</td>' +
+      '<td>玩家 ' + r.player + '</td>' +
+      '<td>' + diceTxt + '</td>' +
+      '<td>' + res + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+/* ==================== 规则页 ==================== */
+function renderRules() {
+  $('rulesTableBody').innerHTML = TIERS.map(t => {
+    const ill = ILLUS[t.key] || [1, 1, 1, 1, 1, 1];
+    return '<tr class="' + (t.isZhuangyuan ? 'zy-row' : '') + '">' +
+      '<td class="c-name">' + t.name + '</td>' +
+      '<td><span class="dice-line">' + diceRowHTML(ill, true) + '</span></td>' +
+      '<td class="c-desc">' + t.desc + '</td>' +
+      '<td class="c-rank">' + t.rankTitle + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+/* ==================== 初始化 ==================== */
+function init() {
+  renderSetupRows();
+  renderRules();
+  document.body.dataset.diceTheme = diceTheme;
+  $('diceArea').innerHTML = diceRowHTML([1, 1, 1, 1, 1, 1]);
+  $('diceHint').textContent = '点击「摇骰子」开始游戏';
+
+  document.querySelectorAll('.view-tab').forEach(t => {
+    t.addEventListener('click', () => switchView(t.dataset.view));
+  });
+  window.addEventListener('hashchange', () => {
+    const v = (location.hash || '#game').slice(1);
+    switchView(v === 'rules' ? 'rules' : 'game');
+  });
+  const v = (location.hash || '#game').slice(1);
+  switchView(v === 'rules' ? 'rules' : 'game');
+
+  $('startBtn').addEventListener('click', startGame);
+  $('rollBtn').addEventListener('click', doRoll);
+  $('restartBtn').addEventListener('click', restartConfirm);
+  $('settingsBtn').addEventListener('click', openSettings);
+
+  $('modalOk').addEventListener('click', () => { const f = modalOK; modalOK = null; modalCancel = null; if (f) f(); });
+  $('modalClose').addEventListener('click', () => { modalOK = null; modalCancel = null; closeModal(); });
+  $('modalCancel').addEventListener('click', () => { const f = modalCancel; modalOK = null; modalCancel = null; closeModal(); if (f) f(); });
+  $('modalMask').addEventListener('click', e => { if (e.target === $('modalMask')) { modalOK = null; modalCancel = null; closeModal(); } });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>
