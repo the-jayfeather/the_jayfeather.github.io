@@ -214,6 +214,14 @@ body[data-dice-theme="red"] .die.red .pip.on { background:var(--gold); box-shado
 body[data-dice-theme="blue"] .die { background:linear-gradient(145deg,#7ED4FF,#4DA6E8); }
 body[data-dice-theme="blue"] .die .pip.on { background:#2C3644; box-shadow:inset 0 1px 2px rgba(0,0,0,.35); }
 body[data-dice-theme="blue"] .die.red .pip.on { background:#D8403A; box-shadow:inset 0 1px 2px rgba(0,0,0,.3); }
+/* 初音绿：青绿面 · 白点，4/1 红点（初音标志青绿 #39C5BB 系） */
+body[data-dice-theme="miku"] .die { background:linear-gradient(145deg,#5BD6CB,#35B0A5); }
+body[data-dice-theme="miku"] .die .pip.on { background:#F2FFFD; box-shadow:inset 0 1px 2px rgba(0,0,0,.28); }
+body[data-dice-theme="miku"] .die.red .pip.on { background:#D8403A; box-shadow:inset 0 1px 2px rgba(0,0,0,.3); }
+/* 经典黑：黑灰面 · 土豪金点，4/1 红点 */
+body[data-dice-theme="black"] .die { background:linear-gradient(145deg,#343941,#1A1E24); }
+body[data-dice-theme="black"] .die .pip.on { background:#D4AF37; box-shadow:inset 0 1px 2px rgba(0,0,0,.45); }
+body[data-dice-theme="black"] .die.red .pip.on { background:#D8403A; box-shadow:inset 0 1px 2px rgba(0,0,0,.35); }
 
 /* ==================== 设置面板：主题选择 ==================== */
 .dice-line { display:flex; gap:3px; flex-wrap:wrap; align-items:center; }
@@ -872,8 +880,8 @@ function playBowlSound() {
 }
 
 /* ==================== 骰子面主题 ==================== */
-const THEME_NAMES = { classic: '经典白', red: '发财红', blue: '天依蓝' };
-function loadTheme() { try { const v = localStorage.getItem('bb_dice_theme'); return (v === 'red' || v === 'blue') ? v : 'classic'; } catch (e) { return 'classic'; } }
+const THEME_NAMES = { classic: '经典白', black: '经典黑', red: '发财红', blue: '天依蓝', miku: '初音绿' };
+function loadTheme() { try { const v = localStorage.getItem('bb_dice_theme'); return (v === 'red' || v === 'blue' || v === 'miku' || v === 'black') ? v : 'classic'; } catch (e) { return 'classic'; } }
 function saveTheme(t) { try { localStorage.setItem('bb_dice_theme', t); } catch (e) {} }
 let diceTheme = loadTheme();
 /* 奖品模式：'name' 名称奖品 / 'cash' 奖金（只填钱数） */
@@ -888,7 +896,7 @@ let cashPreset = loadCashPreset();
 /* ==================== 设置面板 ==================== */
 function openSettings() {
   if (G && G.rolling) { toast('请等待本次摇骰结束'); return; }
-  const pills = ['classic', 'red', 'blue'].map(t =>
+  const pills = ['classic', 'black', 'red', 'blue', 'miku'].map(t =>
     '<button class="radio-pill' + (t === diceTheme ? ' active' : '') + '" data-theme="' + t + '" type="button">' + THEME_NAMES[t] + '</button>'
   ).join('');
   openModal('设置',
