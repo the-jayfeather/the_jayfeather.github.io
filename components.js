@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="headline">
   <h1 class="title-text">the_jayfeather的导航站</h1>
   <a class="page" href="the_jayfeather的导航站 - 主页.html" target="_self">主页</a>
-  <a class="page" href="website/网页万年历/万年历.html" target="_blank">网页万年历</a>
+  <a class="page" href="website/tools/网页万年历/万年历.html" target="_blank">网页万年历</a>
+  <a class="page" href="the_jayfeather的导航站 - 更多工具.html" target="_self">更多工具</a>
   <a class="page" href="the_jayfeather的导航站 - 功能实验室.html" target="_self">功能实验室</a>
   <a class="page" href="the_jayfeather的导航站 - 发布页.html" target="_self">发布页</a>
   <a class="page" href="the_jayfeather的导航站 - 关于.html" target="_self">关于</a>
