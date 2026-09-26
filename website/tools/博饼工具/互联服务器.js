@@ -144,12 +144,12 @@ const server = http.createServer(async (req, res) => {
 
   /* 电脑端：推送结果/状态 → 广播给该配对码下所有手机（每台独立队列） */
   if (p === '/api/push' && req.method === 'POST') {
-    let sid = '', msg = null;
-    try { const b = JSON.parse(await readBody(req)); sid = b.sid || ''; msg = b.msg || null; } catch (e) {}
+    let sid = '', msg = null, target = '';
+    try { const b = JSON.parse(await readBody(req)); sid = b.sid || ''; msg = b.msg || null; target = String(b.target || '').trim(); } catch (e) {}
     const s = sessions.get(sid);
     if (!s || !msg) { json(res, { ok: false }); return; }
     const m = phones.get(s.code);
-    if (m) m.forEach(p => p.queue.push(msg));
+    if (m) m.forEach((p, pid) => { if (target && pid !== target) return; p.queue.push(msg); });
     json(res, { ok: true });
     return;
   }
