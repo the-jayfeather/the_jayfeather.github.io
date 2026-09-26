@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 4567;
 const ROOT = __dirname;
 
 /* ---------------- 内存会话 ----------------
- * sessions: sid -> { code, paired, shakeFlag, shakeName, pairRequested, lastSeen }
+ * sessions: sid -> { code, paired, shakeFlag, shakeName, shakeId, pairRequested, lastSeen }
  * byCode  : code -> sid
  * phones  : code -> Map<pid, {name, ip, at, queue: []}>  每个配对手机独立消息队列 */
 const sessions = new Map();
@@ -94,7 +94,7 @@ const server = http.createServer(async (req, res) => {
   if (p === '/api/pair/new' && req.method === 'POST') {
     const code = genCode();
     const sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
-    sessions.set(sid, { code, paired: false, shakeFlag: false, shakeName: '', pairRequested: false, lastSeen: Date.now() });
+    sessions.set(sid, { code, paired: false, shakeFlag: false, shakeName: '', shakeId: '', pairRequested: false, lastSeen: Date.now() });
     byCode.set(code, sid);
     phones.set(code, new Map());
     json(res, { ok: true, code, sid, ip: lanIP(), port: PORT });
@@ -115,14 +115,29 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  /* 手机端：上报摇动（带设备名，电脑可显示谁摇的） */
+  /* 手机端：上报摇动（带设备名与设备 id，电脑可判断谁摇的） */
   if (p === '/api/shake' && req.method === 'POST') {
-    let code = '', name = '';
-    try { const b = JSON.parse(await readBody(req)) || {}; code = String(b.code || '').trim(); name = String(b.name || '手机').trim(); } catch (e) {}
+    let code = '', name = '', id = '';
+    try { const b = JSON.parse(await readBody(req)) || {}; code = String(b.code || '').trim(); name = String(b.name || '手机').trim(); id = String(b.id || '').trim(); } catch (e) {}
     const sid = byCode.get(code);
     if (!sid) { json(res, { ok: false, error: '配对码不存在或已过期' }); return; }
     sessions.get(sid).shakeFlag = true;
     sessions.get(sid).shakeName = name;
+    sessions.get(sid).shakeId = id;
+    json(res, { ok: true });
+    return;
+  }
+
+  /* 手机端：绑定玩家（分玩家设备模式） */
+  if (p === '/api/bind' && req.method === 'POST') {
+    let code = '', pid = '', player = '';
+    try { const b = JSON.parse(await readBody(req)) || {}; code = String(b.code || '').trim(); pid = String(b.pid || '').trim(); player = String(b.player || '').trim(); } catch (e) {}
+    const sid = byCode.get(code);
+    if (!sid) { json(res, { ok: false, error: '配对码不存在或已过期' }); return; }
+    const m = phones.get(code);
+    const p = m && m.get(pid);
+    if (!p) { json(res, { ok: false, error: '设备未注册' }); return; }
+    p.player = player;
     json(res, { ok: true });
     return;
   }
@@ -189,10 +204,11 @@ const server = http.createServer(async (req, res) => {
     s.lastSeen = Date.now();
     const m = phones.get(s.code);
     const devices = [];
-    if (m) m.forEach((p, pid) => devices.push({ pid, name: p.name, ip: p.ip, at: p.at }));
-    const out = { ok: true, paired: s.paired, shake: s.shakeFlag, shakeName: s.shakeName || '', request: s.pairRequested || false, devices };
+    if (m) m.forEach((p, pid) => devices.push({ pid, name: p.name, ip: p.ip, at: p.at, player: p.player || '' }));
+    const out = { ok: true, paired: s.paired, shake: s.shakeFlag, shakeName: s.shakeName || '', shakeId: s.shakeId || '', request: s.pairRequested || false, devices };
     s.shakeFlag = false;
     s.shakeName = '';
+    s.shakeId = '';
     s.pairRequested = false;
     json(res, out);
     return;

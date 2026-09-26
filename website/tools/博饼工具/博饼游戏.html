@@ -572,6 +572,11 @@ body[data-dice-theme="black"] .die.red .pip.on { background:#D8403A; box-shadow:
           <div class="remote-hint" id="remoteHint">配对后摇动手机或点按「摇骰子」，电脑端将同步摇骰。</div>
         </div>
         <div class="remote-devices" id="remoteDevices"></div>
+        <div class="remote-player" id="remotePlayerBox" hidden>
+          <div class="rd-head"><span>选择你的玩家</span></div>
+          <select class="inp" id="remotePlayerSelect"></select>
+          <div class="remote-hint" id="remotePlayerInfo"></div>
+        </div>
         <div class="result-banner" id="remoteBanner"></div>
         <div class="remote-list" id="remoteList"></div>
       </div>
@@ -966,6 +971,10 @@ const LINK = {
   paired: false, offline: false, statusText: '', results: [],
   pairRequested: null, pairPending: false,
   devices: [],
+  /* 互联摇骰模式：'together' 一起摇（默认） / 'perPlayer' 分玩家设备 */
+  playerMode: loadPlayerMode(),
+  devicePlayers: {},
+  myPlayer: null,
   cloud: { room: null, lastSeen: null, backoff: 0 },
   lan: { sid: null, pid: '', ip: '', backoff: 0 }
 };
@@ -985,6 +994,11 @@ function loadChannel() {
   return 'auto';
 }
 function saveChannel(c) { try { localStorage.setItem('bb_link_channel', c); } catch (e) {} }
+function loadPlayerMode() {
+  try { const v = localStorage.getItem('bb_link_player_mode'); if (v === 'together' || v === 'perPlayer') return v; } catch (e) {}
+  return 'together';
+}
+function savePlayerMode(m) { try { localStorage.setItem('bb_link_player_mode', m); } catch (e) {} }
 /* 设备唯一标识与显示名（手机端用；电脑端也用其区分本机） */
 function deviceId() {
   let id = '';
@@ -1012,7 +1026,25 @@ function removeDevice(id) {
   if (i >= 0) LINK.devices.splice(i, 1);
 }
 function broadcastDevices() {
-  linkPush({ type: 'devices', list: LINK.devices.map(x => ({ name: x.name, channel: x.channel })) });
+  const players = G ? G.playerNames : [];
+  const turn = (G && G.phase === 'elim') ? (G.elimPlayers[0] || 0) : (G ? G.cur : 0);
+  linkPush({ type: 'devices', list: LINK.devices.map(x => ({ name: x.name, channel: x.channel, player: x.player || '' })),
+    playerMode: LINK.playerMode, players, bindings: LINK.devicePlayers, currentPlayer: turn });
+}
+/* 电脑端：设备绑定玩家（分玩家设备模式） */
+function bindDevicePlayer(id, playerName) {
+  if (!id || !playerName) return;
+  const idx = G ? G.playerNames.indexOf(playerName) : -1;
+  if (idx < 0) { linkPush({ type: 'status', text: '玩家「' + playerName + '」不存在，请重新选择' }); return; }
+  /* 该玩家已被其他设备绑定则拒绝 */
+  for (const k in LINK.devicePlayers) {
+    if (LINK.devicePlayers[k] === idx + 1 && k !== id) { linkPush({ type: 'status', text: '「' + playerName + '」已被其他设备绑定，请选择其他玩家' }); return; }
+  }
+  LINK.devicePlayers[id] = idx + 1;
+  const d = LINK.devices.find(x => x.id === id);
+  if (d) d.player = playerName;
+  renderLinkUI();
+  broadcastDevices();
 }
 /* LeanCloud 云通道配置（在 leancloud.cn 免费注册应用后获取） */
 function loadCloudCfg() {
@@ -1097,6 +1129,8 @@ function linkTeardown() {
   LINK.paired = false; LINK.code = ''; LINK.offline = false; LINK.results = [];
   LINK.pairRequested = null; LINK.pairPending = false;
   LINK.devices = [];
+  LINK.devicePlayers = {};
+  LINK.myPlayer = null;
   stopDiscover();
   hideDiscover();
   LINK.cloud = { room: null, lastSeen: null, backoff: 0 };
@@ -1146,7 +1180,8 @@ function tryRegister(tryNo) {
     conn.on('open', () => { LINK.paired = true; renderLinkUI(); toast('手机已配对，可摇动手机摇骰子'); });
     conn.on('data', d => {
       if (!d) return;
-      if (d.type === 'shake') phoneTriggeredRoll();
+      if (d.type === 'shake') phoneTriggeredRoll({ id: conn.__devId || '' });
+      else if (d.type === 'bind') { bindDevicePlayer(d.id || conn.__devId, d.player); }
       else if (d.type === 'hello') {
         conn.__devId = d.id || ('auto-' + (conn.peer || Date.now()));
         upsertDevice({ id: conn.__devId, name: d.name || '手机', channel: 'auto', at: Date.now() });
@@ -1165,11 +1200,21 @@ function tryRegister(tryNo) {
     conn.on('error', () => {});
   });
 }
-/* 手机发来摇动指令 → 触发电脑摇骰 */
-function phoneTriggeredRoll() {
+/* 手机发来摇动指令 → 触发电脑摇骰；分玩家设备模式下校验轮到者 */
+function phoneTriggeredRoll(info) {
   if (!G) { toast('请先在电脑上开始博饼'); return; }
   if (G.phase === 'done') { toast('本局已结束，请先在电脑上重新设置'); return; }
   if (G.rolling) { toast('正在摇骰中，请稍候'); return; }
+  if (LINK.playerMode === 'perPlayer') {
+    const id = (info && info.id) || '';
+    const player = LINK.devicePlayers[id];
+    const turn = (G.phase === 'elim') ? (G.elimPlayers[0] || 1) : G.cur;
+    if (!player) { linkPush({ type: 'status', text: '你的手机尚未绑定玩家：请在手机端选择玩家后摇骰' }); return; }
+    if (player !== turn) {
+      linkPush({ type: 'status', text: '还没轮到「' + (G.playerNames[player - 1] || '该玩家') + '」：现在轮到 ' + (G.playerNames[turn - 1] || '该玩家') + '，请由对应设备摇骰' });
+      return;
+    }
+  }
   doRoll();
 }
 /* 电脑端把结果/状态推送给配对手机（数据通道直发） */
@@ -1293,7 +1338,14 @@ function cloudPollPC() {
         const t = obj.createdAt ? new Date(obj.createdAt).getTime() : 0;
         if (t > LINK.cloud.lastSeen) {
           const from = obj.get('from');
-          if (obj.get('type') === 'shake' && from !== 'pc') phoneTriggeredRoll();
+          if (obj.get('type') === 'shake' && from !== 'pc') {
+            const sd = obj.get('data') || {};
+            phoneTriggeredRoll({ id: sd.id || '', name: sd.name || '' });
+          }
+          else if (obj.get('type') === 'bind' && from !== 'pc') {
+            const bd = obj.get('data') || {};
+            bindDevicePlayer(bd.id, bd.player);
+          }
           else if (obj.get('type') === 'join' && from !== 'pc') {
             LINK.paired = true;
             const jd = obj.get('data') || {};
@@ -1348,7 +1400,7 @@ function cloudPair() {
 /* 手机端：发送摇动指令 */
 function cloudShake() {
   if (!LINK.paired || !LINK.code) { toast('请先完成配对'); return; }
-  cloudWrite('shake', 'phone', { name: deviceName() }).then(() => toast('已摇动，等待电脑结果…')).catch(() => toast('发送失败，请检查网络'));
+  cloudWrite('shake', 'phone', { name: deviceName(), id: deviceId() }).then(() => toast('已摇动，等待电脑结果…')).catch(() => toast('发送失败，请检查网络'));
 }
 /* 手机端轮询：接收电脑 result / status */
 function cloudPollPhone() {
@@ -1433,15 +1485,16 @@ function lanPollPC() {
     LINK.offline = false;
     if (d.paired && !LINK.paired) { LINK.paired = true; renderLinkUI(); toast('手机已配对，可摇动手机摇骰子'); }
     if (d.devices) {
-      const devs = d.devices.map(x => ({ id: x.pid, name: x.name || '手机', channel: 'lan', at: x.at || Date.now() }));
+      const devs = d.devices.map(x => ({ id: x.pid, name: x.name || '手机', channel: 'lan', at: x.at || Date.now(), player: x.player || '' }));
       if (JSON.stringify(devs) !== JSON.stringify(LINK.devices)) {
         LINK.devices = devs;
+        devs.forEach(x => { if (x.player) LINK.devicePlayers[x.id] = G ? (G.playerNames.indexOf(x.player) + 1) : 0; });
         renderLinkUI();
         broadcastDevices();
       }
     }
     if (d.request && !LINK.pairPending) showPairRequest();
-    if (d.shake) phoneTriggeredRoll();
+    if (d.shake) phoneTriggeredRoll({ id: d.shakeId || '', name: d.shakeName || '' });
     LINK.lan.backoff = 0;
     LINK.lanTimer = setTimeout(lanPollPC, 600);
   }).catch(() => {
@@ -1483,7 +1536,7 @@ function lanShake() {
   if (!LINK.paired || !LINK.code) { toast('请先完成配对'); return; }
   lanFetch(lanBase() + '/api/shake', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code: LINK.code, name: deviceName() })
+    body: JSON.stringify({ code: LINK.code, name: deviceName(), id: deviceId() })
   }).then(() => toast('已摇动，等待电脑结果…')).catch(() => toast('发送失败，请检查网络'));
 }
 /* 手机端轮询：接收电脑结果/状态 */
@@ -1534,7 +1587,7 @@ function renderDevices() {
   if (!LINK.devices.length) { el.innerHTML = '<div class="set-note">暂无已连接设备</div>'; return; }
   el.innerHTML = '<div class="set-title">已连接设备</div>' + LINK.devices.map(x => {
     const tag = ({ cloud: '国内云', lan: '局域网', auto: '自动' }[x.channel]) || x.channel;
-    return '<div class="set-row"><span>' + x.name + '</span><span class="rd-chan">' + tag + '</span></div>';
+    return '<div class="set-row"><span>' + (x.player ? x.name + ' · ' + x.player : x.name) + '</span><span class="rd-chan">' + tag + '</span></div>';
   }).join('');
 }
 
@@ -1697,7 +1750,7 @@ function handlePhoneMsg(m) {
     LINK.statusText = m.text;
     renderRemoteStatus(m.text);
   } else if (m.type === 'devices') {
-    renderPhoneDevices(m.list);
+    renderPhoneDevices(m);
   }
 }
 function phoneShake() {
@@ -1708,7 +1761,7 @@ function phoneShake() {
   if (LINK.channel === 'cloud') { cloudShake(); return; }
   if (LINK.channel === 'lan') { lanShake(); return; }
   if (!LINK.conn) { toast('请先完成配对'); return; }
-  try { LINK.conn.send({ type: 'shake' }); } catch (e) { toast('连接已断开，请重新配对'); return; }
+  try { LINK.conn.send({ type: 'shake', id: deviceId() }); } catch (e) { toast('连接已断开，请重新配对'); return; }
   toast('已摇动，等待电脑结果…');
 }
 /* 摇动检测：加速度变化超过阈值且冷却后触发；iOS 需在用户手势中请求权限 */
@@ -1745,12 +1798,54 @@ function renderRemoteStatus(text) {
   const el = $('remoteStatus');
   if (el) el.textContent = text;
 }
-function renderPhoneDevices(list) {
+function renderPhoneDevices(msg) {
   const el = $('remoteDevices');
   if (!el) return;
+  const list = (msg && msg.list) || [];
   const items = ['电脑（' + (LINK.code || '----') + '）'];
-  (list || []).forEach(x => items.push(x.name || '手机'));
+  (list || []).forEach(x => items.push((x.player ? x.name + ' · ' + x.player : x.name) || '手机'));
   el.innerHTML = items.map(n => '<div class="rd-dev-item"><span class="rd-dot"></span>' + n + '</div>').join('');
+  /* 分玩家设备模式：显示玩家选择器 */
+  if (msg && msg.playerMode === 'perPlayer') showPlayerPicker(msg.players || [], msg.bindings || {}, msg.currentPlayer || 0);
+  else hidePlayerPicker();
+}
+function showPlayerPicker(players, bindings, current) {
+  const box = $('remotePlayerBox');
+  const sel = $('remotePlayerSelect');
+  const info = $('remotePlayerInfo');
+  if (!box || !sel || !info) return;
+  box.hidden = false;
+  if (!players || !players.length) { sel.innerHTML = ''; info.textContent = '请先在电脑端开始博饼，再选择你的玩家'; return; }
+  /* 排除其他设备已绑定的玩家 */
+  const taken = {};
+  for (const k in (bindings || {})) { if (k !== deviceId()) taken[bindings[k]] = true; }
+  const opts = players.filter(n => !taken[n]);
+  sel.innerHTML = opts.map(n => '<option value="' + n + '">' + n + '</option>').join('');
+  sel.onchange = () => { bindPlayer(sel.value); };
+  const turnName = (players[current - 1]) || '';
+  if (LINK.myPlayer) {
+    info.textContent = '你已绑定 ' + LINK.myPlayer + (turnName ? ' · 现在轮到 ' + turnName : '');
+  } else {
+    info.textContent = turnName
+      ? '现在轮到 ' + turnName + '：选择你的玩家后，轮到你可摇骰'
+      : '选择你的玩家后，轮到你可摇骰';
+  }
+}
+function hidePlayerPicker() {
+  const box = $('remotePlayerBox');
+  if (box) box.hidden = true;
+}
+/* 手机端：上报玩家绑定 */
+function bindPlayer(name) {
+  if (!name) return;
+  LINK.myPlayer = name;
+  const info = $('remotePlayerInfo');
+  if (info) info.textContent = '已绑定 ' + name + '（轮到你可摇骰）';
+  if (LINK.channel === 'cloud') cloudWrite('bind', 'phone', { id: deviceId(), player: name }).catch(() => {});
+  else if (LINK.channel === 'lan') {
+    lanFetch(lanBase() + '/api/bind', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: LINK.code, pid: LINK.lan.pid || '', player: name }) }).catch(() => {});
+  } else if (LINK.conn) { try { LINK.conn.send({ type: 'bind', id: deviceId(), player: name }); } catch (e) {} }
+  toast('已绑定 ' + name);
 }
 function renderRemoteBanner(r) {
   const b = $('remoteBanner');
@@ -1816,6 +1911,11 @@ function openSettings() {
       '<button class="radio-pill' + (LINK.channel === 'lan' ? ' active' : '') + '" data-channel="lan" type="button">局域网</button>' +
     '</div></div>' +
     '<div class="set-note" id="linkChannelInfo"></div>' +
+    '<div class="set-row"><span>摇骰模式</span><div class="radio-group" id="linkPlayerModeGroup">' +
+      '<button class="radio-pill' + (LINK.playerMode === 'together' ? ' active' : '') + '" data-pmode="together" type="button">一起摇</button>' +
+      '<button class="radio-pill' + (LINK.playerMode === 'perPlayer' ? ' active' : '') + '" data-pmode="perPlayer" type="button">分玩家设备</button>' +
+    '</div></div>' +
+    '<div class="set-note">一起摇：所有设备可随时摇骰；分玩家设备：手机需绑定玩家，轮到该玩家时才能摇（未绑定手机的玩家由电脑摇，电脑端始终可摇）。</div>' +
     (LINK.channel === 'cloud'
       ? '<div class="set-row"><span>AppID</span><input class="inp" id="cloudAppId" placeholder="LeanCloud AppID"></div>' +
         '<div class="set-row"><span>AppKey</span><input class="inp" id="cloudAppKey" placeholder="LeanCloud AppKey"></div>' +
@@ -1867,6 +1967,15 @@ function openSettings() {
       document.querySelectorAll('#linkChannelGroup .radio-pill').forEach(b => b.classList.toggle('active', b === btn));
       applyChannel(btn.dataset.channel);
       openSettings(); /* 重绘面板：云配置输入区随通道显隐 */
+    });
+  });
+  document.querySelectorAll('#linkPlayerModeGroup .radio-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#linkPlayerModeGroup .radio-pill').forEach(b => b.classList.toggle('active', b === btn));
+      LINK.playerMode = btn.dataset.pmode;
+      savePlayerMode(LINK.playerMode);
+      broadcastDevices();
+      toast(LINK.playerMode === 'perPlayer' ? '已切换为分玩家设备模式' : '已切换为一起摇模式');
     });
   });
   const cloudSave = $('cloudSaveBtn');
@@ -2009,6 +2118,7 @@ function startGame() {
   renderBestZY();
   renderRecords();
   renderStatus();
+  broadcastDevices();
   // 开局即无非状元奖品 → 直接进入最后一轮
   if (nonZYTotal(G.prizes) === 0) enterFinalPhase();
 }
@@ -2125,6 +2235,7 @@ function processRoll(dice) {
     isZY: !!(tier && tier.isZhuangyuan)
   });
   advance();
+  broadcastDevices();
 }
 
 /* ==================== 阶段推进 ==================== */
