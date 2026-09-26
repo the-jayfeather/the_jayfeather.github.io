@@ -475,6 +475,7 @@ body[data-dice-theme="black"] .die.red .pip.on { background:#D8403A; box-shadow:
 .rd-ip { font-size:11px; color:var(--placeholder); }
 .rd-state { margin-left:auto; font-size:11px; color:var(--tianyi); flex-shrink:0; }
 .rd-empty { font-size:12px; color:var(--placeholder); padding:4px 2px; line-height:1.6; }
+.rd-chan { font-size:10px; color:var(--tianyi); border:1px solid var(--tianyi); border-radius:9999px; padding:1px 6px; flex-shrink:0; line-height:1.5; }
 
 /* ==================== 页脚 ==================== */
 .footer {
@@ -1439,34 +1440,42 @@ function renderLanUI(st, note) {
   }
 }
 /* ---------------- 手机自动发现电脑 & 配对请求 ---------------- */
-let discoverTimer = null;
+let lanDiscoverTimer = null, cloudDiscoverTimer = null;
+const DISCOVER = { lan: [], cloud: [] };
 function startDiscover() {
   if (LINK.paired) return;
   const box = $('remoteDiscover');
   if (box) box.hidden = false;
   const info = $('rdList');
   if (info) info.innerHTML = '正在搜索附近电脑…';
-  if (LINK.channel === 'auto') {
-    if (info) info.innerHTML = '「自动」通道无法自动发现电脑：请改用「国内云」或「局域网」通道，或在设置中直接输入配对码。';
-    return;
-  }
-  if (LINK.channel === 'lan') lanDiscover();
-  else if (LINK.channel === 'cloud') cloudDiscover();
+  stopDiscover();
+  /* 并行探测所有可用发现通道：局域网 + 国内云（无论当前选择哪个通道） */
+  let any = false;
+  if (typeof fetch === 'function') { lanDiscover(); any = true; }
+  if (typeof AV !== 'undefined' && localStorage.getItem('bb_cloud_appid') && localStorage.getItem('bb_cloud_appkey')) { cloudDiscover(); any = true; }
+  if (!any && info) info.innerHTML = '<div class="rd-empty">未发现可用的发现通道：请在设置中配置「国内云」，或使用「局域网」通道运行服务器。</div>';
 }
 function stopDiscover() {
-  if (discoverTimer) { clearTimeout(discoverTimer); discoverTimer = null; }
+  if (lanDiscoverTimer) { clearTimeout(lanDiscoverTimer); lanDiscoverTimer = null; }
+  if (cloudDiscoverTimer) { clearTimeout(cloudDiscoverTimer); cloudDiscoverTimer = null; }
 }
 function hideDiscover() {
   const box = $('remoteDiscover');
   if (box) box.hidden = true;
 }
-function renderDiscoverList(items) {
+function renderDiscoverList(channel, items) {
+  DISCOVER[channel] = items || [];
   const list = $('rdList');
   if (!list) return;
-  if (!items || !items.length) { list.innerHTML = '<div class="rd-empty">未发现电脑：请确认电脑已打开本页并处于主机模式（未配对）。</div>'; return; }
-  list.innerHTML = items.map(it => {
+  const all = [];
+  DISCOVER.lan.forEach(it => all.push({ code: it.code, ip: it.ip, channel: 'lan' }));
+  DISCOVER.cloud.forEach(it => all.push({ code: it.code, ip: it.ip, channel: 'cloud' }));
+  if (!all.length) { list.innerHTML = '<div class="rd-empty">未发现电脑：请确认电脑已打开本页并处于主机模式（未配对）。</div>'; return; }
+  list.innerHTML = all.map(it => {
     const waiting = LINK.pairRequested === it.code;
-    return '<button class="rd-item' + (waiting ? ' waiting' : '') + '" type="button" data-code="' + it.code + '">' +
+    const tag = it.channel === 'lan' ? '局域网' : '国内云';
+    return '<button class="rd-item' + (waiting ? ' waiting' : '') + '" type="button" data-code="' + it.code + '" data-channel="' + it.channel + '">' +
+      '<span class="rd-chan">' + tag + '</span>' +
       '<span>配对码 ' + it.code + '</span>' +
       (it.ip ? '<span class="rd-ip">' + it.ip + '</span>' : '') +
       '<span class="rd-state">' + (waiting ? '等待电脑同意…' : '点击请求配对') + '</span>' +
@@ -1475,11 +1484,25 @@ function renderDiscoverList(items) {
   list.querySelectorAll('.rd-item').forEach(b => {
     b.addEventListener('click', () => {
       const code = b.getAttribute('data-code');
-      if (!code) return;
-      if (LINK.channel === 'cloud') cloudRequestPair(code);
-      else if (LINK.channel === 'lan') lanRequestPair(code);
+      const channel = b.getAttribute('data-channel');
+      if (!code || !channel) return;
+      requestPairFor({ code: code, channel: channel });
     });
   });
+}
+/* 请求配对：若手机当前通道与设备所在通道不一致，自动切换后配对 */
+function requestPairFor(it) {
+  if (LINK.channel !== it.channel) {
+    linkTeardown();
+    LINK.channel = it.channel;
+    saveChannel(LINK.channel);
+    if (it.channel === 'lan') lanInitPhone();
+    else if (it.channel === 'cloud') cloudInitPhone();
+    renderLinkUI();
+    startDiscover();
+  }
+  if (it.channel === 'cloud') cloudRequestPair(it.code);
+  else if (it.channel === 'lan') lanRequestPair(it.code);
 }
 function markRequesting(code) {
   const list = $('rdList');
@@ -1494,11 +1517,11 @@ function markRequesting(code) {
 }
 /* 局域网：轮询未配对电脑列表 */
 function lanDiscover() {
-  if (LINK.channel !== 'lan' || LINK.mode !== 'remote' || LINK.paired) return;
+  if (LINK.mode !== 'remote' || LINK.paired) return;
   lanFetch(lanBase() + '/api/list').then(r => r.json()).then(d => {
     if (!d.ok) return;
-    renderDiscoverList(d.list || []);
-    discoverTimer = setTimeout(lanDiscover, 3000);
+    renderDiscoverList('lan', d.list || []);
+    lanDiscoverTimer = setTimeout(lanDiscover, 3000);
   }).catch(() => {});
 }
 /* 局域网：向某电脑发送配对请求 */
@@ -1513,14 +1536,14 @@ function lanRequestPair(code) {
 }
 /* 云通道：轮询未配对房间 */
 function cloudDiscover() {
-  if (LINK.channel !== 'cloud' || LINK.mode !== 'remote' || LINK.paired) return;
-  if (typeof AV === 'undefined') return;
+  if (LINK.mode !== 'remote' || LINK.paired) return;
+  if (typeof AV === 'undefined' || !localStorage.getItem('bb_cloud_appid') || !localStorage.getItem('bb_cloud_appkey')) return;
   const q = new AV.Query('Room');
   q.equalTo('paired', false);
   q.limit(10);
   q.find().then(list => {
-    renderDiscoverList((list || []).map(r => ({ code: r.get('code'), ip: '' })));
-    discoverTimer = setTimeout(cloudDiscover, 4000);
+    renderDiscoverList('cloud', (list || []).map(r => ({ code: r.get('code'), ip: '' })));
+    cloudDiscoverTimer = setTimeout(cloudDiscover, 4000);
   }).catch(() => {});
 }
 /* 云通道：发送配对请求 */
@@ -2309,9 +2332,7 @@ function init() {
   $('remoteRollBtn').addEventListener('click', () => { ensureMotion(); phoneShake(); });
   $('rdRefresh').addEventListener('click', () => {
     if (LINK.paired) { toast('已配对，无需再发现'); return; }
-    if (LINK.channel === 'lan') lanDiscover();
-    else if (LINK.channel === 'cloud') cloudDiscover();
-    else toast('「自动」通道不支持自动发现');
+    startDiscover();
   });
   if (LINK.mode === 'remote') {
     $('setupPanel').hidden = true;
