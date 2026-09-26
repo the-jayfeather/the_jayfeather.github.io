@@ -463,6 +463,19 @@ body[data-dice-theme="black"] .die.red .pip.on { background:#D8403A; box-shadow:
 .remote-item.none .ri-res { color:var(--placeholder); }
 .link-code-big { color:var(--gold); font-size:24px; letter-spacing:5px; font-weight:bold; }
 
+/* ==================== 手机互联：发现电脑 ==================== */
+.remote-discover { margin-top:14px; border:1px dashed var(--border-strong); border-radius:14px; padding:10px 12px; }
+.rd-head { display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--sky); margin-bottom:8px; }
+.rd-refresh { font-size:12px; padding:3px 12px; border-radius:9999px; border:1px solid var(--border-strong); background:var(--select-bg); color:var(--ice); font-family:inherit; cursor:pointer; }
+.rd-refresh:hover { background:var(--tianyi); color:var(--ink-deep); }
+.rd-list { display:flex; flex-direction:column; gap:6px; }
+.rd-item { display:flex; align-items:center; gap:8px; width:100%; text-align:left; font-size:13px; padding:8px 12px; border-radius:10px; border:1px solid var(--border-strong); background:var(--select-bg); color:var(--cloud); font-family:inherit; cursor:pointer; }
+.rd-item:hover { border-color:var(--tianyi); }
+.rd-item.waiting { opacity:.75; cursor:default; }
+.rd-ip { font-size:11px; color:var(--placeholder); }
+.rd-state { margin-left:auto; font-size:11px; color:var(--tianyi); flex-shrink:0; }
+.rd-empty { font-size:12px; color:var(--placeholder); padding:4px 2px; line-height:1.6; }
+
 /* ==================== 页脚 ==================== */
 .footer {
   margin-top:auto; padding:16px 0 24px; text-align:center;
@@ -546,6 +559,10 @@ body[data-dice-theme="black"] .die.red .pip.on { background:#D8403A; box-shadow:
       <div class="panel" id="remotePanel" hidden>
         <h3 class="panel-title">骰子模式 <span class="tiny-tag">手机遥控</span></h3>
         <div class="remote-status" id="remoteStatus">未配对：点右上角设置输入配对码</div>
+        <div class="remote-discover" id="remoteDiscover" hidden>
+          <div class="rd-head"><span>发现附近电脑</span><button class="rd-refresh" id="rdRefresh" type="button">刷新</button></div>
+          <div class="rd-list" id="rdList"></div>
+        </div>
         <div class="remote-roll">
           <button class="remote-btn" id="remoteRollBtn" type="button">摇骰子</button>
           <div class="remote-hint" id="remoteHint">配对后摇动手机或点按「摇骰子」，电脑端将同步摇骰。</div>
@@ -936,6 +953,7 @@ const LINK = {
   channel: loadChannel(),
   peer: null, conn: null, code: '',
   paired: false, offline: false, statusText: '', results: [],
+  pairRequested: null, pairPending: false,
   cloud: { room: null, lastSeen: null, backoff: 0 },
   lan: { sid: null, ip: '', backoff: 0 }
 };
@@ -1033,6 +1051,9 @@ function linkTeardown() {
   if (LINK.cloudTimer) { clearTimeout(LINK.cloudTimer); LINK.cloudTimer = null; }
   if (LINK.lanTimer) { clearTimeout(LINK.lanTimer); LINK.lanTimer = null; }
   LINK.paired = false; LINK.code = ''; LINK.offline = false; LINK.results = [];
+  LINK.pairRequested = null; LINK.pairPending = false;
+  stopDiscover();
+  hideDiscover();
   LINK.cloud = { room: null, lastSeen: null, backoff: 0 };
   LINK.lan = { sid: null, ip: '', backoff: 0 };
 }
@@ -1101,10 +1122,11 @@ function linkPush(msg) {
 }
 /* ---------------- 手机端（骰子模式） ---------------- */
 function linkInitPhone() {
-  if (LINK.channel === 'lan') { lanInitPhone(); return; }
-  if (LINK.channel === 'cloud') { cloudInitPhone(); return; }
+  if (LINK.channel === 'lan') { lanInitPhone(); startDiscover(); return; }
+  if (LINK.channel === 'cloud') { cloudInitPhone(); startDiscover(); return; }
   /* auto：PeerJS */
   if (typeof Peer !== 'function') { renderRemoteStatus('互联组件加载失败，请刷新页面'); }
+  startDiscover();
   renderLinkUI();
 }
 function linkPair() {
@@ -1176,6 +1198,7 @@ function cloudInitPC() {
       const room = new AV.Object('Room');
       room.set('code', code);
       room.set('ts', Date.now());
+      room.set('paired', false);
       room.save().then(() => {
         LINK.cloud.room = room;
         LINK.code = code; LINK.paired = false; LINK.offline = false;
@@ -1207,6 +1230,7 @@ function cloudPollPC() {
           const from = obj.get('from');
           if (obj.get('type') === 'shake' && from !== 'pc') phoneTriggeredRoll();
           else if (obj.get('type') === 'join' && from !== 'pc') { LINK.paired = true; }
+          else if (obj.get('type') === 'request' && from !== 'pc' && !LINK.pairPending) showPairRequest();
           changed = true;
         }
       });
@@ -1245,6 +1269,8 @@ function cloudPair() {
     renderLinkUI();
     renderRemoteStatus('已配对，摇动手机或点按「摇骰子」触发电脑');
     toast('配对成功，进入骰子模式');
+    try { room.set('paired', true); room.save(); } catch (e) {}
+    stopDiscover(); hideDiscover();
     cloudWrite('join', 'phone', {}).catch(() => {});
     cloudPollPhone();
   }).catch(() => { toast('网络异常，请检查网络后重试'); });
@@ -1272,6 +1298,11 @@ function cloudPollPhone() {
         if (t > LINK.cloud.lastSeen) {
           const from = obj.get('from');
           const d = obj.get('data') || {};
+          if (from === 'pc' && obj.get('type') === 'accept' && !LINK.paired) {
+            LINK.paired = true; stopDiscover(); hideDiscover(); renderLinkUI();
+            renderRemoteStatus('已配对，摇动手机或点按「摇骰子」触发电脑');
+            toast('配对成功，进入骰子模式');
+          }
           if (from === 'pc' && (d.type === 'result' || d.type === 'status')) handlePhoneMsg(d);
         }
       });
@@ -1328,6 +1359,7 @@ function lanPollPC() {
     if (!d.ok) throw new Error('bad');
     LINK.offline = false;
     if (d.paired && !LINK.paired) { LINK.paired = true; renderLinkUI(); toast('手机已配对，可摇动手机摇骰子'); }
+    if (d.request && !LINK.pairPending) showPairRequest();
     if (d.shake) phoneTriggeredRoll();
     LINK.lan.backoff = 0;
     LINK.lanTimer = setTimeout(lanPollPC, 600);
@@ -1377,6 +1409,11 @@ function lanPollPhone() {
   if (LINK.channel !== 'lan' || LINK.mode !== 'remote' || !LINK.code) return;
   lanFetch(lanBase() + '/api/phone/events?code=' + encodeURIComponent(LINK.code)).then(r => r.json()).then(d => {
     if (!d.ok) throw new Error('bad');
+    if (d.paired && !LINK.paired) {
+      LINK.paired = true; stopDiscover(); hideDiscover(); renderLinkUI();
+      renderRemoteStatus('已配对，摇动手机或点按「摇骰子」触发电脑');
+      toast('配对成功，进入骰子模式');
+    }
     if (d.msg) handlePhoneMsg(d.msg);
     LINK.lan.backoff = 0;
     LINK.lanTimer = setTimeout(lanPollPhone, 500);
@@ -1400,6 +1437,129 @@ function renderLanUI(st, note) {
       ? '未连接互联服务器：请在博饼工具目录运行「node 互联服务器.js」后刷新本页。'
       : '手机与电脑连同一 Wi-Fi，访问 http://' + (LINK.lan.ip || '电脑IP') + ':4567 打开本页并输入配对码。';
   }
+}
+/* ---------------- 手机自动发现电脑 & 配对请求 ---------------- */
+let discoverTimer = null;
+function startDiscover() {
+  if (LINK.paired) return;
+  const box = $('remoteDiscover');
+  if (box) box.hidden = false;
+  const info = $('rdList');
+  if (info) info.innerHTML = '正在搜索附近电脑…';
+  if (LINK.channel === 'auto') {
+    if (info) info.innerHTML = '「自动」通道无法自动发现电脑：请改用「国内云」或「局域网」通道，或在设置中直接输入配对码。';
+    return;
+  }
+  if (LINK.channel === 'lan') lanDiscover();
+  else if (LINK.channel === 'cloud') cloudDiscover();
+}
+function stopDiscover() {
+  if (discoverTimer) { clearTimeout(discoverTimer); discoverTimer = null; }
+}
+function hideDiscover() {
+  const box = $('remoteDiscover');
+  if (box) box.hidden = true;
+}
+function renderDiscoverList(items) {
+  const list = $('rdList');
+  if (!list) return;
+  if (!items || !items.length) { list.innerHTML = '<div class="rd-empty">未发现电脑：请确认电脑已打开本页并处于主机模式（未配对）。</div>'; return; }
+  list.innerHTML = items.map(it => {
+    const waiting = LINK.pairRequested === it.code;
+    return '<button class="rd-item' + (waiting ? ' waiting' : '') + '" type="button" data-code="' + it.code + '">' +
+      '<span>配对码 ' + it.code + '</span>' +
+      (it.ip ? '<span class="rd-ip">' + it.ip + '</span>' : '') +
+      '<span class="rd-state">' + (waiting ? '等待电脑同意…' : '点击请求配对') + '</span>' +
+      '</button>';
+  }).join('');
+  list.querySelectorAll('.rd-item').forEach(b => {
+    b.addEventListener('click', () => {
+      const code = b.getAttribute('data-code');
+      if (!code) return;
+      if (LINK.channel === 'cloud') cloudRequestPair(code);
+      else if (LINK.channel === 'lan') lanRequestPair(code);
+    });
+  });
+}
+function markRequesting(code) {
+  const list = $('rdList');
+  if (!list) return;
+  list.querySelectorAll('.rd-item').forEach(b => {
+    if (b.getAttribute && b.getAttribute('data-code') === code) {
+      b.classList.add('waiting');
+      const st = b.querySelector('.rd-state');
+      if (st) st.textContent = '等待电脑同意…';
+    }
+  });
+}
+/* 局域网：轮询未配对电脑列表 */
+function lanDiscover() {
+  if (LINK.channel !== 'lan' || LINK.mode !== 'remote' || LINK.paired) return;
+  lanFetch(lanBase() + '/api/list').then(r => r.json()).then(d => {
+    if (!d.ok) return;
+    renderDiscoverList(d.list || []);
+    discoverTimer = setTimeout(lanDiscover, 3000);
+  }).catch(() => {});
+}
+/* 局域网：向某电脑发送配对请求 */
+function lanRequestPair(code) {
+  LINK.pairRequested = code;
+  LINK.code = code;
+  markRequesting(code);
+  lanFetch(lanBase() + '/api/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: code }) }).then(r => r.json()).then(d => {
+    if (!d.ok) { LINK.pairRequested = null; toast('请求失败，请重试'); return; }
+    toast('已发送配对请求，等待电脑同意…');
+  }).catch(() => { toast('请求失败，请检查网络'); });
+}
+/* 云通道：轮询未配对房间 */
+function cloudDiscover() {
+  if (LINK.channel !== 'cloud' || LINK.mode !== 'remote' || LINK.paired) return;
+  if (typeof AV === 'undefined') return;
+  const q = new AV.Query('Room');
+  q.equalTo('paired', false);
+  q.limit(10);
+  q.find().then(list => {
+    renderDiscoverList((list || []).map(r => ({ code: r.get('code'), ip: '' })));
+    discoverTimer = setTimeout(cloudDiscover, 4000);
+  }).catch(() => {});
+}
+/* 云通道：发送配对请求 */
+function cloudRequestPair(code) {
+  LINK.pairRequested = code;
+  LINK.code = code;
+  markRequesting(code);
+  cloudWrite('request', 'phone', { code: code }).then(() => toast('已发送配对请求，等待电脑同意…')).catch(() => toast('请求失败，请检查网络'));
+}
+/* 电脑端：收到配对请求 → 弹窗同意/拒绝 */
+function showPairRequest() {
+  if (LINK.pairPending) return;
+  LINK.pairPending = true;
+  openModal('配对请求',
+    '手机 请求与你配对（配对码 <b>' + LINK.code + '</b>），是否同意？',
+    '同意', acceptPair, '拒绝', declinePair);
+}
+function acceptPair() {
+  LINK.pairPending = false;
+  if (LINK.channel === 'lan') {
+    lanFetch(lanBase() + '/api/accept', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sid: LINK.lan.sid }) }).then(r => r.json()).then(d => {
+      if (d && d.ok) { LINK.paired = true; renderLinkUI(); toast('已同意配对，手机可摇骰子'); }
+    }).catch(() => {});
+  } else if (LINK.channel === 'cloud') {
+    if (LINK.cloud.room) { try { LINK.cloud.room.set('paired', true); LINK.cloud.room.save(); } catch (e) {} }
+    cloudWrite('accept', 'pc', {}).then(() => {
+      LINK.paired = true; renderLinkUI(); toast('已同意配对，手机可摇骰子');
+    }).catch(() => {});
+  }
+  closeModal();
+}
+function declinePair() {
+  LINK.pairPending = false;
+  if (LINK.channel === 'lan') {
+    lanFetch(lanBase() + '/api/decline', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sid: LINK.lan.sid }) }).catch(() => {});
+  } else if (LINK.channel === 'cloud') {
+    cloudWrite('decline', 'pc', {}).catch(() => {});
+  }
+  closeModal();
 }
 
 /* 手机端接收电脑推送：中奖结果 / 阶段状态 */
@@ -2147,6 +2307,12 @@ function init() {
 
   /* 手机互联：骰子模式（遥控）⇄ 主机，可在设置中手动切换 */
   $('remoteRollBtn').addEventListener('click', () => { ensureMotion(); phoneShake(); });
+  $('rdRefresh').addEventListener('click', () => {
+    if (LINK.paired) { toast('已配对，无需再发现'); return; }
+    if (LINK.channel === 'lan') lanDiscover();
+    else if (LINK.channel === 'cloud') cloudDiscover();
+    else toast('「自动」通道不支持自动发现');
+  });
   if (LINK.mode === 'remote') {
     $('setupPanel').hidden = true;
     $('gamePanel').hidden = true;
