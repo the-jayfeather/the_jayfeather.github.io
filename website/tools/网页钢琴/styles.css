@@ -1,0 +1,554 @@
+/* ============================================================
+ * 洛天依钢琴 · 天依蓝主题
+ * 深海蓝 #062742 / 导航蓝 #225588 / 天依蓝 #66CCFF
+ * 浅冰蓝 #BBEEFF / 亮蓝 #99DDFF / 云白 #E0F5FF / 墨蓝 #113355
+ * ============================================================ */
+:root {
+  color-scheme: dark;
+  --ink: #E0F5FF;
+  --muted: #99DDFF;
+  --line: rgba(102, 204, 255, 0.18);
+  --panel: rgba(10, 51, 82, 0.85);
+  --accent: #66CCFF;
+  --accent-dark: #225588;
+  --accent-soft: rgba(102, 204, 255, 0.16);
+  --bg: #062742;
+  --bg-deep: #032138;
+  --key-width: 78px;
+  --key-height: 310px;
+  --radius: 18px;
+  --shadow: rgba(34, 85, 136, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--bg);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family:
+    'LXGW WenKai', '霞鹜文楷', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体',
+    'Microsoft YaHei', 'Noto Sans TC', sans-serif;
+  background:
+    radial-gradient(1100px 480px at 85% -10%, rgba(102, 204, 255, 0.12), transparent 60%),
+    radial-gradient(800px 400px at -10% 22%, rgba(34, 85, 136, 0.35), transparent 55%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==================== 顶部导航条（仿博饼游戏.html） ==================== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background-color: var(--accent-dark);
+  box-shadow: 0 2px 10px rgba(34, 85, 136, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  z-index: 1000;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(102, 204, 255, 0.18);
+  border: 1px solid rgba(102, 204, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.brand-name {
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: rgba(187, 238, 255, 0.65);
+  margin-left: 2px;
+  align-self: flex-end;
+  padding-bottom: 4px;
+  white-space: nowrap;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav-badge {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(102, 204, 255, 0.35);
+  background: rgba(102, 204, 255, 0.12);
+  color: var(--sky, #88DDFF);
+  font-size: 0.8rem;
+  font-weight: 650;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.app-shell {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: clamp(96px, 12vh, 120px) 0 44px;
+}
+
+.hero {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin-bottom: 10px;
+  color: var(--sky, #88DDFF);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.18em;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 7vw, 4.4rem);
+  font-weight: 780;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 0 0 24px rgba(102, 204, 255, 0.35);
+}
+
+.hero p {
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 2vw, 1.12rem);
+}
+
+.instrument {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: 0 24px 70px var(--shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.mode-switch {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(17, 51, 85, 0.6);
+}
+
+.mode-button {
+  min-width: 62px;
+  padding: 8px 13px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.mode-button.is-selected {
+  color: #062742;
+  background: var(--accent);
+  box-shadow: 0 2px 8px rgba(102, 204, 255, 0.35);
+}
+
+.toolbar-actions,
+.volume-control {
+  display: flex;
+  align-items: center;
+}
+
+.toolbar-actions {
+  gap: 24px;
+}
+
+.volume-control {
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
+.volume-control input {
+  width: 128px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.volume-control output {
+  width: 3.2em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.stop-button {
+  padding: 10px 15px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ice, #BBEEFF);
+  background: rgba(17, 51, 85, 0.6);
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.stop-button:hover,
+.stop-button:focus-visible {
+  border-color: var(--accent);
+  color: #062742;
+  background: var(--accent);
+}
+
+.piano-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 30px 24px 12px;
+  scrollbar-color: #44688C transparent;
+  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+}
+
+.piano {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px;
+  border-radius: 16px;
+  background: #0b3350;
+  box-shadow: inset 0 2px 6px rgba(3, 33, 56, 0.6);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.piano-key {
+  position: relative;
+  display: flex;
+  flex: 0 0 var(--key-width);
+  width: var(--key-width);
+  height: var(--key-height);
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 8px 22px;
+  overflow: hidden;
+  border: 1px solid rgba(102, 204, 255, 0.25);
+  border-radius: 8px 8px 12px 12px;
+  outline: none;
+  color: #183034;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 72%, #EAF6FF 100%);
+  box-shadow:
+    0 7px 0 #17496e,
+    0 10px 14px rgba(4, 22, 40, 0.5);
+  cursor: pointer;
+  touch-action: pan-x;
+  -webkit-touch-callout: none;
+  transition: transform 70ms ease, box-shadow 70ms ease, background 100ms ease;
+}
+
+.piano-key::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--key-accent, transparent);
+  content: "";
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+
+.piano-key.is-active {
+  transform: translateY(6px);
+  color: #062742;
+  background: linear-gradient(180deg, #D6F1FF 0%, #A8DFFF 100%);
+  box-shadow:
+    0 1px 0 #17496e,
+    0 3px 8px rgba(102, 204, 255, 0.35),
+    inset 0 0 0 2px rgba(102, 204, 255, 0.45);
+}
+
+.piano-key.is-active::before,
+.piano-key:focus-visible::before {
+  opacity: 1;
+}
+
+.piano-key:focus-visible {
+  box-shadow:
+    0 7px 0 #17496e,
+    0 10px 14px rgba(4, 22, 40, 0.5),
+    inset 0 0 0 2px var(--accent);
+}
+
+.key-labels {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.key-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.note-label {
+  min-width: 2.2em;
+  font-size: 1.08rem;
+  font-weight: 760;
+  letter-spacing: -0.02em;
+}
+
+.computer-key {
+  min-width: 28px;
+  padding: 3px 6px;
+  border: 1px solid rgba(102, 204, 255, 0.25);
+  border-radius: 6px;
+  color: #2E5F7E;
+  background: rgba(230, 246, 255, 0.85);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.instrument-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 52px;
+  padding: 10px 24px 16px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.instrument-footer p {
+  margin: 0;
+}
+
+.shortcut-hints {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.hint-pill {
+  padding: 5px 12px;
+  border: 1px solid rgba(102, 204, 255, 0.22);
+  border-radius: 9999px;
+  background: rgba(17, 51, 85, 0.6);
+  color: var(--ice, #BBEEFF);
+  font-size: 0.78rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+#audio-status[data-state="ready"]::before {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  content: "";
+  vertical-align: 1px;
+  box-shadow: 0 0 8px rgba(102, 204, 255, 0.6);
+}
+
+#audio-status[data-state="error"] {
+  color: #F87171;
+}
+
+noscript {
+  display: block;
+  margin: 20px 0;
+  color: #F87171;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --key-width: 66px;
+    --key-height: 276px;
+  }
+
+  .navbar {
+    padding: 0 14px;
+  }
+
+  .brand-name {
+    font-size: 19px;
+    letter-spacing: 1px;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .app-shell {
+    width: min(100% - 24px, 1180px);
+    padding-top: 94px;
+  }
+
+  .instrument {
+    border-radius: 20px;
+  }
+
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .mode-switch {
+    align-self: flex-start;
+  }
+
+  .toolbar-actions {
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .volume-control {
+    flex: 1;
+  }
+
+  .volume-control input {
+    width: min(32vw, 150px);
+  }
+
+  .piano-scroll {
+    padding: 24px 14px 12px;
+  }
+
+  .piano {
+    min-width: max-content;
+  }
+
+  .instrument-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px 16px 16px;
+  }
+
+  .shortcut-hints {
+    display: none;
+  }
+}
+
+@media (max-width: 430px) {
+  :root {
+    --key-width: 62px;
+    --key-height: 250px;
+  }
+
+  .app-shell {
+    width: 100%;
+    padding: 88px 0 0;
+  }
+
+  .hero {
+    padding: 0 18px;
+    margin-bottom: 24px;
+  }
+
+  .instrument {
+    border-right: 0;
+    border-left: 0;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .toolbar-actions {
+    align-items: flex-end;
+  }
+
+  .volume-control {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 5px 8px;
+  }
+
+  .volume-control input {
+    order: 3;
+    width: 100%;
+  }
+
+  .stop-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
