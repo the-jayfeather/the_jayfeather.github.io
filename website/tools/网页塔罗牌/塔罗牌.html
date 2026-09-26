@@ -1,0 +1,999 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>塔罗占卜 · 在线塔罗</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='20' height='20' rx='6' fill='%23062742' stroke='%2366CCFF' stroke-width='1.6'/%3E%3Cpath d='M12 4.5l2 4.6 5 .4-3.7 3.3 1.1 4.9L12 15.2l-4.4 2.5 1.1-4.9L5 9.5l5-.4z' fill='%2366CCFF'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=LXGW+WenKai&display=swap">
+<style>
+/* ============================================================
+ * 塔罗牌 · 天依蓝主题
+ * 配色沿用站点 style.css：
+ * 深海蓝 #062742 / 导航蓝 #225588 / 天依蓝 #66CCFF
+ * 浅冰蓝 #BBEEFF / 亮蓝 #99DDFF / 云白 #E0F5FF / 墨蓝 #113355
+ * 逆位金 #FFD98A
+ * ============================================================ */
+:root {
+  --bg:#062742; --nav:#225588; --tianyi:#66CCFF; --ice:#BBEEFF;
+  --sky:#99DDFF; --cyan:#88DDFF; --cloud:#E0F5FF; --ink:#113355; --ink-deep:#032138;
+  --card-bg:rgba(187,238,255,.20);
+  --card-solid:rgba(187,238,255,.85);
+  --border:rgba(102,204,255,.18);
+  --border-strong:rgba(102,204,255,.22);
+  --shadow:rgba(34,85,136,.28);
+  --bar:rgba(20,35,55,.92);
+  --select-bg:rgba(40,70,105,.6);
+  --scroll:#44688C; --placeholder:#739CBF;
+  --gold:#FFD98A; --gold-soft:#FFE3AE; --gold-deep:#F4C96B;
+  --radius:18px;
+}
+* { box-sizing:border-box; }
+[hidden] { display:none !important; }
+html { height:100%; }
+body {
+  min-height:100%; margin:0;
+  background:var(--bg); color:var(--cloud);
+  font-family:'LXGW WenKai','霞鹜文楷','Kaiti SC','STKaiti','KaiTi','楷体','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--scroll); border-radius:4px; }
+::-webkit-scrollbar-thumb:hover { background:var(--tianyi); }
+
+/* ==================== 顶部导航栏 ==================== */
+.navbar {
+  position:fixed; top:0; left:0; right:0; height:64px;
+  background-color:var(--nav);
+  box-shadow:0 2px 10px rgba(34,85,136,.4);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 22px; z-index:1000;
+}
+.brand { display:flex; align-items:center; gap:12px; user-select:none; }
+.brand-icon {
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(102,204,255,.18);
+  border:1px solid rgba(102,204,255,.35);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.brand-icon svg { width:22px; height:22px; }
+.brand-name {
+  font-family:'Microsoft YaHei','微软雅黑',sans-serif;
+  font-size:24px; font-weight:bold; color:var(--sky); letter-spacing:2px;
+}
+.brand-sub { font-size:12px; color:rgba(187,238,255,.65); margin-left:2px; align-self:flex-end; padding-bottom:4px; }
+.nav-right { display:flex; align-items:center; gap:14px; }
+.view-tabs {
+  display:flex; background:var(--bar);
+  border:1px solid var(--border-strong); border-radius:9999px; padding:4px; gap:4px;
+}
+.view-tab {
+  border:none; background:transparent; color:var(--ice);
+  font-family:inherit; font-size:14px; padding:6px 18px; border-radius:9999px;
+  cursor:pointer; transition:all .2s ease; white-space:nowrap;
+}
+.view-tab:hover { background:rgba(102,204,255,.18); }
+.view-tab.active { background:var(--tianyi); color:var(--ink-deep); }
+.settings-btn {
+  display:flex; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:12px; flex-shrink:0;
+  background:var(--select-bg); border:1px solid var(--border-strong);
+  cursor:pointer; transition:all .2s ease; color:var(--ice);
+}
+.settings-btn svg { width:20px; height:20px; }
+.settings-btn:hover {
+  background:var(--tianyi); color:var(--ink-deep);
+  box-shadow:0 4px 14px rgba(102,204,255,.4);
+}
+
+/* ==================== 主布局 ==================== */
+.main { padding-top:64px; min-height:100vh; }
+.view { display:none; }
+.view.active { display:block; }
+.content { max-width:1180px; margin:0 auto; padding:18px 20px 30px; }
+
+/* ==================== 通用卡片 ==================== */
+.panel {
+  background-color:var(--card-bg); border-radius:var(--radius);
+  border:1px solid var(--border); box-shadow:0 6px 22px var(--shadow);
+  padding:16px 20px; margin-bottom:16px;
+}
+.panel-title {
+  font-size:17px; color:var(--ice); margin:0 0 12px 0;
+  display:flex; align-items:center; gap:8px; letter-spacing:1px;
+}
+.panel-title::before {
+  content:''; width:9px; height:9px; border-radius:50%;
+  background-color:var(--tianyi); flex-shrink:0;
+}
+.panel-title .tiny-tag { margin-left:auto; font-size:12px; color:rgba(187,238,255,.55); font-weight:normal; }
+
+/* ==================== 占卜：模式选择 ==================== */
+.mode-row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.mode-label { font-size:15px; color:var(--sky); letter-spacing:1px; }
+.radio-group { display:flex; gap:8px; flex-wrap:wrap; }
+.radio-pill {
+  padding:6px 16px; border-radius:9999px; border:1px solid var(--border-strong);
+  background:var(--select-bg); color:var(--ice); font-size:13px; font-family:inherit;
+  cursor:pointer; transition:all .18s ease;
+}
+.radio-pill:hover { background:rgba(102,204,255,.25); }
+.radio-pill.active { background:var(--tianyi); color:var(--ink-deep); border-color:var(--tianyi); }
+.status-hint { font-size:14px; color:var(--placeholder); line-height:1.8; margin-top:4px; }
+
+/* ==================== 占卜：抽牌按钮 ==================== */
+.draw-wrap { margin:18px 0 6px; text-align:center; }
+.draw-btn {
+  width:100%; max-width:420px; height:58px; border-radius:9999px; border:none; cursor:pointer;
+  background:linear-gradient(120deg, var(--tianyi), #4FB8E8);
+  color:var(--ink-deep); font-family:inherit; font-size:20px; font-weight:bold; letter-spacing:5px;
+  box-shadow:0 6px 20px rgba(102,204,255,.35);
+  transition:all .18s ease;
+}
+.draw-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 10px 26px rgba(102,204,255,.45); }
+.draw-btn:active:not(:disabled) { transform:translateY(0); }
+.draw-btn:disabled { opacity:.5; cursor:not-allowed; box-shadow:none; }
+
+/* ==================== 占卜：洗牌舞台 ==================== */
+.stage-wrap { position:relative; }
+.stage {
+  position:relative; height:420px; margin-top:10px;
+  background:radial-gradient(ellipse at 50% 42%, rgba(102,204,255,.12), rgba(6,39,66,.16) 74%);
+  border:1px solid var(--border); border-radius:22px; overflow:hidden;
+}
+.fcard {
+  position:absolute; width:46px; height:78px; border-radius:7px;
+  background-color:var(--ink);
+  box-shadow:0 3px 10px rgba(3,33,56,.55), inset 0 0 0 1px rgba(102,204,255,.22);
+  cursor:pointer; will-change:transform,opacity;
+  transition:transform .95s cubic-bezier(.34,.6,.24,1), opacity .35s ease;
+  user-select:none; -webkit-user-select:none;
+}
+.fcard img { width:100%; height:100%; object-fit:cover; border-radius:6px; display:block; }
+.fcard.shuf { transition:none; }
+@keyframes jitter {
+  0%   { transform:translate(0,0) rotate(0deg); }
+  25%  { transform:translate(3px,-4px) rotate(2.5deg); }
+  50%  { transform:translate(-4px,3px) rotate(-3deg); }
+  75%  { transform:translate(3px,4px) rotate(2deg); }
+  100% { transform:translate(-2px,-2px) rotate(-1.5deg); }
+}
+.fcard.jittering { animation:jitter .16s ease-in-out infinite alternate; }
+.stage-hint {
+  position:absolute; left:0; right:0; bottom:12px; text-align:center;
+  font-size:14px; color:var(--placeholder); letter-spacing:1px; pointer-events:none;
+}
+
+/* ==================== 占卜：结果区 ==================== */
+.result-area {
+  display:flex; gap:22px; justify-content:center; align-items:flex-start;
+  flex-wrap:wrap; margin-top:22px; min-height:318px;
+}
+.slot { display:flex; flex-direction:column; align-items:center; gap:10px; width:178px; }
+.slot-label {
+  font-size:15px; color:var(--sky); letter-spacing:3px;
+  padding:3px 12px; border-radius:9999px;
+  background:var(--select-bg); border:1px solid var(--border-strong);
+}
+.slot-label.filled { color:var(--ice); border-color:var(--tianyi); }
+.r-card { width:150px; height:250px; perspective:900px; }
+.r-inner {
+  position:relative; width:100%; height:100%; transform-style:preserve-3d;
+  transition:transform .9s cubic-bezier(.4,.1,.2,1);
+}
+.r-card.flip .r-inner { transform:rotateY(180deg); }
+.r-face {
+  position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  border-radius:12px; overflow:hidden;
+  border:1px solid var(--border-strong);
+  box-shadow:0 8px 24px rgba(3,33,56,.5);
+  background:var(--ink);
+}
+.r-back { background-image:var(--card-back, url('cards/classic/back.png')); background-size:cover; background-position:center; }
+.r-front { transform:rotateY(180deg); }
+.r-face img { width:100%; height:100%; object-fit:cover; transform:scale(1.06); }
+.r-front img.rev { transform:scale(1.06) rotate(180deg); }
+.r-tag {
+  padding:4px 18px; border-radius:9999px; font-size:14px; letter-spacing:2px;
+  opacity:0; transform:translateY(4px); transition:all .35s ease;
+}
+.r-tag.show { opacity:1; transform:none; }
+.r-tag.up { background:var(--tianyi); color:var(--ink-deep); }
+.r-tag.down { background:var(--gold); color:var(--ink-deep); }
+.r-name { font-size:15px; color:var(--ice); min-height:22px; }
+.r-meaning {
+  font-size:13.5px; color:var(--sky); line-height:1.55; text-align:center;
+  min-height:20px; padding:0 6px; max-width:172px;
+}
+.again-wrap { margin:20px 0 4px; text-align:center; }
+.tool-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:36px; height:38px; padding:0 18px; border-radius:12px;
+  background:var(--select-bg); border:1px solid var(--border-strong);
+  color:var(--ice); font-family:inherit; font-size:15px; cursor:pointer;
+  transition:all .2s ease; letter-spacing:1px;
+}
+.tool-btn:hover { background:rgba(102,204,255,.25); border-color:var(--tianyi); }
+.tool-btn:disabled { opacity:.38; cursor:not-allowed; }
+.tool-btn.primary { background:var(--tianyi); color:var(--ink-deep); font-weight:bold; }
+.tool-btn.primary:hover { background:var(--ice); }
+.tool-btn.big-start { height:46px; padding:0 42px; font-size:17px; border-radius:9999px; box-shadow:0 6px 18px rgba(102,204,255,.35); }
+
+/* ==================== 牌库：筛选 ==================== */
+.chips-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.g-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(128px,1fr));
+  gap:14px;
+}
+.gtile {
+  background:var(--card-bg); border:1px solid var(--border);
+  border-radius:14px; padding:9px 9px 7px; cursor:pointer;
+  transition:all .2s ease; text-align:center;
+}
+.gtile:hover { border-color:var(--tianyi); transform:translateY(-3px); box-shadow:0 8px 20px rgba(102,204,255,.18); }
+.gt-art { aspect-ratio:3/5; border-radius:9px; overflow:hidden; background:var(--ink); }
+.gt-art img { width:100%; height:100%; object-fit:cover; transform:scale(1.06); display:block; }
+.gt-name { font-size:13.5px; color:var(--ice); padding:7px 0 3px; }
+.gt-en { font-size:10.5px; color:var(--placeholder); }
+
+/* ==================== 详情页 ==================== */
+.d-back { margin:6px 0 14px; }
+.d-top { display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start; }
+.d-art { width:270px; flex-shrink:0; }
+.d-art-img {
+  aspect-ratio:3/5; border-radius:16px; overflow:hidden;
+  border:1px solid var(--border-strong); box-shadow:0 10px 30px rgba(3,33,56,.5);
+  background:var(--ink); position:relative;
+}
+.d-art-img img { width:100%; height:100%; object-fit:cover; transform:scale(1.06); display:block; }
+.d-theme-pills { display:flex; justify-content:center; gap:8px; margin-top:12px; }
+.d-theme-pills .radio-pill { padding:4px 14px; font-size:12.5px; }
+.d-info { flex:1; min-width:300px; }
+.d-name { margin:0 0 2px; font-size:30px; color:var(--ice); letter-spacing:2px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.d-en { font-size:15px; color:var(--placeholder); letter-spacing:1px; }
+.d-badges { display:flex; gap:8px; margin:10px 0 16px; flex-wrap:wrap; }
+.d-badge {
+  font-size:13px; padding:3px 14px; border-radius:9999px;
+  background:var(--select-bg); border:1px solid var(--border-strong); color:var(--ice);
+}
+.d-badge.el { border-color:var(--tianyi); color:var(--sky); }
+.d-cols { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.d-col {
+  background:var(--card-bg); border:1px solid var(--border); border-radius:16px;
+  padding:16px 20px;
+}
+.d-col.up-col { border-color:rgba(102,204,255,.4); }
+.d-col.down-col { border-color:rgba(255,217,138,.4); }
+.d-col h3 {
+  margin:0 0 10px; font-size:19px; letter-spacing:2px;
+  display:flex; align-items:center; gap:8px;
+}
+.d-col.up-col h3 { color:var(--ice); }
+.d-col.down-col h3 { color:var(--gold-soft); }
+.d-col h3::before { content:''; width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.d-col.up-col h3::before { background:var(--tianyi); }
+.d-col.down-col h3::before { background:var(--gold); }
+.d-row { margin:11px 0; }
+.d-row .k { font-size:13.5px; color:var(--sky); letter-spacing:1px; margin-bottom:3px; }
+.d-row .v { font-size:15px; color:var(--cloud); line-height:1.75; }
+.d-row.first { margin-top:4px; }
+@media (max-width:760px) { .d-cols { grid-template-columns:1fr; } }
+
+/* ==================== 模态框 ==================== */
+.modal-mask {
+  position:fixed; inset:0; background:rgba(4,22,40,.72); backdrop-filter:blur(6px);
+  z-index:1100; display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .22s ease;
+}
+.modal-mask.open { opacity:1; pointer-events:auto; }
+.modal {
+  width:520px; max-width:calc(100vw - 32px); max-height:84vh; overflow-y:auto;
+  background:#0A3352; border:1px solid var(--border-strong); border-radius:20px;
+  box-shadow:0 16px 50px rgba(4,22,40,.6); padding:22px 24px;
+  transform:translateY(14px) scale(.98); transition:transform .22s ease;
+}
+.modal-mask.open .modal { transform:none; }
+.modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.modal-head h2 {
+  margin:0; font-size:20px; color:var(--ice); letter-spacing:2px;
+  display:flex; align-items:center; gap:8px;
+}
+.modal-head h2::before { content:''; width:10px; height:10px; border-radius:50%; background:var(--tianyi); }
+.modal-close {
+  width:34px; height:34px; border-radius:10px; border:1px solid var(--border-strong);
+  background:var(--select-bg); color:var(--ice); font-size:18px; cursor:pointer;
+  font-family:inherit; line-height:1;
+  display:flex; align-items:center; justify-content:center; transition:all .2s ease;
+}
+.modal-close:hover { background:var(--tianyi); color:var(--ink-deep); }
+.modal-body { font-size:15px; color:var(--cloud); line-height:1.9; }
+.set-title { font-size:14px; color:var(--sky); padding:8px 4px 2px; letter-spacing:1px; }
+.set-sep { border-top:1px dashed rgba(102,204,255,.25); margin:16px 0 6px; }
+.set-row {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:14px; padding:8px 4px; font-size:14px; color:var(--cloud);
+}
+.set-note { font-size:12px; color:var(--placeholder); padding:0 4px 6px; line-height:1.7; }
+.theme-preview { display:flex; justify-content:center; align-items:center; gap:14px; padding:12px 0 6px; }
+.tp-card {
+  width:64px; aspect-ratio:3/5; border-radius:9px; overflow:hidden;
+  border:2px solid var(--border-strong); background:var(--ink);
+  transition:all .2s ease; opacity:.7;
+}
+.tp-card.active { border-color:var(--tianyi); opacity:1; box-shadow:0 4px 16px rgba(102,204,255,.3); }
+.tp-card img { width:100%; height:100%; object-fit:cover; display:block; }
+.tp-name { text-align:center; font-size:12px; color:var(--placeholder); margin-top:6px; }
+.switch { position:relative; display:inline-block; width:40px; height:22px; flex-shrink:0; cursor:pointer; }
+.switch input { opacity:0; width:0; height:0; }
+.switch .slider {
+  position:absolute; inset:0;
+  background:var(--select-bg); border:1px solid var(--border-strong);
+  border-radius:9999px; transition:all .22s ease;
+}
+.switch .slider::before {
+  content:''; position:absolute; left:2px; top:2px;
+  width:16px; height:16px; border-radius:50%;
+  background:var(--placeholder); transition:all .22s ease;
+}
+.switch input:checked + .slider { background:var(--tianyi); border-color:var(--tianyi); }
+.switch input:checked + .slider::before { transform:translateX(18px); background:var(--ink-deep); }
+
+/* ==================== Toast ==================== */
+.toast {
+  position:fixed; left:50%; bottom:36px;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--bar); border:1px solid var(--border-strong); color:var(--ice);
+  padding:10px 22px; border-radius:9999px; font-size:14px;
+  box-shadow:0 8px 26px rgba(4,22,40,.55);
+  opacity:0; pointer-events:none; transition:all .28s ease;
+  z-index:1300; max-width:80vw; text-align:center;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ==================== 页脚 ==================== */
+.footer {
+  margin-top:auto; padding:16px 0 24px; text-align:center;
+  color:var(--sky); font-size:12.5px; border-top:1px solid var(--border);
+}
+
+/* ==================== 响应式 ==================== */
+@media (max-width:640px) {
+  .brand-sub { display:none; }
+  .brand-name { font-size:20px; }
+  .view-tab { padding:8px 14px; font-size:14px; min-width:44px; min-height:44px; }
+  .radio-pill { min-width:48px; min-height:44px; display:inline-flex; align-items:center; justify-content:center; }
+  .modal-close { width:40px; height:40px; }
+  .settings-btn { width:44px; height:44px; }
+.stage { height:330px; }
+  .result-area { gap:14px; }
+  .slot { width:148px; }
+  .r-card { width:120px; height:200px; }
+  .g-grid { grid-template-columns:repeat(auto-fill,minmax(98px,1fr)); gap:10px; }
+  .d-art { width:210px; }
+  .content { padding:14px 14px 24px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { transition:none !important; animation:none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 顶部导航 ==================== -->
+<nav class="navbar">
+  <div class="brand">
+    <span class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#66CCFF" stroke-width="1.8" stroke-linejoin="round">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="4"/>
+        <path d="M12 6l1.8 4.2 4.6.4-3.5 3 1 4.6L12 15.6l-3.9 2.6 1-4.6-3.5-3 4.6-.4z" fill="#66CCFF" stroke="none"/>
+      </svg>
+    </span>
+    <span class="brand-name">一只松鸦羽的塔罗牌</span>
+    <span class="brand-sub">网页版 · 在线塔罗</span>
+  </div>
+  <div class="nav-right">
+    <div class="view-tabs" id="viewTabs">
+      <button class="view-tab active" data-view="divine" type="button">网页占卜</button>
+      <button class="view-tab" data-view="gallery" type="button">卡牌介绍</button>
+    </div>
+    <button class="settings-btn" id="settingsBtn" type="button" aria-label="设置">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3.2"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- ==================== 视图：网页占卜 ==================== -->
+  <section id="view-divine" class="view active" data-view="divine">
+    <div class="content">
+      <div class="panel">
+        <h3 class="panel-title">抽卡模式 <span class="tiny-tag">选择牌阵</span></h3>
+        <div class="mode-row">
+          <span class="mode-label">牌阵</span>
+          <div class="radio-group" id="modeGroup">
+            <button class="radio-pill active" data-mode="three" type="button">往今未三牌阵</button>
+            <button class="radio-pill" data-mode="single" type="button">单张牌随机抽</button>
+          </div>
+        </div>
+        <div class="status-hint" id="modeHint">三牌阵：在扇形牌堆中依次点选 3 张，从左到右代表「过去 · 现在 · 未来」。</div>
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">塔罗占卜 <span class="tiny-tag" id="animTag">动画开</span></h3>
+        <div class="draw-wrap">
+          <button class="draw-btn" id="drawBtn" type="button">开始抽牌</button>
+        </div>
+        <div class="stage-wrap">
+          <div class="stage" id="stage"></div>
+          <div class="stage-hint" id="stageHint">点击「开始抽牌」，进入洗牌流程</div>
+        </div>
+        <div class="result-area" id="resultArea"></div>
+        <div class="again-wrap" id="againWrap" hidden>
+          <button class="tool-btn primary big-start" id="againBtn" type="button">再抽一次</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 视图：卡牌介绍 ==================== -->
+  <section id="view-gallery" class="view" data-view="gallery">
+    <div class="content">
+      <div class="panel">
+        <h3 class="panel-title">卡牌介绍 <span class="tiny-tag" id="galleryCount"></span></h3>
+        <div class="chips-row" id="galleryChips">
+          <button class="radio-pill active" data-filter="all" type="button">全部</button>
+          <button class="radio-pill" data-filter="major" type="button">大阿卡纳</button>
+          <button class="radio-pill" data-filter="wands" type="button">权杖组</button>
+          <button class="radio-pill" data-filter="cups" type="button">圣杯组</button>
+          <button class="radio-pill" data-filter="swords" type="button">宝剑组</button>
+          <button class="radio-pill" data-filter="pentacles" type="button">星币组</button>
+        </div>
+        <div class="g-grid" id="galleryGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 视图：卡牌详情 ==================== -->
+  <section id="view-detail" class="view" data-view="detail">
+    <div class="content">
+      <div class="d-back">
+        <button class="tool-btn" id="detailBack" type="button">← 返回牌库</button>
+      </div>
+      <div class="d-top">
+        <div class="d-art">
+          <div class="d-art-img" id="detailArt"></div>
+          <div class="d-theme-pills" id="detailThemePills">
+            <button class="radio-pill active" data-dt="classic" type="button">经典风格</button>
+            <button class="radio-pill" data-dt="simple" type="button">简约风格</button>
+          </div>
+        </div>
+        <div class="d-info">
+          <h2 class="d-name" id="detailName"></h2>
+          <div class="d-badges" id="detailBadges"></div>
+          <div class="d-cols" id="detailCols"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">塔罗牌 · 天依蓝 · 仅供娱乐</footer>
+
+<!-- ==================== 设置模态框 ==================== -->
+<div class="modal-mask" id="settingsModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="settingsTitle">设置</h2>
+      <button class="modal-close" id="settingsClose" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body" id="settingsBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ==================== 基础工具 ==================== */
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+let toastTimer = null;
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ==================== 卡牌数据（78 张） ==================== */
+const CARDS = [
+{f:'00-fool',n:'愚者',e:'The Fool',g:'major',el:'风',u:'自由、新开始、冒险、纯真',r:'鲁莽、轻率、停滞不前、缺乏规划',uc:'适合尝试新领域或新机会，行动力强，但别忽视细节',ul:'以轻松心态开启感情，真诚大胆地表达自己',uw:'可能有新的进账渠道，风险与回报并存，别赌上全部',rc:'冲动决定易生变数，先摸清形势再行动',rl:'逃避承诺或忽冷忽热，需要更认真对待对方',rw:'财务计划混乱，忌投机与冲动消费'},
+{f:'01-magician',n:'魔术师',e:'The Magician',g:'major',el:'风',u:'创造力、行动力、掌握技能、心想事成',r:'欺骗、技不如人、空有想法、机会浪费',uc:'才华与资源都在手，主动出击推动项目，易获认可',ul:'充满魅力与吸引力，主动表白或制造浪漫会有效',uw:'点子能变现，谈判与理财都有利，善用手中资源',rc:'华而不实或准备不足，谨防画饼与夸大',rl:'花言巧语需警惕，关系可能流于表面',rw:'小心诈骗与虚假信息，投资前多方核实'},
+{f:'02-priestess',n:'女祭司',e:'The High Priestess',g:'major',el:'水',u:'直觉、潜意识、静观其变、等待时机',r:'忽略直觉、心浮气躁、秘密浮现',uc:'信息不透明时先按兵不动，观察学习再出手',ul:'感情含蓄内敛，倾听内心感受，别急着挑明',uw:'财运偏保守，适合储蓄与稳健理财，留意隐藏信息',rc:'错失良机或信息误判，别被表象迷惑',rl:'关系中有未说出口的话，需要坦诚沟通',rw:'财务状况不明朗，谨防糊涂账'},
+{f:'03-empress',n:'皇后',e:'The Empress',g:'major',el:'土',u:'丰盛、滋养、母性、艺术与享受',r:'过度依赖、物质至上、忽视自我',uc:'事业发展稳健，团队氛围好，适合创意与审美相关工作',ul:'感情温柔被呵护，享受被爱也学会付出',uw:'财运不错，正财稳定，舍得为自己和他人花钱',rc:'安于现状可能停滞，注意别被琐事拖累',rl:'过度付出失去自我，或关系变得依赖',rw:'开销超支，注意收支平衡'},
+{f:'04-emperor',n:'皇帝',e:'The Emperor',g:'major',el:'火',u:'权威、秩序、掌控、责任感',r:'固执、控制欲强、专断、逃避责任',uc:'适合承担责任、立规矩定制度，理性推进事务',ul:'关系讲究稳定与承诺，对方可靠但需给空间',uw:'财富靠实力积累，适合稳健长期投资',rc:'太强势易招致反弹，刚愎自用会误事',rl:'关系太强势缺少温情，小心控制欲伤人',rw:'财务上忌独断冒进，注意大额决策'},
+{f:'05-hierophant',n:'教皇',e:'The Hierophant',g:'major',el:'土',u:'传统、教导、精神指引、贵人相助',r:'僵化、教条、迷信权威、被束缚',uc:'适合遵循行业规范或求助前辈，培训与考证有利',ul:'感情讲究责任与名分，可能走向见家长或结婚',uw:'财运循规蹈矩，贵人指点带来机会',rc:'流程繁琐或观念陈旧，需打破常规',rl:'感情平淡模式化，缺少激情需用心经营',rw:'财路狭窄，别被旧思维限制'},
+{f:'06-lovers',n:'恋人',e:'The Lovers',g:'major',el:'风',u:'爱情、选择、和谐、价值观契合',r:'分歧、摇摆不定、错位、感情危机',uc:'面临重要选择（合作或岗位），跟随内心与价值观',ul:'两情相悦、关系升温，是确立关系的好时机',uw:'财运与人脉相关，合作生财，忌贪心',rc:'选择困难或合作生变，需要明确优先级',rl:'感情出现裂痕或信任隐患，坦诚沟通',rw:'合伙钱财易起纠纷，先立规矩再谈钱'},
+{f:'07-chariot',n:'战车',e:'The Chariot',g:'major',el:'水',u:'意志力、胜利、前进、掌控方向',r:'失控、方向迷失、冲动、半途而废',uc:'目标明确全力冲刺，项目有望获胜或晋升',ul:'关系需要双方同频前进，热情主动会有进展',uw:'财运进取，敢于行动就有回报，忌冒进',rc:'急于求成反生变故，注意根基不稳',rl:'相处节奏失衡，一方太强势易争吵',rw:'资金周转紧张，避免加杠杆'},
+{f:'08-strength',n:'力量',e:'Strength',g:'major',el:'火',u:'勇气、耐心、以柔克刚、内在力量',r:'信心不足、意志薄弱、勉强硬撑',uc:'用耐心与实力化解难题，以柔克刚更有效',ul:'温柔坚定的爱，包容彼此，关系稳固',uw:'财运转好但需耐心守成，不贪快钱',rc:'硬扛不如借力，先稳住心态再处理',rl:'缺乏安全感或情绪内耗，需要多沟通',rw:'财务压力大，别逞强借贷'},
+{f:'09-hermit',n:'隐者',e:'The Hermit',g:'major',el:'土',u:'内省、独处、寻找真理、沉淀',r:'孤立、逃避现实、过度保守',uc:'适合闭关学习、深耕专业，独当一面前先修炼内功',ul:'感情需要空间，静下来想清楚自己要什么',uw:'财运偏低调，适合研究与规划，忌大动作',rc:'闭门造车易脱节，该求助时别硬撑',rl:'关系疏离或异地，主动一点才能拉近距离',rw:'理财宜保守，先观察再行动'},
+{f:'10-wheel',n:'命运之轮',e:'Wheel of Fortune',g:'major',el:'火',u:'转机、循环、好运、时机到来',r:'运势反复、错失时机、原地打转',uc:'时来运转，把握新机遇，顺势而为易成功',ul:'缘分转好，可能遇到对的人或关系迎来转机',uw:'财运有起伏但整体向好，顺势投资有回报',rc:'运气不稳，别把所有希望押在一次机会上',rl:'感情起伏不定，随缘但别躺平',rw:'财运波动，避免追涨杀跌'},
+{f:'11-justice',n:'正义',e:'Justice',g:'major',el:'风',u:'公正、平衡、因果、依法办事',r:'不公、失衡、逃避责任、决定草率',uc:'合同、法务、审计类事务有利，权衡后做决定',ul:'关系讲究公平对等，把话说清楚，承诺兑现',uw:'钱财来得干净，账目分明，稳健积累',rc:'流程或条款上有坑，仔细核对再签字',rl:'付出与回报不对等，别一味迁就',rw:'税务或借贷需谨慎，账目要清楚'},
+{f:'12-hanged-man',n:'倒吊人',e:'The Hanged Man',g:'major',el:'水',u:'换位思考、牺牲、暂停、新视角',r:'无谓牺牲、拖延、钻牛角尖',uc:'暂时的停滞是为了看清方向，换个角度看问题',ul:'为爱付出与等待，慢下来反而更懂彼此',uw:'财运暂缓，蛰伏期不宜大动作，眼光放长',rc:'项目卡壳时别硬扛，调整思路再走',rl:'单方面付出易失衡，别当冤大头',rw:'资金被占用，耐心等回款'},
+{f:'13-death',n:'死神',e:'Death',g:'major',el:'水',u:'结束、转变、放下、重生',r:'抗拒改变、拖延结束、旧事纠缠',uc:'旧项目或岗位结束迎来新机会，果断断舍离',ul:'一段关系走到转折点，结束或升华都需要勇气',uw:'旧的财务模式终结，重新布局有转机',rc:'拖泥带水会错失转型窗口，别怕清零',rl:'关系面临考验，逃避只会让问题发酵',rw:'破财消灾，及时止损比硬撑强'},
+{f:'14-temperance',n:'节制',e:'Temperance',g:'major',el:'火',u:'平衡、调节、耐心、融会贯通',r:'失衡、急躁、挥霍、节奏紊乱',uc:'稳扎稳打、量力而行，资源调度得当见成效',ul:'关系细水长流，磨合出舒适节奏，用心经营',uw:'收支平衡、适度理财，细水长流能积累',rc:'节奏被打乱或用力过猛，回归平衡',rl:'情绪起伏影响相处，多点耐心与体谅',rw:'消费失控，注意预算管理'},
+{f:'15-devil',n:'恶魔',e:'The Devil',g:'major',el:'土',u:'欲望、诱惑、束缚、沉迷',r:'挣脱束缚、看清执念、戒除不良习惯',uc:'警惕利益诱惑与灰色地带，权力欲望要克制',ul:'关系中占有欲与控制欲需正视，别被执念绑架',uw:'偏财诱惑多，谨防陷阱与过度投机',rc:'被短期利益绑架，远离灰色操作',rl:'关系可能不健康或过度依赖，理性评估',rw:'容易破财，克制冲动消费与借贷'},
+{f:'16-tower',n:'高塔',e:'The Tower',g:'major',el:'火',u:'突变、崩塌、觉醒、推倒重来',r:'虚惊一场、危机缓释、慢慢重建',uc:'突发变动打乱计划，与其硬撑不如顺势重建',ul:'关系中的矛盾被引爆，诚实面对才可能修复',uw:'财务有突发波动，提前留好缓冲金',rc:'危机也是转机，先稳住现金流再谈发展',rl:'争吵或信任危机，冷静沟通别逃避',rw:'投资波动大，控制仓位，留足后手'},
+{f:'17-star',n:'星星',e:'The Star',g:'major',el:'风',u:'希望、疗愈、灵感、信念',r:'失望、理想化破灭、信心动摇',uc:'前景明朗，创意与愿景带来机会，保持信念',ul:'感情充满希望与治愈，真诚相待会开花结果',uw:'财运转好，正财稳定，长期投入有回报',rc:'计划偏理想化，落地前多验证',rl:'期待过高易失望，给彼此时间',rw:'财运回暖但别好高骛远，脚踏实地'},
+{f:'18-moon',n:'月亮',e:'The Moon',g:'major',el:'水',u:'不安、幻觉、潜意识、迷茫',r:'拨云见日、真相大白、克服恐惧',uc:'信息不透明、方向模糊，先观察求证再行动',ul:'感情中猜疑与不安，别让想象放大了问题',uw:'财务迷雾多，谨防被画饼或信息差',rc:'项目走势不明，多打听少下注',rl:'多疑易伤感情，开诚布公最重要',rw:'理财需谨慎，警惕虚假消息'},
+{f:'19-sun',n:'太阳',e:'The Sun',g:'major',el:'火',u:'成功、喜悦、活力、光明',r:'略有挫败、光芒被遮挡、乐极生悲',uc:'事业高光时刻，表现受认可，成果可期',ul:'感情热烈明朗，公开幸福，关系大步向前',uw:'财运旺盛，收入可观，阳光下的钱最踏实',rc:'小挫折不碍大局，保持自信别飘',rl:'关系整体甜蜜，注意别因得意忽视对方感受',rw:'财来财去要留余粮，别过度挥霍'},
+{f:'20-judgement',n:'审判',e:'Judgement',g:'major',el:'火',u:'觉醒、复盘、召唤、重新出发',r:'自我怀疑、逃避复盘、判决延迟',uc:'过往积累迎来验收，复盘后重新出发有结果',ul:'关系经历沉淀后重生，放下旧账向前看',uw:'财务清算时刻，旧账结清，重新规划',rc:'成果验收期，认真复盘别逃避',rl:'放下过去的心结，关系才能升级',rw:'结清旧账后轻装上阵，宜做财务规划'},
+{f:'21-world',n:'世界',e:'The World',g:'major',el:'土',u:'圆满、完成、整合、新阶段',r:'未完成、缺憾、停滞在最后一步',uc:'项目收尾圆满，成果落地，可开启更大格局',ul:'关系趋于圆满稳定，是修成正果的好征兆',uw:'财富积累到一个台阶，适合锁定收益再出发',rc:'差一口气，收尾工作别松懈',rl:'关系趋于稳定但需防平淡，多制造共同目标',rw:'守住果实，避免最后一刻失手'},
+{f:'22-wands-ace',n:'权杖首牌',e:'Ace of Wands',g:'wands',el:'火',u:'新开始、灵感迸发、行动火种',r:'起步受阻、热情消退、拖延',uc:'新项目或新岗位的火种点燃，大胆开干',ul:'心动的开始，主动表达有好消息',uw:'新的财源启动，敢投入才有回报',rc:'想法多落地少，先定小目标',rl:'三分钟热度，稳住再升温',rw:'理财忌头脑发热，先规划再出手'},
+{f:'23-wands-2',n:'权杖二',e:'Two of Wands',g:'wands',el:'火',u:'规划、远见、权衡、格局打开',r:'犹豫不决、计划空转、眼高手低',uc:'适合做长远规划与资源盘点，格局决定收益',ul:'在两地或两种选择间权衡，感情需要远见',uw:'为长远目标布局，先舍后得',rc:'光想不做，抓紧落地',rl:'对关系摇摆，先想清楚自己',rw:'理财规划先行，忌随大流'},
+{f:'24-wands-3',n:'权杖三',e:'Three of Wands',g:'wands',el:'火',u:'扩张、远行、机遇初现、探索',r:'延误、准备不足、扩张受阻',uc:'业务向外拓展，异地、出海、新市场有机会',ul:'异地恋或远行带来新缘分',uw:'跨区域、跨领域投资有潜力，眼光放远',rc:'步子别迈太大，准备要充足',rl:'距离产生问题，多沟通维系',rw:'异地项目资金别全押，分散风险'},
+{f:'25-wands-4',n:'权杖四',e:'Four of Wands',g:'wands',el:'火',u:'庆祝、稳定、归属、小成',r:'根基不稳、庆祝过早、回归平淡',uc:'团队氛围好、项目阶段性成功，值得庆祝',ul:'关系稳定温馨，适合见家人或同居',uw:'财富小有积累，安居乐业的好兆头',rc:'别高兴太早，补足短板',rl:'感情进入平稳期，用心保鲜',rw:'守成为主，别因得意乱投资'},
+{f:'26-wands-5',n:'权杖五',e:'Five of Wands',g:'wands',el:'火',u:'竞争、冲突、练习、内部摩擦',r:'和解、避免冲突、以和为贵',uc:'职场竞争激烈，把摩擦变成磨炼',ul:'小争吵别上纲上线，沟通化解',uw:'竞争性收益，凭实力说话',rc:'内耗严重，别站错队',rl:'口角频繁，退一步海阔天空',rw:'小心同行竞争，稳住基本盘'},
+{f:'27-wands-6',n:'权杖六',e:'Six of Wands',g:'wands',el:'火',u:'胜利、认可、好消息、凯旋',r:'延迟的认可、骄傲自满、奖励缩水',uc:'努力被看见，升职加薪或项目获胜可期',ul:'关系迎来高光，公开或告白有利',uw:'财运上扬，业绩奖金可期',rc:'别飘，保持谦逊冲刺',rl:'甜蜜但别得意忘形',rw:'落袋为安，及时锁定收益'},
+{f:'28-wands-7',n:'权杖七',e:'Seven of Wands',g:'wands',el:'火',u:'坚守、迎难而上、立场坚定',r:'勉强支撑、以卵击石、放弃防守',uc:'竞争压力大，守住阵地就是胜利',ul:'关系中有外力干扰，坚定立场',uw:'守住现金流，别被收割',rc:'硬扛不如智取，借力打力',rl:'外界杂音多，信任对方',rw:'防诈骗防跟风，稳住心态'},
+{f:'29-wands-8',n:'权杖八',e:'Eight of Wands',g:'wands',el:'火',u:'迅速推进、消息到来、效率起飞',r:'仓促、延迟、失控的加速',uc:'项目快速推进，多线并行抓效率',ul:'感情迅速升温，消息往来频繁',uw:'资金流动加快，短线机会多',rc:'快中出错，检查细节',rl:'进展太快，留点喘息空间',rw:'短线进出宜谨慎，勿追涨'},
+{f:'30-wands-9',n:'权杖九',e:'Nine of Wands',g:'wands',el:'火',u:'韧性、坚持、边界、最后的防线',r:'疲惫、防备过重、孤立无援',uc:'坚持到关键节点，防住最后一波',ul:'感情里带伤坚持，学会示弱',uw:'守财阶段，稳字当头',rc:'身心俱疲，学会求助',rl:'防备太多伤感情，敞开心扉',rw:'资金吃紧，节流为先'},
+{f:'31-wands-10',n:'权杖十',e:'Ten of Wands',g:'wands',el:'火',u:'责任、负担、重任在肩、厚积薄发',r:'负担过重、逃避责任、放下包袱',uc:'任务繁重但成果在望，咬牙扛完有收获',ul:'关系里承担太多，需要分担',uw:'财富靠勤恳积累，负重前行终有报',rc:'学会授权，别大包大揽',rl:'别一个人扛，共同面对',rw:'债务压力大，量入为出'},
+{f:'32-wands-page',n:'权杖侍者',e:'Page of Wands',g:'wands',el:'火',u:'消息、探索、热情、学徒心态',r:'消息延迟、三分钟热度、缺乏经验',uc:'新领域入门，保持学习心态有好消息',ul:'青涩心动的消息，循序渐进',uw:'小额进账或新机会，先学习再投入',rc:'经验不足别硬接，先练手',rl:'关系还不成熟，慢慢来',rw:'小钱试水，别急着加码'},
+{f:'33-wands-knight',n:'权杖骑士',e:'Knight of Wands',g:'wands',el:'火',u:'行动、冒险、热情外放、冲刺',r:'鲁莽、急躁、三分钟热度',uc:'行动派，快速出击抢占先机',ul:'热情直白的追求，但别吓到对方',uw:'机会来去快，快进快出',rc:'冲动决策要刹车，稳住节奏',rl:'忽冷忽热要收敛，稳定输出',rw:'投机风险高，落袋为安'},
+{f:'34-wands-queen',n:'权杖皇后',e:'Queen of Wands',g:'wands',el:'火',u:'自信、魅力、热情温暖、事业心',r:'嫉妒、自我中心、热情透支',uc:'自信与领导力在线，女性贵人或自身魅力助事业',ul:'热烈自信的魅力，关系充满阳光',uw:'财运由人脉与魅力带动，注意适度',rc:'别太自我，多听团队意见',rl:'强势需柔情调和',rw:'开销随心情，理性一点'},
+{f:'35-wands-king',n:'权杖国王',e:'King of Wands',g:'wands',el:'火',u:'魄力、领袖、成熟、开创格局',r:'专断、急功近利、德不配位',uc:'有魄力扛大梁，领导力被认可',ul:'成熟稳重的担当，关系里有主心骨',uw:'善于开拓财源，投资有魄力',rc:'别刚愎自用，留倾听空间',rl:'大男子主义要克制',rw:'大手笔投资要测算风险'},
+{f:'36-cups-ace',n:'圣杯首牌',e:'Ace of Cups',g:'cups',el:'水',u:'情感开启、爱意流动、灵感',r:'情感干涸、爱意堵塞、情绪化',uc:'团队情感融洽，创意与共情带来机会',ul:'爱情的种子发芽，心动时刻来临',uw:'财运随人情而动，善待身边人',rc:'别情绪化决策，理性搭配',rl:'敞开心扉，回应对方的好意',rw:'人情往来开销，量力而行'},
+{f:'37-cups-2',n:'圣杯二',e:'Two of Cups',g:'cups',el:'水',u:'双向奔赴、合作、吸引力、联结',r:'失衡、分手征兆、貌合神离',uc:'合作默契，找到对的搭档',ul:'两情相悦，关系升温，用心经营',uw:'合伙生财，双赢局面',rc:'合作里各怀心思，摊开谈',rl:'关系失衡，及时沟通调整',rw:'合伙账目分明，亲兄弟明算账'},
+{f:'38-cups-3',n:'圣杯三',e:'Three of Cups',g:'cups',el:'水',u:'庆祝、友谊、社交、喜事',r:'过度享乐、社交疲惫、表面热闹',uc:'团队庆祝或团建带来的归属感，人缘好',ul:'桃花热闹，聚会中遇缘分',uw:'社交带来机会，人脉即财脉',rc:'别沉迷人情，效率优先',rl:'热闹背后感情要真诚',rw:'应酬开销大，控制预算'},
+{f:'39-cups-4',n:'圣杯四',e:'Four of Cups',g:'cups',el:'水',u:'倦怠、审视、重新选择、内省',r:'走出倦怠、重新振作、发现新机会',uc:'对现状疲惫，值得停下来重新选择',ul:'感情平淡期，别忽视对方的心意',uw:'财运平稳但缺动力，寻找新方向',rc:'调整状态，警惕机会流失',rl:'别把对方的付出当理所当然',rw:'理财需要新思路'},
+{f:'40-cups-5',n:'圣杯五',e:'Five of Cups',g:'cups',el:'水',u:'失落、遗憾、聚焦失去',r:'走出阴霾、接纳、修复',uc:'暂时的挫折别放大，回头看看已有资源',ul:'分手或争吵后的低潮，给彼此时间',uw:'亏损后的复盘，别陷在情绪里',rc:'及时止损，重新出发',rl:'放下过去，原谅才能向前',rw:'财务低谷期，稳住别慌'},
+{f:'41-cups-6',n:'圣杯六',e:'Six of Cups',g:'cups',el:'水',u:'怀旧、赠予、天真、照顾',r:'沉溺过去、幼稚、依赖心',uc:'前辈提携或老客户回流，念旧情有好运',ul:'重温美好，青梅竹马或旧情复燃',uw:'有人愿意帮助或赠予，懂得感恩',rc:'别活在过去，往前看',rl:'过度依赖对方，学会独立',rw:'靠人情不如靠自己'},
+{f:'42-cups-7',n:'圣杯七',e:'Seven of Cups',g:'cups',el:'水',u:'选择、幻想、想象空间',r:'清醒、落地、从空想回到现实',uc:'诱惑多、选择多，别被画饼迷惑',ul:'暧昧与想象多，别急着下定义',uw:'机会很多但虚的也多，擦亮眼',rc:'聚焦一个方向深耕',rl:'认清现实，脚踏实地',rw:'警惕虚假投资信息'},
+{f:'43-cups-8',n:'圣杯八',e:'Eight of Cups',g:'cups',el:'水',u:'放下、前行、追寻意义',r:'徘徊、不敢离开、留恋舒适区',uc:'告别旧平台，走出去才有新天地',ul:'离开消耗自己的关系，是成长',uw:'放下沉没成本，轻装前行',rc:'走得果断，准备要足',rl:'想走又不敢，先做准备再行动',rw:'止损后重新布局'},
+{f:'44-cups-9',n:'圣杯九',e:'Nine of Cups',g:'cups',el:'水',u:'满足、如愿、独乐乐',r:'贪心不足、得意忘形、孤立',uc:'成果满足，职业幸福感在线',ul:'感情满足，享受当下',uw:'财运小满，知足常乐',rc:'别固步自封，保持进取',rl:'别只顾自己，多顾及对方',rw:'小富即安，忌贪大'},
+{f:'45-cups-10',n:'圣杯十',e:'Ten of Cups',g:'cups',el:'水',u:'圆满、家庭、幸福结局',r:'家庭矛盾、关系破裂、表面圆满',uc:'团队如家，事业与生活双圆满',ul:'关系圆满，适合谈婚论嫁',uw:'家底殷实，财运安稳',rc:'家庭与工作平衡，别顾此失彼',rl:'家庭矛盾需正视，别回避',rw:'家族资产注意管理与传承'},
+{f:'46-cups-page',n:'圣杯侍者',e:'Page of Cups',g:'cups',el:'水',u:'灵感、讯息、温柔、好奇',r:'情绪化、消息延迟、心不在焉',uc:'带着好奇与温柔推进，创意有惊喜',ul:'恋爱的讯息，含蓄表达',uw:'小额进账或灵感变现，先尝试',rc:'专注力不够，收心做事',rl:'情绪化伤人，学会表达',rw:'冲动小消费，理性一点'},
+{f:'47-cups-knight',n:'圣杯骑士',e:'Knight of Cups',g:'cups',el:'水',u:'邀请、浪漫、追随内心、温和行动',r:'情感回避、迟到、理想化',uc:'温和推进，机会由情面带来',ul:'浪漫的靠近，答应或主动都合适',uw:'靠感觉投资要谨慎，理性跟上',rc:'行动太慢会错过窗口',rl:'别逃避沟通，勇敢面对',rw:'感性消费多，设个预算线'},
+{f:'48-cups-queen',n:'圣杯皇后',e:'Queen of Cups',g:'cups',el:'水',u:'共情、滋养、直觉、包容',r:'情绪内耗、过度付出、自我怀疑',uc:'共情力是优势，团队凝聚力强',ul:'温柔包容的爱，关系被好好滋养',uw:'财运稳定，善理财细水长流',rc:'别被情绪带偏，坚定立场',rl:'付出有度，先爱自己',rw:'花钱买安心要适度'},
+{f:'49-cups-king',n:'圣杯国王',e:'King of Cups',g:'cups',el:'水',u:'情绪稳定、关怀、沉稳包容',r:'情感压抑、冷漠、情绪操纵',uc:'稳重的领导力，用关怀凝聚团队',ul:'成熟可靠的伴侣，安全感在线',uw:'财富稳健，善于守成',rc:'别太严肃，多点人情味',rl:'情绪藏着掖着，打开心扉',rw:'理财稳健，忌人情借贷'},
+{f:'50-swords-ace',n:'宝剑首牌',e:'Ace of Swords',g:'swords',el:'风',u:'清明、真相、突破、决断',r:'混乱、偏见、误判',uc:'思路清晰，一针见血，适合拍板决策',ul:'坦诚沟通，把话说开反而更近',uw:'凭认知与判断力获利，信息就是财富',rc:'别钻牛角尖，分清主次',rl:'言语伤人，三思而后说',rw:'决策前多核实信息'},
+{f:'51-swords-2',n:'宝剑二',e:'Two of Swords',g:'swords',el:'风',u:'僵持、权衡、蒙眼抉择',r:'放开纠结、做出决定、破局',uc:'两难僵局，收集足够信息后尽快拍板',ul:'感情里僵持不下，别逃避，给彼此答案',uw:'投资犹豫期，先观望再定',rc:'优柔寡断最耗能，设定决策期限',rl:'放下防备，关系才有出口',rw:'别在信息不足时下注'},
+{f:'52-swords-3',n:'宝剑三',e:'Three of Swords',g:'swords',el:'风',u:'心痛、真相伤人、疗愈开始',r:'释怀、伤口愈合、和解',uc:'批评或挫败虽痛，却是成长的药',ul:'伤心难过是暂时的，允许自己难过',uw:'财务上有损失，吸取教训向前看',rc:'把伤痛变成经验，别自我攻击',rl:'时间治愈一切，原谅自己',rw:'亏过的钱当学费，勿再犯'},
+{f:'53-swords-4',n:'宝剑四',e:'Four of Swords',g:'swords',el:'风',u:'休息、沉淀、休整、充电',r:'被迫中断、躺平太久、恢复缓慢',uc:'暂停不是退步，休整后效率更高',ul:'给关系放个假，静一静更懂珍惜',uw:'资金躺平期，别动大钱',rc:'劳逸结合，别透支自己',rl:'沉默久了要开口',rw:'现金为王，静待机会'},
+{f:'54-swords-5',n:'宝剑五',e:'Five of Swords',g:'swords',el:'风',u:'争执、胜负欲、不体面的赢',r:'放下输赢、止损、重新和解',uc:'赢了面子输了里子，想想值不值',ul:'争吵没赢家，先低头不丢人',uw:'恶性竞争伤财，及时抽身',rc:'别为竞争迷失方向',rl:'胜负心放一放，珍惜眼前人',rw:'止损离场，别恋战'},
+{f:'55-swords-6',n:'宝剑六',e:'Six of Swords',g:'swords',el:'风',u:'过渡、疗愈之旅、逐渐平静',r:'困在原地、逃避迁移、风浪未平',uc:'换环境或换赛道，平稳过渡',ul:'带彼此走出阴霾，走向平静',uw:'财务上的过渡期，稳中求变',rc:'过渡期别焦虑，循序渐进',rl:'逃避解决不了问题',rw:'转账、搬迁类财务安排妥当'},
+{f:'56-swords-7',n:'宝剑七',e:'Seven of Swords',g:'swords',el:'风',u:'策略、迂回、独行、小心机',r:'谎言败露、坦白、正大光明',uc:'巧劲比蛮力有效，但别走捷径',ul:'有小秘密，坦诚为上',uw:'防人之心，别贪小便宜',rc:'耍小聪明易翻车，走正道',rl:'信任珍贵，别试探底线',rw:'谨防合同或账目上的猫腻'},
+{f:'57-swords-8',n:'宝剑八',e:'Eight of Swords',g:'swords',el:'风',u:'束缚、自我设限、看不清出口',r:'挣脱枷锁、找回力量、解放',uc:'困局多是想象出来的，先动起来',ul:'别让猜忌绑住自己，勇敢表达',uw:'资金受限的感觉，先盘点再破局',rc:'列出限制清单，逐条破除',rl:'心结打开，关系就松了',rw:'灵活调配，别自我设限'},
+{f:'58-swords-9',n:'宝剑九',e:'Nine of Swords',g:'swords',el:'风',u:'焦虑、失眠、担忧过度',r:'放下焦虑、求助、天亮',uc:'压力大，把事情拆小，别吓自己',ul:'敏感多虑，沟通是解药',uw:'财务焦虑时先做清单，别慌',rc:'必要时寻求帮助，你不是一个人',rl:'把担心说出口，对方才知道',rw:'焦虑不解决债务，行动才有用'},
+{f:'59-swords-10',n:'宝剑十',e:'Ten of Swords',g:'swords',el:'风',u:'终局、触底、放手',r:'绝处逢生、缓慢恢复、重生',uc:'最坏已经过去，之后都是向上',ul:'一段关系的结束是解脱的开始',uw:'财务触底，反弹在即',rc:'清零心态，轻装上阵',rl:'结束也是新开始，别回头',rw:'底部之后别慌，慢慢修复'},
+{f:'60-swords-page',n:'宝剑侍者',e:'Page of Swords',g:'swords',el:'风',u:'好奇、机敏、新信息、观察',r:'八卦、口无遮拦、纸上谈兵',uc:'信息灵通，学习快，适合研究分析',ul:'试探性的好感，话说清楚',uw:'消息能换钱，但别轻信小道',rc:'多学多问，别急于表现',rl:'说话过脑，别传闲话',rw:'核实消息来源再行动'},
+{f:'61-swords-knight',n:'宝剑骑士',e:'Knight of Swords',g:'swords',el:'风',u:'果断、冲刺、直言不讳',r:'莽撞、急躁、话不饶人',uc:'快刀斩乱麻，效率惊人但别伤人',ul:'直球表达，冲劲足但别逼太紧',uw:'快进快出，执行力换收益',rc:'刹车慢一点，多听一句',rl:'说话太冲，温柔一点',rw:'短线操作注意风控'},
+{f:'62-swords-queen',n:'宝剑皇后',e:'Queen of Swords',g:'swords',el:'风',u:'独立、清醒、边界感、洞察',r:'冷漠、尖刻、拒人千里',uc:'理性决策，独立女性或导师型贵人有助',ul:'清醒独立，界限分明，别拒爱于门外',uw:'凭头脑赚钱，账目清晰',rc:'理性有余，人情不足',rl:'高冷适度，别冻伤感情',rw:'精明理财，忌刻薄待人'},
+{f:'63-swords-king',n:'宝剑国王',e:'King of Swords',g:'swords',el:'风',u:'权威、逻辑、专业、公正',r:'独断、冷酷、滥用权威',uc:'专业判断服众，适合定规则与裁决',ul:'理性大过感性，爱要说出口',uw:'凭借专业与策略获利',rc:'放下身段，听进逆耳之言',rl:'别用道理赢了感情',rw:'投资重逻辑，忌感情用事'},
+{f:'64-pentacles-ace',n:'星币首牌',e:'Ace of Pentacles',g:'pentacles',el:'土',u:'机会、财富种子、实在收获',r:'机会溜走、手紧、物质焦虑',uc:'新offer或新项目带来实在收益',ul:'稳定靠谱的开始，细水长流',uw:'财运开启，储蓄投资的好时机',rc:'抓牢眼前机会，务实执行',rl:'用行动证明真心',rw:'种下财富种子，忌乱花钱'},
+{f:'65-pentacles-2',n:'星币二',e:'Two of Pentacles',g:'pentacles',el:'土',u:'平衡、多线程、灵活周转',r:'手忙脚乱、失衡、周转不灵',uc:'多任务并行，学会优先级',ul:'感情与事业两头顾，别顾此失彼',uw:'现金流灵活调配，周转为王',rc:'别接太多活，分清主次',rl:'陪伴比忙碌更重要',rw:'记账理财，量入为出'},
+{f:'66-pentacles-3',n:'星币三',e:'Three of Pentacles',g:'pentacles',el:'土',u:'合作、技艺、认可、打磨',r:'内耗、标准下降、团队不和',uc:'团队协作出成果，手艺被认可',ul:'一起经营生活，共同成长',uw:'凭本事赚钱，合作生财',rc:'分工明确，别单打独斗',rl:'一起规划未来，别各顾各',rw:'专业变现，口碑是资产'},
+{f:'67-pentacles-4',n:'星币四',e:'Four of Pentacles',g:'pentacles',el:'土',u:'守住、储蓄、掌控、稳定',r:'吝啬、僵化、抓太紧',uc:'守住资源与岗位，稳字当头',ul:'患得患失伤感情，给彼此安全感',uw:'储蓄意识强，攒钱有道',rc:'别太保守，适度进取',rl:'放开一点，爱不是占有',rw:'理财求稳，但要留流动性'},
+{f:'68-pentacles-5',n:'星币五',e:'Five of Pentacles',g:'pentacles',el:'土',u:'匮乏、低谷、孤立、求助',r:'走出低谷、回暖、重建',uc:'资源紧张期，咬牙过去就是转机',ul:'一起熬过低谷，感情更真',uw:'财务状况紧张，开源节流',rc:'别硬扛，主动找支持',rl:'困境里更需抱团取暖',rw:'低谷期忌大额支出'},
+{f:'69-pentacles-6',n:'星币六',e:'Six of Pentacles',g:'pentacles',el:'土',u:'给予、公平、资助、流动',r:'失衡、索取过度、债务纠纷',uc:'资源分配公平，贵人愿意帮衬',ul:'付出有回应，关系讲究你来我往',uw:'收支平衡，可能有分红或资助',rc:'别只看眼前利，维护口碑',rl:'别把对方的付出当应该',rw:'借贷往来要写清楚'},
+{f:'70-pentacles-7',n:'星币七',e:'Seven of Pentacles',g:'pentacles',el:'土',u:'等待、评估、耕耘、耐心',r:'焦虑收成、半途而废、重新评估',uc:'耕耘期，评估投入产出，再决定加码还是转向',ul:'感情需要时间，别急着要结果',uw:'投资需要耐心，长线是金',rc:'定期复盘，调整策略',rl:'给关系成长的时间',rw:'守仓或定投，忌频繁操作'},
+{f:'71-pentacles-8',n:'星币八',e:'Eight of Pentacles',g:'pentacles',el:'土',u:'精进、打磨、专注、工匠心',r:'敷衍、浮躁、低效',uc:'深耕专业，手艺精进带来溢价',ul:'用心经营，细节打动人心',uw:'靠专业赚稳钱，技能就是资产',rc:'专注一事，做到极致',rl:'用陪伴和细节表达爱',rw:'技能变现，稳扎稳打'},
+{f:'72-pentacles-9',n:'星币九',e:'Nine of Pentacles',g:'pentacles',el:'土',u:'自足、成就、优雅、独当一面',r:'依赖他人、挥霍、底气不足',uc:'事业独立有成，享受成果',ul:'独立而优雅，感情里也不依附',uw:'财来自足，会赚也会享受',rc:'居安思危，保持进取',rl:'别用优越感伤对方',rw:'享受成果但要留储备'},
+{f:'73-pentacles-10',n:'星币十',e:'Ten of Pentacles',g:'pentacles',el:'土',u:'传承、家族、长久基业、富足',r:'家族负担、守成不易、遗产纠纷',uc:'根基稳固，长期主义见成效',ul:'关系奔着长久去，家族认可',uw:'财富传承与积累，家底殷实',rc:'创新别断，守住基业',rl:'家族关系需用心维系',rw:'长远规划，考虑传承'},
+{f:'74-pentacles-page',n:'星币侍者',e:'Page of Pentacles',g:'pentacles',el:'土',u:'学习、务实、新机会、储蓄',r:'拖延、浮躁、计划搁浅',uc:'新技能新岗位的机会，踏实学习',ul:'务实真诚的好感，行动胜言语',uw:'开始储蓄理财，小钱变大钱',rc:'落实计划，别只停留在想',rl:'用行动表达心意',rw:'记账攒钱，戒掉月光'},
+{f:'75-pentacles-knight',n:'星币骑士',e:'Knight of Pentacles',g:'pentacles',el:'土',u:'踏实、可靠、按部就班、守成',r:'停滞、固执、按兵不动',uc:'稳扎稳打，慢工出细活',ul:'可靠安稳的依靠，节奏慢但真',uw:'稳健投资，细水长流',rc:'别太慢，机会要抓',rl:'多点主动与浪漫',rw:'定投储蓄，忌一夜暴富心态'},
+{f:'76-pentacles-queen',n:'星币皇后',e:'Queen of Pentacles',g:'pentacles',el:'土',u:'务实、持家、丰盛、关怀',r:'操心过度、物质焦虑、失衡',uc:'实务能力强，把资源打理得井井有条',ul:'温暖务实的爱，把家照顾好',uw:'善于打理财富，财商在线',rc:'别操心太多，学会放手',rl:'别用物质衡量感情',rw:'理财稳妥，注意家庭开销'},
+{f:'77-pentacles-king',n:'星币国王',e:'King of Pentacles',g:'pentacles',el:'土',u:'财富、稳健、经营有道、兑现',r:'贪婪、守财奴、格局受限',uc:'经营与管理的王者，财富地位双收',ul:'可靠富足，用实力给安全感',uw:'财运亨通，善于让钱生钱',rc:'格局再大一点，分享成果',rl:'别让铜臭味盖过真心',rw:'稳健增值，回馈身边的人'}
+];
+const GROUP_NAMES = { major:'大阿卡纳', wands:'权杖组', cups:'圣杯组', swords:'宝剑组', pentacles:'星币组' };
+const EL_NAMES = { major:'大阿卡纳', wands:'火', cups:'水', swords:'风', pentacles:'土' };
+
+/* ==================== 全局状态 ==================== */
+const state = {
+  theme: 'classic',        // classic | simple
+  anim: true,              // 是否播放洗牌动画
+  mode: 'three',           // three | single
+  deck: [],                // 洗牌后的 78 张牌（随机顺序 + 随机正逆位）
+  picks: [],               // 已抽出的牌 {card, rev}
+  nextPick: 0,             // 下一个应点的槽位索引
+  busy: false,
+  fcards: [],              // 舞台上的面朝下卡片元素
+  tween: null,
+  stageW: 0, stageH: 0,
+  prevSizes: { w:0, h:0 }
+};
+const CARD_BACK = { classic: 'cards/classic/back.png', simple: 'cards/simple/back.png' };
+const cardImg = (c, rev) => {
+  const s = state.theme;
+  const u = `cards/${s}/${c.f}.png`;
+  return `<img src="${u}" alt="${c.n}"${rev ? ' class="rev"' : ''}>`;
+};
+const setTheme = t => {
+  state.theme = t;
+  document.body.style.setProperty('--card-back', `url('${CARD_BACK[t]}')`);
+  syncThemeUI();
+};
+
+/* ==================== 视图路由 ==================== */
+const VIEWS = ['divine', 'gallery', 'detail'];
+function switchView(v) {
+  VIEWS.forEach(x => {
+    $('view-' + x).classList.toggle('active', x === v);
+  });
+  document.querySelectorAll('.view-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === v);
+  });
+  window.scrollTo({ top: 0 });
+  if (v === 'gallery') renderGallery();
+  if (v === 'divine') layoutFan(true);
+}
+function renderCurrentRoute() {
+  const h = location.hash;
+  if (h.startsWith('#card-')) {
+    const id = h.slice(6);
+    const c = CARDS.find(x => x.f === id);
+    if (c) { renderDetail(c); switchView('detail'); return; }
+  }
+  const v = h.slice(1);
+  if (VIEWS.includes(v)) switchView(v); else switchView('divine');
+}
+
+/* ==================== 设置弹窗 ==================== */
+function openSettings() {
+  const b = $('settingsBody');
+  b.innerHTML = `
+    <div class="set-title">牌面主题风格</div>
+    <div class="theme-preview" id="themePreview">
+      <div class="tp-card ${state.theme === 'classic' ? 'active' : ''}" data-tp="classic">
+        <img src="cards/classic/01-magician.png" alt="经典风格">
+        <div class="tp-name">经典风格</div>
+      </div>
+      <div class="tp-card ${state.theme === 'simple' ? 'active' : ''}" data-tp="simple">
+        <img src="cards/simple/01-magician.png" alt="简约风格">
+        <div class="tp-name">简约风格</div>
+      </div>
+    </div>
+    <div class="set-note">经典风格为传统韦特塔罗插画；简约风格为适配本站配色的简笔画线稿。</div>
+    <div class="set-sep"></div>
+    <div class="set-title">洗牌动画</div>
+    <div class="set-row">
+      <span>抽牌时播放「打乱 → 聚拢 → 扇形」动画</span>
+      <label class="switch"><input type="checkbox" id="animSwitch" ${state.anim ? 'checked' : ''}><span class="slider"></span></label>
+    </div>
+    <div class="set-note">关闭后直接跳至摆成扇形，节省时间。</div>
+  `;
+  $('settingsModal').classList.add('open');
+  b.querySelectorAll('.tp-card').forEach(el => {
+    el.addEventListener('click', () => {
+      setTheme(el.dataset.tp);
+      b.querySelectorAll('.tp-card').forEach(x => x.classList.toggle('active', x === el));
+      toast(`已切换为${el.dataset.tp === 'classic' ? '经典' : '简约'}风格`);
+    });
+  });
+  $('animSwitch').addEventListener('change', e => {
+    state.anim = e.target.checked;
+    $('animTag').textContent = state.anim ? '动画开' : '动画关';
+  });
+}
+function closeSettings() { $('settingsModal').classList.remove('open'); }
+
+/* ==================== 占卜：洗牌 ==================== */
+function startDraw() {
+  if (state.busy) return;
+  state.busy = true;
+  state.picks = [];
+  state.nextPick = 0;
+  $('drawBtn').disabled = true;
+  $('againWrap').hidden = true;
+  $('resultArea').innerHTML = '';
+  $('stage').hidden = false;
+  const stage = $('stage');
+  state.stageW = stage.clientWidth;
+  state.stageH = stage.clientHeight;
+  state.prevSizes = { w: state.stageW, h: state.stageH };
+
+  // 洗牌：随机顺序 + 随机正逆位
+  state.deck = CARDS.map((c, i) => ({ card: c, rev: Math.random() < 0.5 }))
+    .sort(() => Math.random() - 0.5);
+
+  if (!state.anim) { buildFanDeck(); return; }
+
+  // —— 阶段 1：整副牌打乱 ——
+  stage.innerHTML = '';
+  state.fcards = [];
+  const fw = 46, fh = 78;
+  const midX = state.stageW / 2 - fw / 2;
+  const midY = state.stageH / 2 - fh / 2 - 8;
+  state.deck.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'fcard';
+    d.style.left = midX + 'px';
+    d.style.top = midY + 'px';
+    d.style.transform = 'rotate(' + ((Math.random() - 0.5) * 7) + 'deg)';
+    d.innerHTML = `<img src="${CARD_BACK[state.theme]}">`;
+    stage.appendChild(d);
+    state.fcards.push(d);
+  });
+  $('stageHint').textContent = '整副牌正在打乱……';
+  state.fcards.forEach(d => d.classList.add('shuf'));
+  awaitF(140);
+  state.fcards.forEach(d => d.classList.remove('shuf'));
+  state.fcards.forEach((d, i) => {
+    const a = (i / 78) * Math.PI * 2;
+    const r = 78 + Math.random() * 74;
+    d.style.transform =
+      'translate(' + (Math.cos(a) * r) + 'px,' + (Math.sin(a) * r) + 'px) rotate(' +
+      ((Math.random() - 0.5) * 22) + 'deg)';
+  });
+  awaitF(430);
+
+  // —— 阶段 2：聚拢到一堆 ——
+  $('stageHint').textContent = '聚拢成堆……';
+  state.fcards.forEach((d, i) => {
+    d.style.transform =
+      'translate(' + (Math.cos(i * 1.7) * (1.5 + Math.random() * 1.2)) + 'px,' +
+      (Math.sin(i * 1.7) * (1.5 + Math.random() * 1.2)) + 'px) rotate(' +
+      ((Math.random() - 0.5) * 10) + 'deg)';
+  });
+  awaitF(420);
+
+  // —— 阶段 3：摆成扇形 ——
+  fanSpread();
+}
+/* 扇形几何：枢轴位于舞台底部下方 20px，卡片沿圆弧均匀展开、径向朝外。
+ * 半径由舞台高度决定，保证最上方卡牌顶部距舞台顶约 18px；
+ * 横向按舞台宽度自动收窄张开角，任何视口下都不超出显示框。 */
+function fanGeom(i, n) {
+  const fw = 46, fh = 78;
+  const cx = state.stageW / 2;
+  const pivotY = state.stageH + 20;
+  const R = Math.max(110, pivotY - 58);            // 卡片中心到枢轴的距离
+  const off = R + fh / 2;                          // 卡片顶边到枢轴的距离（即 transform-origin 偏移）
+  const maxHalf = Math.min(50, Math.asin(Math.min(1, (state.stageW / 2 - 46) / off)) * 180 / Math.PI);
+  const half = Math.max(24, maxHalf);
+  const span = n <= 1 ? 0 : half * 2;
+  const ang = n <= 1 ? 0 : (-half + i * (span / (n - 1))) * Math.PI / 180;
+  return { left: cx - fw / 2, top: pivotY - off, origin: 'center ' + off + 'px', rot: ang };
+}
+function applyFanGeom(d, i, n) {
+  const g = fanGeom(i, n);
+  d.style.left = g.left + 'px';
+  d.style.top = g.top + 'px';
+  d.style.transformOrigin = g.origin;
+  d.style.transform = 'rotate(' + g.rot + 'rad)';
+}
+function fanSpread() {
+  $('stageHint').textContent = '';
+  const n = state.fcards.length;
+  state.fcards.forEach((d, i) => applyFanGeom(d, i, n));
+  state.busy = false;
+  $('drawBtn').disabled = false;
+  if (state.mode === 'three') $('stageHint').textContent = '请依次点选 3 张牌（过去 · 现在 · 未来）';
+  else $('stageHint').textContent = '请点选 1 张牌';
+}
+function buildFanDeck() {
+  const stage = $('stage');
+  stage.innerHTML = '';
+  state.fcards = [];
+  const n = 78;
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'fcard';
+    applyFanGeom(d, i, n);
+    d.innerHTML = `<img src="${CARD_BACK[state.theme]}">`;
+    stage.appendChild(d);
+    state.fcards.push(d);
+  }
+  state.busy = false;
+  $('drawBtn').disabled = false;
+  if (state.mode === 'three') $('stageHint').textContent = '请依次点选 3 张牌（过去 · 现在 · 未来）';
+  else $('stageHint').textContent = '请点选 1 张牌';
+}
+function layoutFan(instant) {
+  if (state.fcards.length === 0) return;
+  const stage = $('stage');
+  const w = stage.clientWidth, h = stage.clientHeight;
+  if (!instant && w === state.prevSizes.w && h === state.prevSizes.h) return;
+  state.prevSizes = { w, h };
+  state.stageW = w; state.stageH = h;
+  const n = state.fcards.length;
+  state.fcards.forEach((d, i) => applyFanGeom(d, i, n));
+}
+
+/* ==================== 占卜：抽牌 ==================== */
+function onFanClick(e) {
+  if (state.busy || state.picks.length >= needPicks()) return;
+  const el = e.target.closest('.fcard');
+  if (!el) return;
+  const idx = state.fcards.indexOf(el);
+  if (idx < 0) return;
+  const entry = state.deck[idx];
+  const rev = entry.rev;
+  const slotIdx = state.picks.length;
+  // 先移除该卡，其余卡整体缩小让位
+  state.fcards.splice(idx, 1);
+  state.deck.splice(idx, 1);
+  el.remove();
+  const old = $('stageHint');
+  old.textContent = '';
+  state.fcards.forEach(d => d.style.transform += ' scale(.82)');
+  spawnResultSlot(entry.card, rev, slotIdx);
+  const remain = needPicks() - state.picks.length;
+  if (remain > 0) {
+    toast(`已抽 ${state.picks.length} 张，还差 ${remain} 张`);
+  } else {
+    state.busy = true;
+    $('drawBtn').disabled = true;
+    $('stage').hidden = true;
+    $('againWrap').hidden = false;
+    toast(state.mode === 'three' ? '三牌阵完成' : '占卜完成');
+  }
+}
+function needPicks() { return state.mode === 'three' ? 3 : 1; }
+function spawnResultSlot(card, rev, slotIdx) {
+  const area = $('resultArea');
+  const labels = state.mode === 'three' ? ['过去', '现在', '未来'] : ['今日之牌'];
+  const slot = document.createElement('div');
+  slot.className = 'slot';
+  slot.innerHTML = `
+    <div class="slot-label">${labels[slotIdx]}</div>
+    <div class="r-card"><div class="r-inner">
+      <div class="r-face r-back"></div>
+      <div class="r-face r-front">${cardImg(card, rev)}</div>
+    </div></div>
+    <div class="r-tag"></div>
+    <div class="r-name"></div>
+    <div class="r-meaning"></div>
+  `;
+  area.appendChild(slot);
+  state.picks.push({ card, rev });
+  awaitF(150);
+  requestAnimationFrame(() => slot.querySelector('.r-card').classList.add('flip'));
+  awaitF(520);
+  const tag = slot.querySelector('.r-tag');
+  tag.textContent = rev ? '逆位' : '正位';
+  tag.classList.add('show', rev ? 'down' : 'up');
+  slot.querySelector('.r-name').textContent = `${card.n}${rev ? '（逆位）' : ''}`;
+  slot.querySelector('.r-meaning').textContent = rev ? card.r : card.u;
+  if (slotIdx === needPicks() - 1 && state.mode === 'three') {
+    awaitF(280);
+    const tip = document.createElement('div');
+    tip.style.cssText = 'width:100%;text-align:center;font-size:13.5px;color:var(--placeholder);letter-spacing:1px;';
+    tip.textContent = '左起依次为：过去 · 现在 · 未来';
+    area.appendChild(tip);
+  }
+}
+function resetDivine() {
+  state.busy = false;
+  state.picks = [];
+  state.nextPick = 0;
+  $('stage').hidden = false;
+  $('againWrap').hidden = true;
+  $('drawBtn').disabled = false;
+  $('resultArea').innerHTML = '';
+  $('stageHint').textContent = state.mode === 'three' ? '请依次点选 3 张牌（过去 · 现在 · 未来）' : '请点选 1 张牌';
+  buildFanDeck();
+}
+
+/* ==================== 卡牌介绍 ==================== */
+let galleryFilter = 'all';
+function renderGallery() {
+  const list = CARDS.filter(c => galleryFilter === 'all' || c.g === galleryFilter);
+  $('galleryCount').textContent = `${list.length} / 78 张`;
+  const grid = $('galleryGrid');
+  grid.innerHTML = list.map(c => `
+    <div class="gtile" data-f="${c.f}">
+      <div class="gt-art"><img src="cards/${state.theme}/${c.f}.png" alt="${c.n}" loading="lazy"></div>
+      <div class="gt-name">${c.n}</div>
+      <div class="gt-en">${c.e}</div>
+    </div>`).join('');
+}
+function renderDetail(c) {
+  $('detailArt').innerHTML = `<img src="cards/${state.theme}/${c.f}.png" alt="${c.n}">`;
+  $('detailName').textContent = c.n;
+  $('detailName').insertAdjacentHTML('beforeend', `<span class="d-en">${c.e}</span>`);
+  $('detailBadges').innerHTML = `
+    <span class="d-badge el">元素 · ${c.el}</span>
+    <span class="d-badge">${GROUP_NAMES[c.g]}</span>
+  `;
+  $('detailCols').innerHTML = `
+    <div class="d-col up-col">
+      <h3>正位</h3>
+      <div class="d-row first"><div class="k">简单意义</div><div class="v">${c.u}</div></div>
+      <div class="d-row"><div class="k">事业</div><div class="v">${c.uc}</div></div>
+      <div class="d-row"><div class="k">爱情</div><div class="v">${c.ul}</div></div>
+      <div class="d-row"><div class="k">财运</div><div class="v">${c.uw}</div></div>
+    </div>
+    <div class="d-col down-col">
+      <h3>逆位</h3>
+      <div class="d-row first"><div class="k">简单意义</div><div class="v">${c.r}</div></div>
+      <div class="d-row"><div class="k">事业</div><div class="v">${c.rc}</div></div>
+      <div class="d-row"><div class="k">爱情</div><div class="v">${c.rl}</div></div>
+      <div class="d-row"><div class="k">财运</div><div class="v">${c.rw}</div></div>
+    </div>`;
+  document.querySelectorAll('#detailThemePills .radio-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.dt === state.theme);
+  });
+}
+
+/* ==================== 工具函数 ==================== */
+const awaitF = ms => new Promise(r => setTimeout(r, ms));
+
+/* ==================== 事件绑定 ==================== */
+$('drawBtn').addEventListener('click', startDraw);
+$('againBtn').addEventListener('click', resetDivine);
+$('stage').addEventListener('click', onFanClick);
+$('settingsBtn').addEventListener('click', openSettings);
+$('settingsClose').addEventListener('click', closeSettings);
+$('settingsModal').addEventListener('click', e => { if (e.target === $('settingsModal')) closeSettings(); });
+document.querySelectorAll('#modeGroup .radio-pill').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#modeGroup .radio-pill').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.mode = b.dataset.mode;
+    $('modeHint').textContent = state.mode === 'three'
+      ? '三牌阵：在扇形牌堆中依次点选 3 张，从左到右代表「过去 · 现在 · 未来」。'
+      : '单张随机抽：在扇形牌堆中点选 1 张，得到今日之牌。';
+    resetDivine();
+  });
+});
+document.querySelectorAll('#galleryChips .radio-pill').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#galleryChips .radio-pill').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    galleryFilter = b.dataset.filter;
+    renderGallery();
+  });
+});
+$('galleryGrid').addEventListener('click', e => {
+  const t = e.target.closest('.gtile');
+  if (t) location.hash = '#card-' + t.dataset.f;
+});
+$('detailBack').addEventListener('click', () => { location.hash = 'gallery'; });
+document.querySelectorAll('#detailThemePills .radio-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    setTheme(p.dataset.dt);
+    document.querySelectorAll('#detailThemePills .radio-pill').forEach(x => x.classList.toggle('active', x === p));
+  });
+});
+document.querySelectorAll('.view-tab').forEach(b => {
+  b.addEventListener('click', () => { location.hash = b.dataset.view; });
+});
+window.addEventListener('hashchange', renderCurrentRoute);
+window.addEventListener('resize', () => layoutFan(false));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSettings();
+});
+function syncThemeUI() {
+  document.querySelectorAll('#detailThemePills .radio-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.dt === state.theme);
+  });
+  // 已翻开的牌同步换图
+  document.querySelectorAll('.r-front').forEach((el, i) => {
+    const p = state.picks[i];
+    if (p) el.innerHTML = cardImg(p.card, p.rev);
+  });
+  document.querySelectorAll('#detailArt img').forEach((el, i) => {
+    const c = CARDS.find(x => x.f === (location.hash.slice(6)));
+    if (c) el.src = `cards/${state.theme}/${c.f}.png`;
+  });
+  document.querySelectorAll('.gt-art img').forEach(el => {
+    const t = el.closest('.gtile');
+    if (t) el.src = `cards/${state.theme}/${t.dataset.f}.png`;
+  });
+}
+
+/* ==================== 初始化 ==================== */
+setTheme('classic');
+renderCurrentRoute();
+</script>
+</body>
+</html>
