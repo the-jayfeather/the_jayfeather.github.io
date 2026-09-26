@@ -504,6 +504,8 @@ body[data-dice-theme="black"] .die.red .pip.on { background:#D8403A; box-shadow:
 </style>
 <!-- 手机互联：PeerJS WebRTC 点对点（云信令，无需本地服务器） -->
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<!-- 手机互联：LeanCloud 国内云通道（国内可达稳定，需在 leancloud.cn 免费注册并填入 AppID/AppKey） -->
+<script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.15.1/dist/av-min.js"></script>
 </head>
 <body>
 
@@ -930,8 +932,12 @@ const LINK = {
   /* 模式：'host' 主机（生成配对码等待手机）/ 'remote' 骰子模式（输入配对码遥控）
    * 默认按设备自动检测，可在设置中手动切换 */
   mode: loadLinkMode(),
+  /* 互联通道：'auto' PeerJS 云信令（默认）/ 'cloud' 国内云通道（LeanCloud）/ 'lan' 局域网服务器 */
+  channel: loadChannel(),
   peer: null, conn: null, code: '',
-  paired: false, offline: false, statusText: '', results: []
+  paired: false, offline: false, statusText: '', results: [],
+  cloud: { room: null, lastSeen: null, backoff: 0 },
+  lan: { sid: null, ip: '', backoff: 0 }
 };
 function loadLinkMode() {
   try {
@@ -941,12 +947,42 @@ function loadLinkMode() {
   return isPhone ? 'remote' : 'host';
 }
 function saveLinkMode(m) { try { localStorage.setItem('bb_link_mode', m); } catch (e) {} }
+function loadChannel() {
+  try {
+    const v = localStorage.getItem('bb_link_channel');
+    if (v === 'auto' || v === 'cloud' || v === 'lan') return v;
+  } catch (e) {}
+  return 'auto';
+}
+function saveChannel(c) { try { localStorage.setItem('bb_link_channel', c); } catch (e) {} }
+/* LeanCloud 云通道配置（在 leancloud.cn 免费注册应用后获取） */
+function loadCloudCfg() {
+  const cfg = { appid: '', appkey: '', server: '' };
+  try {
+    cfg.appid = localStorage.getItem('bb_cloud_appid') || '';
+    cfg.appkey = localStorage.getItem('bb_cloud_appkey') || '';
+    cfg.server = localStorage.getItem('bb_cloud_server') || '';
+  } catch (e) {}
+  return cfg;
+}
+function saveCloudCfg(c) {
+  try {
+    localStorage.setItem('bb_cloud_appid', c.appid);
+    localStorage.setItem('bb_cloud_appkey', c.appkey);
+    localStorage.setItem('bb_cloud_server', c.server);
+  } catch (e) {}
+}
 
 function renderLinkUI() {
   const dev = $('linkDevice');
   if (dev) dev.textContent = LINK.mode === 'remote' ? '骰子模式（手机遥控）' : '主机（电脑）';
   const st = $('linkStatus');
   const note = $('linkNote');
+  const chInfo = $('linkChannelInfo');
+  if (chInfo) chInfo.textContent = ({ auto: '通道：PeerJS 云信令（零配置，默认）', cloud: '通道：国内云 LeanCloud（稳定，需配置）', lan: '通道：局域网 互联服务器.js（同一 Wi-Fi 最稳）' }[LINK.channel] || '');
+  if (LINK.channel === 'lan') { renderLanUI(st, note); return; }
+  if (LINK.channel === 'cloud') { renderCloudUI(st, note); return; }
+  /* auto：PeerJS 云信令 */
   if (LINK.mode === 'remote') {
     if (st) { st.textContent = LINK.paired ? '已配对' : '未配对'; st.style.color = LINK.paired ? 'var(--gold-soft)' : ''; }
     if (note) note.textContent = LINK.paired
@@ -961,7 +997,7 @@ function renderLinkUI() {
     }
     if (note) {
       note.textContent = LINK.offline
-        ? '互联服务不可达（peerjs 云信令连接失败）。请检查网络后刷新重试；也可退回局域网模式：运行「互联服务器.js」。'
+        ? '互联服务不可达（peerjs 云信令连接失败）。请在设置中切换为「国内云」或「局域网」通道。'
         : '手机打开本页（如 GitHub Pages 公网链接），在设置中输入上方配对码；配对后摇动手机即可摇骰。';
     }
   }
@@ -971,12 +1007,7 @@ function applyLinkMode(mode) {
   if (mode === LINK.mode) { renderLinkUI(); return; }
   LINK.mode = mode;
   saveLinkMode(mode);
-  /* 断开旧连接 */
-  if (LINK.conn) { try { LINK.conn.close(); } catch (e) {} }
-  LINK.conn = null;
-  if (LINK.peer) { try { LINK.peer.destroy(); } catch (e) {} }
-  LINK.peer = null;
-  LINK.paired = false; LINK.code = ''; LINK.offline = false; LINK.results = [];
+  linkTeardown();
   if (mode === 'remote') {
     $('setupPanel').hidden = true;
     $('gamePanel').hidden = true;
@@ -993,8 +1024,34 @@ function applyLinkMode(mode) {
   }
   toast(mode === 'remote' ? '已切换为骰子模式（遥控）' : '已切换为主机模式');
 }
+/* 切换通道/模式前：断开当前所有连接与轮询 */
+function linkTeardown() {
+  if (LINK.conn) { try { LINK.conn.close(); } catch (e) {} }
+  LINK.conn = null;
+  if (LINK.peer) { try { LINK.peer.destroy(); } catch (e) {} }
+  LINK.peer = null;
+  if (LINK.cloudTimer) { clearTimeout(LINK.cloudTimer); LINK.cloudTimer = null; }
+  if (LINK.lanTimer) { clearTimeout(LINK.lanTimer); LINK.lanTimer = null; }
+  LINK.paired = false; LINK.code = ''; LINK.offline = false; LINK.results = [];
+  LINK.cloud = { room: null, lastSeen: null, backoff: 0 };
+  LINK.lan = { sid: null, ip: '', backoff: 0 };
+}
+/* 切换互联通道（设置面板）：断开后按当前模式重新初始化 */
+function applyChannel(ch) {
+  if (ch === LINK.channel) { renderLinkUI(); return; }
+  LINK.channel = ch;
+  saveChannel(ch);
+  linkTeardown();
+  if (LINK.mode === 'remote') { renderRemoteStatus('未配对：点右上角设置输入配对码'); linkInitPhone(); }
+  else linkInitPC();
+  renderLinkUI();
+  toast(({ auto: '已切换互联通道：PeerJS 云信令', cloud: '已切换互联通道：国内云（LeanCloud）', lan: '已切换互联通道：局域网' }[ch]) || '已切换互联通道');
+}
 /* ---------------- 电脑端（主机） ---------------- */
 function linkInitPC() {
+  if (LINK.channel === 'lan') { lanInitPC(); return; }
+  if (LINK.channel === 'cloud') { cloudInitPC(); return; }
+  /* auto：PeerJS 云信令 */
   if (LINK.peer) return;
   if (typeof Peer !== 'function') { LINK.offline = true; renderLinkUI(); return; }
   tryRegister(0);
@@ -1034,17 +1091,25 @@ function phoneTriggeredRoll() {
   doRoll();
 }
 /* 电脑端把结果/状态推送给配对手机（数据通道直发） */
+/* 电脑端把结果/状态推送给配对手机（按当前通道分发） */
 function linkPush(msg) {
+  if (LINK.channel === 'cloud') { cloudPush(msg); return; }
+  if (LINK.channel === 'lan') { lanPush(msg); return; }
   if (LINK.conn && typeof LINK.conn.send === 'function') {
     try { LINK.conn.send(msg); } catch (e) {}
   }
 }
 /* ---------------- 手机端（骰子模式） ---------------- */
 function linkInitPhone() {
+  if (LINK.channel === 'lan') { lanInitPhone(); return; }
+  if (LINK.channel === 'cloud') { cloudInitPhone(); return; }
+  /* auto：PeerJS */
   if (typeof Peer !== 'function') { renderRemoteStatus('互联组件加载失败，请刷新页面'); }
   renderLinkUI();
 }
 function linkPair() {
+  if (LINK.channel === 'cloud') { cloudPair(); return; }
+  if (LINK.channel === 'lan') { lanPair(); return; }
   const input = $('linkCodeInput');
   const code = (input && input.value || '').trim();
   if (!/^\d{4}$/.test(code)) { toast('请输入 4 位数字配对码'); return; }
@@ -1076,6 +1141,267 @@ function linkPair() {
     else if (t === 'network' || t === 'server-error' || t === 'socket-error' || t === 'socket-closed' || t === 'ssl-unavailable') toast('互联服务不可达，请检查网络');
   });
 }
+/* ---------------- 国内云通道（LeanCloud，国内可达稳定） ----------------
+ * 需在 leancloud.cn 免费注册并创建应用，在设置中填入 AppID / AppKey / 服务域名。
+ * 电脑创建「房间」，手机凭 4 位配对码加入；双方轮询指令表（Cmd）完成摇骰与结果同步。 */
+function cloudReady() {
+  if (typeof AV === 'undefined') { toast('云组件加载失败（可能被网络拦截），请刷新或改用其它通道'); return false; }
+  const cfg = loadCloudCfg();
+  if (!cfg.appid || !cfg.appkey || !cfg.server) { toast('请先在设置中填写 LeanCloud 的 AppID / AppKey / 服务域名'); return false; }
+  try { AV.init({ appId: cfg.appid, appKey: cfg.appkey, serverURLs: cfg.server }); } catch (e) {}
+  return true;
+}
+function cloudCode() { return String(1000 + Math.floor(Math.random() * 9000)); }
+/* 写入一条指令（房间内所有人可见） */
+function cloudWrite(type, from, data) {
+  if (typeof AV === 'undefined' || !LINK.code) return Promise.reject(new Error('no av'));
+  const obj = new AV.Object('Cmd');
+  obj.set('room', LINK.code);
+  obj.set('type', type);
+  obj.set('from', from);
+  obj.set('data', data || {});
+  return obj.save();
+}
+/* 电脑端：创建房间（配对码唯一） */
+function cloudInitPC() {
+  if (LINK.cloud.room) return;
+  if (!cloudReady()) { LINK.offline = true; renderLinkUI(); return; }
+  const tryCreate = n => {
+    if (n > 8) { LINK.offline = true; renderLinkUI(); toast('配对码生成失败，请重试'); return; }
+    const code = cloudCode();
+    const q = new AV.Query('Room');
+    q.equalTo('code', code);
+    q.count().then(cnt => {
+      if (cnt > 0) { tryCreate(n + 1); return; }
+      const room = new AV.Object('Room');
+      room.set('code', code);
+      room.set('ts', Date.now());
+      room.save().then(() => {
+        LINK.cloud.room = room;
+        LINK.code = code; LINK.paired = false; LINK.offline = false;
+        renderLinkUI();
+        cloudPollPC();
+      }).catch(() => { LINK.offline = true; renderLinkUI(); });
+    }).catch(() => { LINK.offline = true; renderLinkUI(); });
+  };
+  tryCreate(0);
+}
+/* 电脑端轮询：处理手机 join / shake 指令 */
+function cloudPollPC() {
+  if (LINK.channel !== 'cloud' || LINK.mode !== 'host' || typeof AV === 'undefined' || !LINK.code) return;
+  const q = new AV.Query('Cmd');
+  q.equalTo('room', LINK.code);
+  q.descending('createdAt');
+  q.limit(20);
+  q.find().then(list => {
+    LINK.offline = false;
+    let maxT = 0;
+    list.forEach(obj => { const t = obj.createdAt ? new Date(obj.createdAt).getTime() : 0; if (t > maxT) maxT = t; });
+    if (LINK.cloud.lastSeen === null) {
+      LINK.cloud.lastSeen = maxT || 0;
+    } else {
+      let changed = false;
+      list.forEach(obj => {
+        const t = obj.createdAt ? new Date(obj.createdAt).getTime() : 0;
+        if (t > LINK.cloud.lastSeen) {
+          const from = obj.get('from');
+          if (obj.get('type') === 'shake' && from !== 'pc') phoneTriggeredRoll();
+          else if (obj.get('type') === 'join' && from !== 'pc') { LINK.paired = true; }
+          changed = true;
+        }
+      });
+      LINK.cloud.lastSeen = maxT || LINK.cloud.lastSeen;
+      if (changed) renderLinkUI();
+    }
+    LINK.cloud.backoff = 0;
+    LINK.cloudTimer = setTimeout(cloudPollPC, 1500);
+  }).catch(() => {
+    LINK.offline = true; renderLinkUI();
+    LINK.cloud.backoff = Math.min(LINK.cloud.backoff + 1, 4);
+    LINK.cloudTimer = setTimeout(cloudPollPC, 1500 * (LINK.cloud.backoff + 1));
+  });
+}
+/* 电脑端：结果/状态写入指令表 */
+function cloudPush(msg) {
+  if (!LINK.code || typeof AV === 'undefined') return;
+  cloudWrite('result', 'pc', msg).catch(() => {});
+}
+/* 手机端：进入云通道（等待配对） */
+function cloudInitPhone() {
+  if (!cloudReady()) { renderRemoteStatus('云配置缺失：请先在设置填写 LeanCloud'); }
+  renderLinkUI();
+}
+/* 手机端：凭码加入房间 */
+function cloudPair() {
+  const input = $('linkCodeInput');
+  const code = (input && input.value || '').trim();
+  if (!/^\d{4}$/.test(code)) { toast('请输入 4 位数字配对码'); return; }
+  if (!cloudReady()) return;
+  const q = new AV.Query('Room');
+  q.equalTo('code', code);
+  q.first().then(room => {
+    if (!room) { toast('配对码不存在，请核对电脑端显示的码'); return; }
+    LINK.code = code; LINK.cloud.room = room; LINK.paired = true;
+    renderLinkUI();
+    renderRemoteStatus('已配对，摇动手机或点按「摇骰子」触发电脑');
+    toast('配对成功，进入骰子模式');
+    cloudWrite('join', 'phone', {}).catch(() => {});
+    cloudPollPhone();
+  }).catch(() => { toast('网络异常，请检查网络后重试'); });
+}
+/* 手机端：发送摇动指令 */
+function cloudShake() {
+  if (!LINK.paired || !LINK.code) { toast('请先完成配对'); return; }
+  cloudWrite('shake', 'phone', {}).then(() => toast('已摇动，等待电脑结果…')).catch(() => toast('发送失败，请检查网络'));
+}
+/* 手机端轮询：接收电脑 result / status */
+function cloudPollPhone() {
+  if (LINK.channel !== 'cloud' || LINK.mode !== 'remote' || typeof AV === 'undefined' || !LINK.code) return;
+  const q = new AV.Query('Cmd');
+  q.equalTo('room', LINK.code);
+  q.descending('createdAt');
+  q.limit(20);
+  q.find().then(list => {
+    let maxT = 0;
+    list.forEach(obj => { const t = obj.createdAt ? new Date(obj.createdAt).getTime() : 0; if (t > maxT) maxT = t; });
+    if (LINK.cloud.lastSeen === null) {
+      LINK.cloud.lastSeen = maxT || 0;
+    } else {
+      list.forEach(obj => {
+        const t = obj.createdAt ? new Date(obj.createdAt).getTime() : 0;
+        if (t > LINK.cloud.lastSeen) {
+          const from = obj.get('from');
+          const d = obj.get('data') || {};
+          if (from === 'pc' && (d.type === 'result' || d.type === 'status')) handlePhoneMsg(d);
+        }
+      });
+      LINK.cloud.lastSeen = maxT || LINK.cloud.lastSeen;
+    }
+    LINK.cloud.backoff = 0;
+    LINK.cloudTimer = setTimeout(cloudPollPhone, 1000);
+  }).catch(() => {
+    LINK.cloud.backoff = Math.min(LINK.cloud.backoff + 1, 4);
+    LINK.cloudTimer = setTimeout(cloudPollPhone, 1000 * (LINK.cloud.backoff + 1));
+  });
+}
+function renderCloudUI(st, note) {
+  const cfg = loadCloudCfg();
+  if (LINK.mode === 'remote') {
+    if (st) { st.textContent = LINK.paired ? '已配对' : '未配对'; st.style.color = LINK.paired ? 'var(--gold-soft)' : ''; }
+    if (note) note.textContent = LINK.paired
+      ? '配对成功！现在可以摇动手机或点按「摇骰子」。'
+      : (cfg.appid ? '请输入电脑端设置中显示的 4 位数字配对码。' : '尚未配置：请先在设置中填写 LeanCloud 的 AppID / AppKey / 服务域名。');
+  } else {
+    const codeEl = $('linkCode');
+    if (codeEl) codeEl.textContent = LINK.code || '----';
+    if (st) st.textContent = LINK.offline ? '连接失败' : (LINK.paired ? '已配对（手机已连接）' : '等待手机配对');
+    st.style.color = LINK.offline ? 'var(--warn-bg)' : (LINK.paired ? 'var(--gold-soft)' : '');
+    if (note) note.textContent = LINK.offline
+      ? '云通道连接异常，请检查网络后重试；也可切换回「自动」或「局域网」。'
+      : (cfg.appid ? '手机打开本页，在设置中输入上方配对码即可配对（经国内云中转，无需穿透网络）。' : '尚未配置：请在设置中填写 LeanCloud 的 AppID / AppKey / 服务域名。');
+  }
+}
+/* ---------------- 局域网通道（互联服务器.js，同一 Wi-Fi 最稳） ---------------- */
+function lanFetch(url, opts) {
+  if (typeof fetch !== 'function') return Promise.reject(new Error('no fetch'));
+  return fetch(url, opts);
+}
+function lanBase() { return 'http://' + (LINK.lan.ip || '127.0.0.1') + ':4567'; }
+/* 电脑端：向局域网服务器注册配对码 */
+function lanInitPC() {
+  if (LINK.lan.sid) return;
+  lanFetch(lanBase() + '/api/pair/new', { method: 'POST' }).then(r => r.json()).then(d => {
+    if (!d.ok) throw new Error('bad');
+    LINK.lan.sid = d.sid; LINK.lan.ip = d.ip || '127.0.0.1';
+    LINK.code = d.code; LINK.paired = false; LINK.offline = false;
+    renderLinkUI();
+    lanPollPC();
+  }).catch(() => {
+    LINK.offline = true; LINK.lan.ip = '127.0.0.1';
+    renderLinkUI();
+  });
+}
+/* 电脑端轮询：配对状态 + 手机摇动 */
+function lanPollPC() {
+  if (LINK.channel !== 'lan' || LINK.mode !== 'host' || !LINK.lan.sid) return;
+  lanFetch(lanBase() + '/api/events?sid=' + encodeURIComponent(LINK.lan.sid)).then(r => r.json()).then(d => {
+    if (!d.ok) throw new Error('bad');
+    LINK.offline = false;
+    if (d.paired && !LINK.paired) { LINK.paired = true; renderLinkUI(); toast('手机已配对，可摇动手机摇骰子'); }
+    if (d.shake) phoneTriggeredRoll();
+    LINK.lan.backoff = 0;
+    LINK.lanTimer = setTimeout(lanPollPC, 600);
+  }).catch(() => {
+    LINK.offline = true; renderLinkUI();
+    LINK.lan.backoff = Math.min(LINK.lan.backoff + 1, 5);
+    LINK.lanTimer = setTimeout(lanPollPC, 600 * (LINK.lan.backoff + 1));
+  });
+}
+/* 电脑端：结果/状态推送给手机队列 */
+function lanPush(msg) {
+  if (!LINK.lan.sid) return;
+  lanFetch(lanBase() + '/api/push', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sid: LINK.lan.sid, msg: msg })
+  }).catch(() => {});
+}
+/* 手机端：进入局域网通道 */
+function lanInitPhone() { renderLinkUI(); }
+/* 手机端：凭码配对 */
+function lanPair() {
+  const input = $('linkCodeInput');
+  const code = (input && input.value || '').trim();
+  if (!/^\d{4}$/.test(code)) { toast('请输入 4 位数字配对码'); return; }
+  lanFetch(lanBase() + '/api/pair/verify', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: code })
+  }).then(r => r.json()).then(d => {
+    if (!d.ok) { toast('配对码不存在，请核对电脑端显示的码'); return; }
+    LINK.code = code; LINK.paired = true;
+    renderLinkUI();
+    renderRemoteStatus('已配对，摇动手机或点按「摇骰子」触发电脑');
+    toast('配对成功，进入骰子模式');
+    lanPollPhone();
+  }).catch(() => { toast('无法连接互联服务器，请检查网络'); });
+}
+/* 手机端：发送摇动 */
+function lanShake() {
+  if (!LINK.paired || !LINK.code) { toast('请先完成配对'); return; }
+  lanFetch(lanBase() + '/api/shake', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: LINK.code })
+  }).then(() => toast('已摇动，等待电脑结果…')).catch(() => toast('发送失败，请检查网络'));
+}
+/* 手机端轮询：接收电脑结果/状态 */
+function lanPollPhone() {
+  if (LINK.channel !== 'lan' || LINK.mode !== 'remote' || !LINK.code) return;
+  lanFetch(lanBase() + '/api/phone/events?code=' + encodeURIComponent(LINK.code)).then(r => r.json()).then(d => {
+    if (!d.ok) throw new Error('bad');
+    if (d.msg) handlePhoneMsg(d.msg);
+    LINK.lan.backoff = 0;
+    LINK.lanTimer = setTimeout(lanPollPhone, 500);
+  }).catch(() => {
+    LINK.lan.backoff = Math.min(LINK.lan.backoff + 1, 5);
+    LINK.lanTimer = setTimeout(lanPollPhone, 500 * (LINK.lan.backoff + 1));
+  });
+}
+function renderLanUI(st, note) {
+  if (LINK.mode === 'remote') {
+    if (st) { st.textContent = LINK.paired ? '已配对' : '未配对'; st.style.color = LINK.paired ? 'var(--gold-soft)' : ''; }
+    if (note) note.textContent = LINK.paired
+      ? '配对成功！现在可以摇动手机或点按「摇骰子」。'
+      : '请输入电脑端设置中显示的 4 位数字配对码（电脑与手机需连同一 Wi-Fi）。';
+  } else {
+    const codeEl = $('linkCode');
+    if (codeEl) codeEl.textContent = LINK.code || '----';
+    if (st) st.textContent = LINK.offline ? '服务器未连接' : (LINK.paired ? '已配对（手机已连接）' : '等待手机配对');
+    st.style.color = LINK.offline ? 'var(--warn-bg)' : (LINK.paired ? 'var(--gold-soft)' : '');
+    if (note) note.textContent = LINK.offline
+      ? '未连接互联服务器：请在博饼工具目录运行「node 互联服务器.js」后刷新本页。'
+      : '手机与电脑连同一 Wi-Fi，访问 http://' + (LINK.lan.ip || '电脑IP') + ':4567 打开本页并输入配对码。';
+  }
+}
+
 /* 手机端接收电脑推送：中奖结果 / 阶段状态 */
 function handlePhoneMsg(m) {
   if (!m) return;
@@ -1091,10 +1417,13 @@ function handlePhoneMsg(m) {
   }
 }
 function phoneShake() {
-  if (!LINK.paired || !LINK.conn) { toast('请先完成配对'); return; }
+  if (!LINK.paired) { toast('请先完成配对'); return; }
   if (navigator.vibrate) { try { navigator.vibrate(80); } catch (e) {} }
   const btn = $('remoteRollBtn');
   if (btn) { btn.classList.add('pressed'); setTimeout(() => btn.classList.remove('pressed'), 240); }
+  if (LINK.channel === 'cloud') { cloudShake(); return; }
+  if (LINK.channel === 'lan') { lanShake(); return; }
+  if (!LINK.conn) { toast('请先完成配对'); return; }
   try { LINK.conn.send({ type: 'shake' }); } catch (e) { toast('连接已断开，请重新配对'); return; }
   toast('已摇动，等待电脑结果…');
 }
@@ -1190,6 +1519,20 @@ function openSettings() {
     '<div class="set-note" id="sfxNote">' + (sfxSrc === 'bowl' ? '瓷碗音效：每次摇动随机播放 5 段真实碗声之一。' : '合成音效：本地合成的骰子碰撞声，无需网络。') + '</div>' +
     '<div class="set-sep"></div>' +
     '<div class="set-title">手机互联 · 摇骰遥控</div>' +
+    '<div class="set-row"><span>互联通道</span><div class="radio-group" id="linkChannelGroup">' +
+      '<button class="radio-pill' + (LINK.channel === 'auto' ? ' active' : '') + '" data-channel="auto" type="button">自动</button>' +
+      '<button class="radio-pill' + (LINK.channel === 'cloud' ? ' active' : '') + '" data-channel="cloud" type="button">国内云</button>' +
+      '<button class="radio-pill' + (LINK.channel === 'lan' ? ' active' : '') + '" data-channel="lan" type="button">局域网</button>' +
+    '</div></div>' +
+    '<div class="set-note" id="linkChannelInfo"></div>' +
+    (LINK.channel === 'cloud'
+      ? '<div class="set-row"><span>AppID</span><input class="inp" id="cloudAppId" placeholder="LeanCloud AppID"></div>' +
+        '<div class="set-row"><span>AppKey</span><input class="inp" id="cloudAppKey" placeholder="LeanCloud AppKey"></div>' +
+        '<div class="set-row"><span>服务域名</span><input class="inp" id="cloudServer" placeholder="https://xxx.leancloud.cn"></div>' +
+        '<div class="set-row"><button class="tool-btn primary" id="cloudSaveBtn" type="button">保存并连接</button></div>' +
+        '<div class="set-note">免费注册：leancloud.cn → 创建应用 → 设置 → 应用凭证，复制 AppID / AppKey 与「服务域名」（形如 https://xxx.leancloud.cn）。</div>'
+      : '') +
+    '<div class="set-sep"></div>' +
     '<div class="set-row"><span>骰子模式</span><label class="switch"><input type="checkbox" id="linkModeToggle"' + (LINK.mode === 'remote' ? ' checked' : '') + '><span class="slider"></span></label></div>' +
     '<div class="set-row"><span>本机角色</span><span id="linkDevice"></span></div>' +
     (LINK.mode === 'remote'
@@ -1227,11 +1570,28 @@ function openSettings() {
     saveSfx(sfxEnabled);
     toast(sfxEnabled ? '摇骰子音效已开启' : '摇骰子音效已关闭');
   });
+  document.querySelectorAll('#linkChannelGroup .radio-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#linkChannelGroup .radio-pill').forEach(b => b.classList.toggle('active', b === btn));
+      applyChannel(btn.dataset.channel);
+      openSettings(); /* 重绘面板：云配置输入区随通道显隐 */
+    });
+  });
+  const cloudSave = $('cloudSaveBtn');
+  if (cloudSave) cloudSave.addEventListener('click', () => {
+    const cfg = { appid: $('cloudAppId').value.trim(), appkey: $('cloudAppKey').value.trim(), server: $('cloudServer').value.trim() };
+    if (!cfg.appid || !cfg.appkey || !cfg.server) { toast('请完整填写 AppID / AppKey / 服务域名'); return; }
+    saveCloudCfg(cfg);
+    toast('云通道配置已保存');
+    linkTeardown();
+    if (LINK.mode === 'remote') linkInitPhone(); else linkInitPC();
+    renderLinkUI();
+  });
   const pairBtn = $('linkPairBtn');
   if (pairBtn) pairBtn.addEventListener('click', linkPair);
   const modeToggle = $('linkModeToggle');
   if (modeToggle) modeToggle.addEventListener('change', () => applyLinkMode(modeToggle.checked ? 'remote' : 'host'));
-  /* 主机模式若尚未注册配对码，打开设置时自动生成 */
+  /* 主机模式若尚未连接，打开设置时自动初始化 */
   if (LINK.mode !== 'remote' && !LINK.peer) linkInitPC();
   renderLinkUI();
 }
