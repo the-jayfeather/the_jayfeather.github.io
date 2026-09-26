@@ -595,6 +595,12 @@ body[data-dice-theme="black"] .die.red .pip.on { background:#D8403A; box-shadow:
         <div class="setup-grid" id="playerNames" hidden></div>
         <div class="setup-note" id="nameModeHint">默认模式：玩家 1、玩家 2… 按顺序自动命名。</div>
         <div class="setup-row">
+          <label class="setup-label">玩家设备分配</label>
+          <span class="tool-spacer"></span>
+        </div>
+        <div class="setup-grid" id="playerDevAssign"></div>
+        <div class="setup-note">为玩家分配已连接手机：分配后该玩家在「分玩家设备」模式下由对应手机摇骰；未分配设备的玩家默认使用电脑摇骰（电脑端始终可摇）。</div>
+        <div class="setup-row">
           <label class="setup-label">奖品模式</label>
           <div class="radio-group" id="prizeModeGroup">
             <button class="radio-pill active" data-mode="name" type="button">名称奖品</button>
@@ -1020,15 +1026,17 @@ function upsertDevice(d) {
   const i = LINK.devices.findIndex(x => x.id === d.id);
   if (i >= 0) LINK.devices[i] = Object.assign({}, LINK.devices[i], d);
   else LINK.devices.push(d);
+  renderPlayerDevAssign();
 }
 function removeDevice(id) {
   const i = LINK.devices.findIndex(x => x.id === id);
   if (i >= 0) LINK.devices.splice(i, 1);
+  renderPlayerDevAssign();
 }
 function broadcastDevices() {
   const players = G ? G.playerNames : [];
   const turn = (G && G.phase === 'elim') ? (G.elimPlayers[0] || 0) : (G ? G.cur : 0);
-  linkPush({ type: 'devices', list: LINK.devices.map(x => ({ name: x.name, channel: x.channel, player: x.player || '' })),
+  linkPush({ type: 'devices', list: LINK.devices.map(x => ({ id: x.id, name: x.name, channel: x.channel, player: x.player || '' })),
     playerMode: LINK.playerMode, players, bindings: LINK.devicePlayers, currentPlayer: turn });
 }
 /* 电脑端：设备绑定玩家（分玩家设备模式） */
@@ -1805,30 +1813,27 @@ function renderPhoneDevices(msg) {
   const items = ['电脑（' + (LINK.code || '----') + '）'];
   (list || []).forEach(x => items.push((x.player ? x.name + ' · ' + x.player : x.name) || '手机'));
   el.innerHTML = items.map(n => '<div class="rd-dev-item"><span class="rd-dot"></span>' + n + '</div>').join('');
-  /* 分玩家设备模式：显示玩家选择器 */
-  if (msg && msg.playerMode === 'perPlayer') showPlayerPicker(msg.players || [], msg.bindings || {}, msg.currentPlayer || 0);
+  /* 分玩家设备模式：只读显示电脑端分配结果（分配入口在电脑开局设置） */
+  if (msg && msg.playerMode === 'perPlayer') showPlayerAssign(msg);
   else hidePlayerPicker();
 }
-function showPlayerPicker(players, bindings, current) {
+function showPlayerAssign(msg) {
   const box = $('remotePlayerBox');
   const sel = $('remotePlayerSelect');
   const info = $('remotePlayerInfo');
   if (!box || !sel || !info) return;
   box.hidden = false;
-  if (!players || !players.length) { sel.innerHTML = ''; info.textContent = '请先在电脑端开始博饼，再选择你的玩家'; return; }
-  /* 排除其他设备已绑定的玩家 */
-  const taken = {};
-  for (const k in (bindings || {})) { if (k !== deviceId()) taken[bindings[k]] = true; }
-  const opts = players.filter(n => !taken[n]);
-  sel.innerHTML = opts.map(n => '<option value="' + n + '">' + n + '</option>').join('');
-  sel.onchange = () => { bindPlayer(sel.value); };
-  const turnName = (players[current - 1]) || '';
-  if (LINK.myPlayer) {
-    info.textContent = '你已绑定 ' + LINK.myPlayer + (turnName ? ' · 现在轮到 ' + turnName : '');
+  sel.hidden = true;
+  sel.innerHTML = '';
+  const selfId = LINK.channel === 'lan' ? (LINK.lan.pid || '') : deviceId();
+  const selfDev = ((msg && msg.list) || []).find(x => x.id === selfId);
+  const turnName = ((msg && msg.players) || [])[(msg && msg.currentPlayer) - 1] || '';
+  if (selfDev && selfDev.player) {
+    info.textContent = '你被分配为：' + selfDev.player + (turnName ? ' · 现在轮到 ' + turnName : '');
+  } else if (selfDev) {
+    info.textContent = '你尚未被分配玩家：请在电脑端开局设置中分配' + (turnName ? ' · 现在轮到 ' + turnName : '');
   } else {
-    info.textContent = turnName
-      ? '现在轮到 ' + turnName + '：选择你的玩家后，轮到你可摇骰'
-      : '选择你的玩家后，轮到你可摇骰';
+    info.textContent = '等待电脑端为你分配玩家…';
   }
 }
 function hidePlayerPicker() {
@@ -1911,11 +1916,13 @@ function openSettings() {
       '<button class="radio-pill' + (LINK.channel === 'lan' ? ' active' : '') + '" data-channel="lan" type="button">局域网</button>' +
     '</div></div>' +
     '<div class="set-note" id="linkChannelInfo"></div>' +
-    '<div class="set-row"><span>摇骰模式</span><div class="radio-group" id="linkPlayerModeGroup">' +
-      '<button class="radio-pill' + (LINK.playerMode === 'together' ? ' active' : '') + '" data-pmode="together" type="button">一起摇</button>' +
-      '<button class="radio-pill' + (LINK.playerMode === 'perPlayer' ? ' active' : '') + '" data-pmode="perPlayer" type="button">分玩家设备</button>' +
-    '</div></div>' +
-    '<div class="set-note">一起摇：所有设备可随时摇骰；分玩家设备：手机需绑定玩家，轮到该玩家时才能摇（未绑定手机的玩家由电脑摇，电脑端始终可摇）。</div>' +
+    (LINK.mode === 'host'
+      ? '<div class="set-row"><span>摇骰模式</span><div class="radio-group" id="linkPlayerModeGroup">' +
+        '<button class="radio-pill' + (LINK.playerMode === 'together' ? ' active' : '') + '" data-pmode="together" type="button">一起摇</button>' +
+        '<button class="radio-pill' + (LINK.playerMode === 'perPlayer' ? ' active' : '') + '" data-pmode="perPlayer" type="button">分玩家设备</button>' +
+      '</div></div>' +
+      '<div class="set-note">一起摇：所有设备可随时摇骰；分玩家设备：在开局设置中为玩家分配手机设备，轮到该玩家时由其手机摇骰（未分配设备的玩家由电脑摇，电脑端始终可摇）。</div>'
+      : '') +
     (LINK.channel === 'cloud'
       ? '<div class="set-row"><span>AppID</span><input class="inp" id="cloudAppId" placeholder="LeanCloud AppID"></div>' +
         '<div class="set-row"><span>AppKey</span><input class="inp" id="cloudAppKey" placeholder="LeanCloud AppKey"></div>' +
@@ -2065,6 +2072,34 @@ function renderPlayerNames() {
   wrap.innerHTML = html;
 }
 
+/* 开局设置：玩家设备分配（下拉：电脑 / 已连接手机） */
+const linkDevAssign = {};
+function renderPlayerDevAssign() {
+  const wrap = $('playerDevAssign');
+  if (!wrap) return;
+  const N = parseInt($('inputPlayers').value, 10) || 6;
+  const devices = LINK.devices || [];
+  let html = '';
+  for (let i = 1; i <= N; i++) {
+    /* 当前行已选设备；其他行已选设备在选项中去重 */
+    const mine = linkDevAssign[i] || '';
+    const used = {};
+    for (const k in linkDevAssign) { if (k !== String(i) && linkDevAssign[k]) used[linkDevAssign[k]] = true; }
+    let opts = '<option value="">电脑</option>';
+    devices.forEach(d => { if (used[d.id]) return; opts += '<option value="' + d.id + '"' + (mine === d.id ? ' selected' : '') + '>' + (d.name || '手机') + '</option>'; });
+    html += '<div class="dev-card">' +
+      '<div class="pc-head"><span class="pc-name">玩家 ' + i + '</span><span class="pc-desc">摇骰设备</span></div>' +
+      '<div class="pc-row"><select class="inp" data-dev="' + i + '">' + opts + '</select></div>' +
+    '</div>';
+  }
+  wrap.innerHTML = html;
+  try {
+    wrap.querySelectorAll('select').forEach(sel => {
+      sel.addEventListener('change', () => { linkDevAssign[parseInt(sel.getAttribute('data-dev'), 10)] = sel.value; });
+    });
+  } catch (e) {}
+}
+
 function startGame() {
   const N = parseInt($('inputPlayers').value, 10);
   if (!N || N < 2) { toast('请设置至少 2 名玩家'); return; }
@@ -2117,6 +2152,20 @@ function startGame() {
   renderStock();
   renderBestZY();
   renderRecords();
+  /* 玩家设备分配：分玩家设备模式下对应手机摇骰；未分配默认电脑 */
+  LINK.devicePlayers = {};
+  LINK.devices.forEach(d => d.player = '');
+  try {
+    document.querySelectorAll('#playerDevAssign select').forEach(sel => {
+      const pi = parseInt(sel.getAttribute && sel.getAttribute('data-dev'), 10);
+      const v = sel.value;
+      if (pi && v) {
+        LINK.devicePlayers[v] = pi;
+        const d = LINK.devices.find(x => x.id === v);
+        if (d) d.player = playerNames[pi - 1];
+      }
+    });
+  } catch (e) {}
   renderStatus();
   broadcastDevices();
   // 开局即无非状元奖品 → 直接进入最后一轮
@@ -2576,7 +2625,7 @@ function init() {
   switchView(v === 'rules' ? 'rules' : 'game');
 
   $('startBtn').addEventListener('click', startGame);
-  $('inputPlayers').addEventListener('input', renderPlayerNames);
+  $('inputPlayers').addEventListener('input', () => { renderPlayerNames(); renderPlayerDevAssign(); });
   $('nameModeSwitch').addEventListener('change', renderPlayerNames);
   document.querySelectorAll('#prizeModeGroup .radio-pill').forEach(b => b.classList.toggle('active', b.dataset.mode === prizeMode));
   document.querySelectorAll('#prizeModeGroup .radio-pill').forEach(btn => {
