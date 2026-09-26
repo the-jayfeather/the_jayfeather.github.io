@@ -927,17 +927,27 @@ const isPhone = /Android|iPhone|iPad|iPod|Mobile|Opera Mini|IEMobile/i.test(UA_S
   (typeof navigator === 'object' && navigator && typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 1 &&
    window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
 const LINK = {
-  device: isPhone ? 'phone' : 'pc',
+  /* 模式：'host' 主机（生成配对码等待手机）/ 'remote' 骰子模式（输入配对码遥控）
+   * 默认按设备自动检测，可在设置中手动切换 */
+  mode: loadLinkMode(),
   peer: null, conn: null, code: '',
   paired: false, offline: false, statusText: '', results: []
 };
+function loadLinkMode() {
+  try {
+    const v = localStorage.getItem('bb_link_mode');
+    if (v === 'host' || v === 'remote') return v;
+  } catch (e) {}
+  return isPhone ? 'remote' : 'host';
+}
+function saveLinkMode(m) { try { localStorage.setItem('bb_link_mode', m); } catch (e) {} }
 
 function renderLinkUI() {
   const dev = $('linkDevice');
-  if (dev) dev.textContent = LINK.device === 'phone' ? '手机' : '电脑';
+  if (dev) dev.textContent = LINK.mode === 'remote' ? '骰子模式（手机遥控）' : '主机（电脑）';
   const st = $('linkStatus');
   const note = $('linkNote');
-  if (LINK.device === 'phone') {
+  if (LINK.mode === 'remote') {
     if (st) { st.textContent = LINK.paired ? '已配对' : '未配对'; st.style.color = LINK.paired ? 'var(--gold-soft)' : ''; }
     if (note) note.textContent = LINK.paired
       ? '配对成功！现在可以摇动手机或点按「摇骰子」。'
@@ -955,6 +965,33 @@ function renderLinkUI() {
         : '手机打开本页（如 GitHub Pages 公网链接），在设置中输入上方配对码；配对后摇动手机即可摇骰。';
     }
   }
+}
+/* 手动切换互联模式：骰子模式（遥控）⇄ 主机 */
+function applyLinkMode(mode) {
+  if (mode === LINK.mode) { renderLinkUI(); return; }
+  LINK.mode = mode;
+  saveLinkMode(mode);
+  /* 断开旧连接 */
+  if (LINK.conn) { try { LINK.conn.close(); } catch (e) {} }
+  LINK.conn = null;
+  if (LINK.peer) { try { LINK.peer.destroy(); } catch (e) {} }
+  LINK.peer = null;
+  LINK.paired = false; LINK.code = ''; LINK.offline = false; LINK.results = [];
+  if (mode === 'remote') {
+    $('setupPanel').hidden = true;
+    $('gamePanel').hidden = true;
+    $('recordSidebar').hidden = true;
+    $('remotePanel').hidden = false;
+    renderRemoteStatus('未配对：点右上角设置输入配对码');
+    linkInitPhone();
+  } else {
+    $('setupPanel').hidden = false;
+    $('gamePanel').hidden = false;
+    $('recordSidebar').hidden = false;
+    $('remotePanel').hidden = true;
+    linkInitPC();
+  }
+  toast(mode === 'remote' ? '已切换为骰子模式（遥控）' : '已切换为主机模式');
 }
 /* ---------------- 电脑端（主机） ---------------- */
 function linkInitPC() {
@@ -1153,8 +1190,9 @@ function openSettings() {
     '<div class="set-note" id="sfxNote">' + (sfxSrc === 'bowl' ? '瓷碗音效：每次摇动随机播放 5 段真实碗声之一。' : '合成音效：本地合成的骰子碰撞声，无需网络。') + '</div>' +
     '<div class="set-sep"></div>' +
     '<div class="set-title">手机互联 · 摇骰遥控</div>' +
-    '<div class="set-row"><span>本机设备</span><span id="linkDevice"></span></div>' +
-    (LINK.device === 'phone'
+    '<div class="set-row"><span>骰子模式</span><label class="switch"><input type="checkbox" id="linkModeToggle"' + (LINK.mode === 'remote' ? ' checked' : '') + '><span class="slider"></span></label></div>' +
+    '<div class="set-row"><span>本机角色</span><span id="linkDevice"></span></div>' +
+    (LINK.mode === 'remote'
       ? '<div class="set-row"><span>配对码</span><input class="inp num big" id="linkCodeInput" maxlength="4" inputmode="numeric" placeholder="4位数字"></div>' +
         '<div class="set-row"><span>配对状态</span><span id="linkStatus"></span></div>' +
         '<div class="set-row"><button class="tool-btn primary" id="linkPairBtn" type="button">配对</button></div>'
@@ -1191,8 +1229,10 @@ function openSettings() {
   });
   const pairBtn = $('linkPairBtn');
   if (pairBtn) pairBtn.addEventListener('click', linkPair);
-  /* 电脑端若尚未注册配对码，打开设置时自动生成 */
-  if (LINK.device === 'pc' && !LINK.peer) linkInitPC();
+  const modeToggle = $('linkModeToggle');
+  if (modeToggle) modeToggle.addEventListener('change', () => applyLinkMode(modeToggle.checked ? 'remote' : 'host'));
+  /* 主机模式若尚未注册配对码，打开设置时自动生成 */
+  if (LINK.mode !== 'remote' && !LINK.peer) linkInitPC();
   renderLinkUI();
 }
 
@@ -1745,14 +1785,14 @@ function init() {
   $('diceArea').innerHTML = diceRowHTML([1, 1, 1, 1, 1, 1]);
   $('diceHint').textContent = '点击「摇骰子」开始游戏';
 
-  /* 设备互联：手机进入骰子模式，电脑作为主机等待配对 */
-  if (LINK.device === 'phone') {
+  /* 手机互联：骰子模式（遥控）⇄ 主机，可在设置中手动切换 */
+  $('remoteRollBtn').addEventListener('click', () => { ensureMotion(); phoneShake(); });
+  if (LINK.mode === 'remote') {
     $('setupPanel').hidden = true;
     $('gamePanel').hidden = true;
     $('recordSidebar').hidden = true;
     $('remotePanel').hidden = false;
     renderRemoteStatus('未配对：点右上角设置输入配对码');
-    $('remoteRollBtn').addEventListener('click', () => { ensureMotion(); phoneShake(); });
     linkInitPhone();
   } else {
     linkInitPC();
