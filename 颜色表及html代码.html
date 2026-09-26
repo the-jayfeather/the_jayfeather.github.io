@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>颜色表 · 天依主题</title>
+<meta name="description" content="HTML 颜色名称及色样对照表：英文名、中文名、Hex RGB 与十进制数值，支持搜索与一键复制。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23062742'/%3E%3Ccircle cx='10' cy='11' r='4' fill='%2366CCFF'/%3E%3Ccircle cx='21' cy='11' r='4' fill='%23BBEEFF'/%3E%3Ccircle cx='15.5' cy='20' r='4' fill='%2399DDFF'/%3E%3C/svg%3E">
+<style>
+/* ============================================================
+ * 颜色表 · 天依配色（取色自洛天依导航站 style.css）
+ * 深海蓝 #062742 / 导航蓝 #225588 / 天依蓝 #66CCFF
+ * 浅冰蓝 #BBEEFF / 亮蓝 #99DDFF / 云白 #E0F5FF / 墨蓝 #113355
+ * ============================================================ */
+:root {
+  --bg: #062742;
+  --nav: #225588;
+  --tianyi: #66CCFF;
+  --ice: #BBEEFF;
+  --sky: #99DDFF;
+  --cyan: #88DDFF;
+  --cloud: #E0F5FF;
+  --ink: #113355;
+  --ink-deep: #032138;
+  --card-bg: rgba(187, 238, 255, 0.20);
+  --card-solid: rgba(187, 238, 255, 0.85);
+  --border: rgba(102, 204, 255, 0.18);
+  --border-strong: rgba(102, 204, 255, 0.22);
+  --shadow: rgba(34, 85, 136, 0.28);
+  --bar: rgba(20, 35, 55, 0.92);
+  --select-bg: rgba(40, 70, 105, 0.6);
+  --scroll: #44688C;
+  --placeholder: #739CBF;
+  --radius: 18px;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 80px; }
+body {
+  min-height: 100%;
+  margin: 0;
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(102, 204, 255, 0.10), transparent 60%),
+    radial-gradient(900px 420px at -10% 20%, rgba(34, 85, 136, 0.35), transparent 55%),
+    var(--bg);
+  color: var(--cloud);
+  font-family: 'LXGW WenKai', '霞鹜文楷', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--tianyi); }
+
+/* ---------- 顶部导航 ---------- */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  background-color: var(--nav);
+  box-shadow: 0 2px 10px rgba(34, 85, 136, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  z-index: 1000;
+}
+.brand { display: flex; align-items: center; gap: 12px; user-select: none; }
+.brand-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(102, 204, 255, 0.18);
+  border: 1px solid rgba(102, 204, 255, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.brand-icon svg { width: 22px; height: 22px; }
+.brand-name {
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--sky);
+  letter-spacing: 2px;
+}
+.brand-sub {
+  font-size: 12px;
+  color: rgba(187, 238, 255, 0.65);
+  margin-left: 2px;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+.nav-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--select-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
+  padding: 7px 16px;
+  width: 300px;
+}
+.nav-search svg { width: 16px; height: 16px; color: var(--placeholder); flex-shrink: 0; }
+.nav-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--ice);
+  font-family: inherit;
+  font-size: 14px;
+}
+.nav-search input::placeholder { color: var(--placeholder); }
+
+/* ---------- 主区 ---------- */
+.main { padding: 64px 22px 40px; max-width: 1180px; margin: 0 auto; }
+
+.panel {
+  background-color: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 22px var(--shadow);
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  backdrop-filter: blur(4px);
+}
+.panel-title {
+  font-size: 17px;
+  color: var(--ice);
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 1px;
+}
+.panel-title::before {
+  content: '';
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background-color: var(--tianyi);
+  flex-shrink: 0;
+}
+.panel-title .tiny-tag {
+  margin-left: auto;
+  font-size: 11px;
+  color: rgba(187, 238, 255, 0.55);
+  font-weight: normal;
+}
+
+/* ---------- 标题卡 ---------- */
+.hero { text-align: center; padding: 26px 22px 22px; }
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  color: var(--tianyi);
+  letter-spacing: 3px;
+  text-shadow: 0 0 22px rgba(102, 204, 255, 0.35);
+}
+.hero .sub {
+  font-size: 14px;
+  color: var(--sky);
+  letter-spacing: 1px;
+}
+.hero .stats {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.stat-pill {
+  font-size: 12px;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  background: rgba(102, 204, 255, 0.14);
+  border: 1px solid rgba(102, 204, 255, 0.28);
+  color: var(--ice);
+}
+.stat-pill b { color: var(--tianyi); }
+
+/* ---------- 表格 ---------- */
+.tbl-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+}
+colgroup col.sw { width: 70px; }
+colgroup col.en { width: 20%; }
+colgroup col.zh { width: 22%; }
+colgroup col.hx { width: 19%; }
+colgroup col.de { width: 23%; }
+thead th {
+  text-align: left;
+  font-weight: normal;
+  color: var(--sky);
+  letter-spacing: 1px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-strong);
+  white-space: nowrap;
+  font-size: 13px;
+}
+tbody td {
+  padding: 7px 12px;
+  border-bottom: 1px solid rgba(102, 204, 255, 0.08);
+  vertical-align: middle;
+}
+tbody tr { transition: background 0.14s ease; }
+tbody tr:hover { background: rgba(102, 204, 255, 0.12); }
+td.sw { text-align: center; }
+.swatch {
+  display: inline-block;
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  vertical-align: middle;
+  transition: transform 0.16s ease;
+}
+tbody tr:hover .swatch { transform: scale(1.08); }
+td.en { color: var(--ice); }
+td.zh { color: var(--cloud); }
+td.code {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--sky);
+  cursor: pointer;
+  user-select: all;
+  border-radius: 6px;
+  transition: color 0.14s ease, background 0.14s ease;
+}
+td.code:hover { color: #FFFFFF; background: rgba(102, 204, 255, 0.14); }
+tr.no-match { display: none; }
+
+/* ---------- 空结果 ---------- */
+.empty-row td {
+  padding: 26px 12px;
+  text-align: center;
+  color: var(--placeholder);
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+.empty-row { display: none; }
+.empty-row.show { display: table-row; }
+
+/* ---------- 页脚 ---------- */
+.footer {
+  margin-top: 26px;
+  padding: 18px 0 8px;
+  text-align: center;
+  color: var(--sky);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+}
+.footer .links { margin-top: 6px; }
+.footer a { color: var(--ice); text-decoration: none; margin: 0 6px; }
+.footer a:hover { color: var(--tianyi); text-decoration: underline; }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bar);
+  border: 1px solid var(--border-strong);
+  color: var(--ice);
+  padding: 10px 22px;
+  border-radius: 9999px;
+  font-size: 14px;
+  box-shadow: 0 8px 26px rgba(4, 22, 40, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.28s ease;
+  z-index: 1300;
+  max-width: 80vw;
+  text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 860px) {
+  .nav-search { width: 200px; }
+  .main { padding: 64px 14px 30px; }
+  .hero h1 { font-size: 22px; }
+  .panel { padding: 14px 14px; }
+  colgroup col.sw { width: 48px; }
+  .swatch { width: 34px; height: 34px; }
+  td.code { font-size: 12px; }
+}
+@media (max-width: 560px) {
+  .brand-sub { display: none; }
+  .brand-name { font-size: 19px; }
+  .nav-search { width: 150px; padding: 6px 12px; }
+  .hero h1 { letter-spacing: 2px; }
+  thead th { font-size: 12px; padding: 8px 8px; white-space: normal; line-height: 1.3; }
+  tbody td { padding: 6px 8px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#66CCFF" stroke-width="1.8" stroke-linecap="round">
+        <circle cx="9" cy="9" r="5" fill="rgba(102,204,255,0.22)"/>
+        <circle cx="15.5" cy="15.5" r="5.5" fill="rgba(187,238,255,0.35)" stroke="#BBEEFF"/>
+        <path d="M9 14 L14 9" stroke="#99DDFF"/>
+      </svg>
+    </div>
+    <span class="brand-name">颜色表</span>
+    <span class="brand-sub">随心查 · HTML 色表</span>
+  </div>
+  <div class="nav-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="search" type="text" placeholder="搜索：英文名 / 中文名 / 色值" autocomplete="off">
+  </div>
+</header>
+
+<main class="main">
+  <section class="panel hero">
+    <h1>颜色名称及色样表（HTML 版）</h1>
+    <div class="sub">标准 HTML 颜色对照 · 点击 Hex 或十进制值即可复制</div>
+    <div class="stats">
+      <span class="stat-pill">共 <b id="total">0</b> 色</span>
+      <span class="stat-pill">当前显示 <b id="shown">0</b> 色</span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel-title">颜色对照表<span class="tiny-tag">English · 中文 · Hex RGB · Decimal</span></h2>
+    <div class="tbl-wrap">
+      <table>
+        <colgroup>
+          <col class="sw"><col class="en"><col class="zh"><col class="hx"><col class="de">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>色样</th>
+            <th>颜色名 English</th>
+            <th>中文名称</th>
+            <th>Hex RGB</th>
+            <th>十进制 Decimal</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty-row" id="emptyRow"><div>未找到匹配的颜色，换个关键词试试</div></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>颜色表 · 洛天依主题适配 · 数据整理自标准 HTML 颜色名称</div>
+    <div class="links">
+      <a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value" target="_blank" rel="noopener">CSS 颜色参考</a>
+      <a href="https://www.w3schools.com/colors/colors_names.asp" target="_blank" rel="noopener">Color Names</a>
+    </div>
+  </footer>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var COLORS = [
+['FFB6C1','LightPink','浅粉红','#FFB6C1','255,182,193'],
+['FFC0CB','Pink','粉红','#FFC0CB','255,192,203'],
+['DC143C','Crimson','深红(猩红)','#DC143C','220,20,60'],
+['FFF0F5','LavenderBlush','淡紫红','#FFF0F5','255,240,245'],
+['DB7093','PaleVioletRed','弱紫罗兰红','#DB7093','219,112,147'],
+['FF69B4','HotPink','热情的粉红','#FF69B4','255,105,180'],
+['FF1493','DeepPink','深粉红','#FF1493','255,20,147'],
+['C71585','MediumVioletRed','中紫罗兰红','#C71585','199,21,133'],
+['DA70D6','Orchid','暗紫色(兰花紫)','#DA70D6','218,112,214'],
+['D8BFD8','Thistle','蓟色','#D8BFD8','216,191,216'],
+['DDA0DD','Plum','洋李色(李子紫)','#DDA0DD','221,160,221'],
+['EE82EE','Violet','紫罗兰','#EE82EE','238,130,238'],
+['FF00FF','Magenta','洋红(玫瑰红)','#FF00FF','255,0,255'],
+['FF00FF','Fuchsia','紫红(灯笼海棠)','#FF00FF','255,0,255'],
+['8B008B','DarkMagenta','深洋红','#8B008B','139,0,139'],
+['800080','Purple','紫色','#800080','128,0,128'],
+['BA55D3','MediumOrchid','中兰花紫','#BA55D3','186,85,211'],
+['9400D3','DarkViolet','暗紫罗兰','#9400D3','148,0,211'],
+['9932CC','DarkOrchid','暗兰花紫','#9932CC','153,50,204'],
+['4B0082','Indigo','靛青/紫兰色','#4B0082','75,0,130'],
+['8A2BE2','BlueViolet','蓝紫罗兰','#8A2BE2','138,43,226'],
+['9370DB','MediumPurple','中紫色','#9370DB','147,112,219'],
+['7B68EE','MediumSlateBlue','中暗蓝色(中板岩蓝)','#7B68EE','123,104,238'],
+['6A5ACD','SlateBlue','石蓝色(板岩蓝)','#6A5ACD','106,90,205'],
+['483D8B','DarkSlateBlue','暗灰蓝色(暗板岩蓝)','#483D8B','72,61,139'],
+['E6E6FA','Lavender','淡紫色(熏衣草淡紫)','#E6E6FA','230,230,250'],
+['F8F8FF','GhostWhite','幽灵白','#F8F8FF','248,248,255'],
+['0000FF','Blue','纯蓝','#0000FF','0,0,255'],
+['0000CD','MediumBlue','中蓝色','#0000CD','0,0,205'],
+['191970','MidnightBlue','午夜蓝','#191970','25,25,112'],
+['00008B','DarkBlue','暗蓝色','#00008B','0,0,139'],
+['000080','Navy','海军蓝','#000080','0,0,128'],
+['4169E1','RoyalBlue','皇家蓝/宝蓝','#4169E1','65,105,225'],
+['6495ED','CornflowerBlue','矢车菊蓝','#6495ED','100,149,237'],
+['B0C4DE','LightSteelBlue','亮钢蓝','#B0C4DE','176,196,222'],
+['778899','LightSlateGray','亮蓝灰(亮石板灰)','#778899','119,136,153'],
+['708090','SlateGray','灰石色(石板灰)','#708090','112,128,144'],
+['1E90FF','DodgerBlue','闪兰色(道奇蓝)','#1E90FF','30,144,255'],
+['F0F8FF','AliceBlue','爱丽丝蓝','#F0F8FF','240,248,255'],
+['4682B4','SteelBlue','钢蓝/铁青','#4682B4','70,130,180'],
+['87CEFA','LightSkyBlue','亮天蓝色','#87CEFA','135,206,250'],
+['87CEEB','SkyBlue','天蓝色','#87CEEB','135,206,235'],
+['00BFFF','DeepSkyBlue','深天蓝','#00BFFF','0,191,255'],
+['ADD8E6','LightBlue','亮蓝','#ADD8E6','173,216,230'],
+['B0E0E6','PowderBlue','粉蓝色(火药青)','#B0E0E6','176,224,230'],
+['5F9EA0','CadetBlue','军兰色(军服蓝)','#5F9EA0','95,158,160'],
+['F0FFFF','Azure','蔚蓝色','#F0FFFF','240,255,255'],
+['E0FFFF','LightCyan','淡青色','#E0FFFF','224,255,255'],
+['AFEEEE','PaleTurquoise','弱绿宝石','#AFEEEE','175,238,238'],
+['00FFFF','Cyan','青色','#00FFFF','0,255,255'],
+['00FFFF','Aqua','浅绿色(水色)','#00FFFF','0,255,255'],
+['00CED1','DarkTurquoise','暗绿宝石','#00CED1','0,206,209'],
+['2F4F4F','DarkSlateGray','暗瓦灰色(暗石板灰)','#2F4F4F','47,79,79'],
+['008B8B','DarkCyan','暗青色','#008B8B','0,139,139'],
+['008080','Teal','水鸭色','#008080','0,128,128'],
+['48D1CC','MediumTurquoise','中绿宝石','#48D1CC','72,209,204'],
+['20B2AA','LightSeaGreen','浅海洋绿','#20B2AA','32,178,170'],
+['40E0D0','Turquoise','绿宝石','#40E0D0','64,224,208'],
+['7FFFD4','Aquamarine','宝石碧绿','#7FFFD4','127,255,212'],
+['66CDAA','MediumAquamarine','中宝石碧绿','#66CDAA','102,205,170'],
+['00FA9A','MediumSpringGreen','中春绿色','#00FA9A','0,250,154'],
+['F5FFFA','MintCream','薄荷奶油','#F5FFFA','245,255,250'],
+['00FF7F','SpringGreen','春绿色','#00FF7F','0,255,127'],
+['3CB371','MediumSeaGreen','中海洋绿','#3CB371','60,179,113'],
+['2E8B57','SeaGreen','海洋绿','#2E8B57','46,139,87'],
+['F0FFF0','Honeydew','蜜色(蜜瓜色)','#F0FFF0','240,255,240'],
+['90EE90','LightGreen','淡绿色','#90EE90','144,238,144'],
+['98FB98','PaleGreen','弱绿色','#98FB98','152,251,152'],
+['8FBC8F','DarkSeaGreen','暗海洋绿','#8FBC8F','143,188,143'],
+['32CD32','LimeGreen','闪光深绿','#32CD32','50,205,50'],
+['00FF00','Lime','闪光绿','#00FF00','0,255,0'],
+['228B22','ForestGreen','森林绿','#228B22','34,139,34'],
+['008000','Green','纯绿','#008000','0,128,0'],
+['006400','DarkGreen','暗绿色','#006400','0,100,0'],
+['7FFF00','Chartreuse','黄绿色(查特酒绿)','#7FFF00','127,255,0'],
+['7CFC00','LawnGreen','草绿色(草坪绿_','#7CFC00','124,252,0'],
+['ADFF2F','GreenYellow','绿黄色','#ADFF2F','173,255,47'],
+['556B2F','DarkOliveGreen','暗橄榄绿','#556B2F','85,107,47'],
+['9ACD32','YellowGreen','黄绿色','#9ACD32','154,205,50'],
+['6B8E23','OliveDrab','橄榄褐色','#6B8E23','107,142,35'],
+['F5F5DC','Beige','米色/灰棕色','#F5F5DC','245,245,220'],
+['FAFAD2','LightGoldenrodYellow','亮菊黄','#FAFAD2','250,250,210'],
+['FFFFF0','Ivory','象牙色','#FFFFF0','255,255,240'],
+['FFFFE0','LightYellow','浅黄色','#FFFFE0','255,255,224'],
+['FFFF00','Yellow','纯黄','#FFFF00','255,255,0'],
+['808000','Olive','橄榄','#808000','128,128,0'],
+['BDB76B','DarkKhaki','暗黄褐色(深卡叽布)','#BDB76B','189,183,107'],
+['FFFACD','LemonChiffon','柠檬绸','#FFFACD','255,250,205'],
+['EEE8AA','PaleGoldenrod','灰菊黄(苍麒麟色)','#EEE8AA','238,232,170'],
+['F0E68C','Khaki','黄褐色(卡叽布)','#F0E68C','240,230,140'],
+['FFD700','Gold','金色','#FFD700','255,215,0'],
+['FFF8DC','Cornsilk','玉米丝色','#FFF8DC','255,248,220'],
+['DAA520','Goldenrod','金菊黄','#DAA520','218,165,32'],
+['B8860B','DarkGoldenrod','暗金菊黄','#B8860B','184,134,11'],
+['FFFAF0','FloralWhite','花的白色','#FFFAF0','255,250,240'],
+['FDF5E6','OldLace','老花色(旧蕾丝)','#FDF5E6','253,245,230'],
+['F5DEB3','Wheat','浅黄色(小麦色)','#F5DEB3','245,222,179'],
+['FFE4B5','Moccasin','鹿皮色(鹿皮靴)','#FFE4B5','255,228,181'],
+['FFA500','Orange','橙色','#FFA500','255,165,0'],
+['FFEFD5','PapayaWhip','番木色(番木瓜)','#FFEFD5','255,239,213'],
+['FFEBCD','BlanchedAlmond','白杏色','#FFEBCD','255,235,205'],
+['FFDEAD','NavajoWhite','纳瓦白(土著白)','#FFDEAD','255,222,173'],
+['FAEBD7','AntiqueWhite','古董白','#FAEBD7','250,235,215'],
+['D2B48C','Tan','茶色','#D2B48C','210,180,140'],
+['DEB887','BurlyWood','硬木色','#DEB887','222,184,135'],
+['FFE4C4','Bisque','陶坯黄','#FFE4C4','255,228,196'],
+['FF8C00','DarkOrange','深橙色','#FF8C00','255,140,0'],
+['FAF0E6','Linen','亚麻布','#FAF0E6','250,240,230'],
+['CD853F','Peru','秘鲁色','#CD853F','205,133,63'],
+['FFDAB9','PeachPuff','桃肉色','#FFDAB9','255,218,185'],
+['F4A460','SandyBrown','沙棕色','#F4A460','244,164,96'],
+['D2691E','Chocolate','巧克力色','#D2691E','210,105,30'],
+['8B4513','SaddleBrown','重褐色(马鞍棕色)','#8B4513','139,69,19'],
+['FFF5EE','Seashell','海贝壳','#FFF5EE','255,245,238'],
+['A0522D','Sienna','黄土赭色','#A0522D','160,82,45'],
+['FFA07A','LightSalmon','浅鲑鱼肉色','#FFA07A','255,160,122'],
+['FF7F50','Coral','珊瑚','#FF7F50','255,127,80'],
+['FF4500','OrangeRed','橙红色','#FF4500','255,69,0'],
+['E9967A','DarkSalmon','深鲜肉/鲑鱼色','#E9967A','233,150,122'],
+['FF6347','Tomato','番茄红','#FF6347','255,99,71'],
+['FFE4E1','MistyRose','浅玫瑰色(薄雾玫瑰)','#FFE4E1','255,228,225'],
+['FA8072','Salmon','鲜肉/鲑鱼色','#FA8072','250,128,114'],
+['FFFAFA','Snow','雪白色','#FFFAFA','255,250,250'],
+['F08080','LightCoral','淡珊瑚色','#F08080','240,128,128'],
+['BC8F8F','RosyBrown','玫瑰棕色','#BC8F8F','188,143,143'],
+['CD5C5C','IndianRed','印度红','#CD5C5C','205,92,92'],
+['FF0000','Red','纯红','#FF0000','255,0,0'],
+['A52A2A','Brown','棕色','#A52A2A','165,42,42'],
+['B22222','FireBrick','火砖色(耐火砖)','#B22222','178,34,34'],
+['8B0000','DarkRed','深红色','#8B0000','139,0,0'],
+['800000','Maroon','栗色','#800000','128,0,0'],
+['FFFFFF','White','纯白','#FFFFFF','255,255,255'],
+['F5F5F5','WhiteSmoke','白烟','#F5F5F5','245,245,245'],
+['DCDCDC','Gainsboro','淡灰色(庚斯博罗灰)','#DCDCDC','220,220,220'],
+['D3D3D3','LightGrey','浅灰色','#D3D3D3','211,211,211'],
+['C0C0C0','Silver','银灰色','#C0C0C0','192,192,192'],
+['A9A9A9','DarkGray','深灰色','#A9A9A9','169,169,169'],
+['808080','Gray','灰色','#808080','128,128,128'],
+['696969','DimGray','暗淡的灰色','#696969','105,105,105'],
+['000000','Black','纯黑','#000000','0,0,0']
+];
+
+var tbody = document.getElementById('tbody');
+var emptyRow = document.getElementById('emptyRow');
+var searchEl = document.getElementById('search');
+var toastEl = document.getElementById('toast');
+var toastTimer = null;
+
+function render(list) {
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var c = list[i];
+    html += '<tr data-hex="' + c[0] + '">'
+      + '<td class="sw"><span class="swatch" style="background:#' + c[0] + '"></span></td>'
+      + '<td class="en">' + c[1] + '</td>'
+      + '<td class="zh">' + c[2] + '</td>'
+      + '<td class="code" data-copy="' + c[3] + '" title="点击复制 ' + c[3] + '">' + c[3] + '</td>'
+      + '<td class="code" data-copy="' + c[4] + '" title="点击复制 ' + c[4] + '">' + c[4] + '</td>'
+      + '</tr>';
+  }
+  tbody.innerHTML = html;
+  document.getElementById('total').textContent = COLORS.length;
+  document.getElementById('shown').textContent = list.length;
+  emptyRow.classList.toggle('show', list.length === 0);
+}
+
+function doSearch() {
+  var q = searchEl.value.trim().toLowerCase();
+  if (!q) { render(COLORS); return; }
+  var hit = [];
+  for (var i = 0; i < COLORS.length; i++) {
+    var c = COLORS[i];
+    if (c[1].toLowerCase().indexOf(q) > -1
+        || c[2].indexOf(q) > -1
+        || c[0].toLowerCase().indexOf(q) > -1
+        || c[3].toLowerCase().indexOf(q) > -1
+        || c[4].indexOf(q) > -1) {
+      hit.push(c);
+    }
+  }
+  render(hit);
+}
+
+searchEl.addEventListener('input', doSearch);
+
+/* 复制：优先 Clipboard API，失败回退 execCommand */
+function copyText(text, done) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done, function () { legacyCopy(text, done); });
+  } else {
+    legacyCopy(text, done);
+  }
+}
+function legacyCopy(text, done) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+  done();
+}
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 1600);
+}
+
+tbody.addEventListener('click', function (e) {
+  var cell = e.target.closest('td.code');
+  if (!cell) return;
+  var val = cell.getAttribute('data-copy');
+  copyText(val, function () { showToast('已复制 ' + val); });
+});
+
+render(COLORS);
+</script>
+</body>
+</html>
