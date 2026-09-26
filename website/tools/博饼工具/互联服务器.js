@@ -23,12 +23,12 @@ const PORT = process.env.PORT || 4567;
 const ROOT = __dirname;
 
 /* ---------------- 内存会话 ----------------
- * sessions: sid -> { code, paired, shakeFlag, lastSeen }
+ * sessions: sid -> { code, paired, shakeFlag, shakeName, pairRequested, lastSeen }
  * byCode  : code -> sid
- * phoneQueues: code -> [ {type:'result'|'status', ...} ] */
+ * phones  : code -> Map<pid, {name, ip, at, queue: []}>  每个配对手机独立消息队列 */
 const sessions = new Map();
 const byCode = new Map();
-const phoneQueues = new Map();
+const phones = new Map();
 
 function genCode() {
   let c;
@@ -42,7 +42,7 @@ setInterval(() => {
     if (now - s.lastSeen > 300000) {
       sessions.delete(sid);
       byCode.delete(s.code);
-      phoneQueues.delete(s.code);
+      phones.delete(s.code);
     }
   }
 }, 60000).unref();
@@ -94,43 +94,47 @@ const server = http.createServer(async (req, res) => {
   if (p === '/api/pair/new' && req.method === 'POST') {
     const code = genCode();
     const sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
-    sessions.set(sid, { code, paired: false, shakeFlag: false, pairRequested: false, lastSeen: Date.now() });
+    sessions.set(sid, { code, paired: false, shakeFlag: false, shakeName: '', pairRequested: false, lastSeen: Date.now() });
     byCode.set(code, sid);
-    phoneQueues.set(code, []);
+    phones.set(code, new Map());
     json(res, { ok: true, code, sid, ip: lanIP(), port: PORT });
     return;
   }
 
-  /* 手机端：凭码配对 */
+  /* 手机端：凭码配对 / 补注册设备（返回独立 pid，手机凭 pid 收广播） */
   if (p === '/api/pair/verify' && req.method === 'POST') {
-    let code = '';
-    try { code = String((JSON.parse(await readBody(req)) || {}).code || '').trim(); } catch (e) {}
+    let code = '', name = '', pid = '';
+    try { const b = JSON.parse(await readBody(req)) || {}; code = String(b.code || '').trim(); name = String(b.name || '手机').trim(); pid = String(b.pid || '').trim(); } catch (e) {}
     const sid = byCode.get(code);
     if (!sid) { json(res, { ok: false, error: '配对码不存在或已过期' }); return; }
     sessions.get(sid).paired = true;
-    json(res, { ok: true });
+    const m = phones.get(code);
+    if (!pid) pid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    m.set(pid, { name, ip: req.socket.remoteAddress || '', at: Date.now(), queue: [] });
+    json(res, { ok: true, pid });
     return;
   }
 
-  /* 手机端：上报摇动 */
+  /* 手机端：上报摇动（带设备名，电脑可显示谁摇的） */
   if (p === '/api/shake' && req.method === 'POST') {
-    let code = '';
-    try { code = String((JSON.parse(await readBody(req)) || {}).code || '').trim(); } catch (e) {}
+    let code = '', name = '';
+    try { const b = JSON.parse(await readBody(req)) || {}; code = String(b.code || '').trim(); name = String(b.name || '手机').trim(); } catch (e) {}
     const sid = byCode.get(code);
     if (!sid) { json(res, { ok: false, error: '配对码不存在或已过期' }); return; }
     sessions.get(sid).shakeFlag = true;
+    sessions.get(sid).shakeName = name;
     json(res, { ok: true });
     return;
   }
 
-  /* 电脑端：推送结果/状态给配对手机 */
+  /* 电脑端：推送结果/状态 → 广播给该配对码下所有手机（每台独立队列） */
   if (p === '/api/push' && req.method === 'POST') {
     let sid = '', msg = null;
     try { const b = JSON.parse(await readBody(req)); sid = b.sid || ''; msg = b.msg || null; } catch (e) {}
     const s = sessions.get(sid);
     if (!s || !msg) { json(res, { ok: false }); return; }
-    const q = phoneQueues.get(s.code);
-    if (q) q.push(msg);
+    const m = phones.get(s.code);
+    if (m) m.forEach(p => p.queue.push(msg));
     json(res, { ok: true });
     return;
   }
@@ -178,26 +182,34 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  /* 电脑端：轮询摇动/配对状态（读取后消费 shake） */
+  /* 电脑端：轮询摇动/配对状态（读取后消费 shake/request，附已连接设备列表） */
   if (p === '/api/events' && req.method === 'GET') {
     const s = sessions.get(u.searchParams.get('sid') || '');
     if (!s) { json(res, { ok: false, error: '会话不存在或已过期' }); return; }
     s.lastSeen = Date.now();
-    const out = { ok: true, paired: s.paired, shake: s.shakeFlag, request: s.pairRequested || false };
+    const m = phones.get(s.code);
+    const devices = [];
+    if (m) m.forEach((p, pid) => devices.push({ pid, name: p.name, ip: p.ip, at: p.at }));
+    const out = { ok: true, paired: s.paired, shake: s.shakeFlag, shakeName: s.shakeName || '', request: s.pairRequested || false, devices };
     s.shakeFlag = false;
+    s.shakeName = '';
     s.pairRequested = false;
     json(res, out);
     return;
   }
 
-  /* 手机端：轮询结果/状态（读取后出队） */
+  /* 手机端：轮询结果/状态（按 pid 读各自队列，出队） */
   if (p === '/api/phone/events' && req.method === 'GET') {
     const code = u.searchParams.get('code') || '';
+    const pid = u.searchParams.get('pid') || '';
     const sid = byCode.get(code);
     if (!sid) { json(res, { ok: false, error: '配对码不存在或已过期' }); return; }
     const s = sessions.get(sid);
-    const q = phoneQueues.get(code);
-    const msg = q && q.length ? q.shift() : null;
+    const m = phones.get(code);
+    const p = m && m.get(pid);
+    if (!p) { json(res, { ok: false, error: '设备未注册' }); return; }
+    p.at = Date.now();
+    const msg = p.queue.length ? p.queue.shift() : null;
     json(res, { ok: true, paired: s.paired, msg });
     return;
   }
