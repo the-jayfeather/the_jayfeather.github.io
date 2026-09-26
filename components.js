@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if(footerContainer){
         footerContainer.innerHTML = `
 <div class="footer">
-  FU Studio · 一只松鸦羽(the_jayfeather) © 2026 版权所有 | 一只松鸦羽的导航站 | <a href="https://the-jayfeather.github.io/the_jayfeather.github.io/">在线版</a> | <a href="https://github.com/the-jayfeather/the_jayfeather.github.io">项目开源地址</a>
+  FU Studio · 一只松鸦羽(the_jayfeather) © 2026 版权所有 | 一只松鸦羽的导航站 | <a href="https://the-jayfeather.github.io/the_jayfeather.github.io/">Github在线版</a> | <a href="https://fu-start.pages.dev">CloudFlare在线版</a> | <a href="https://github.com/the-jayfeather/the_jayfeather.github.io">项目开源地址</a>
 </div>
         `;
     }
