@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网页换算器 · 单位换算</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='22'%20fill='%23225588'/%3E%3Cpath%20d='M50%2088V36M18%2088h64M24%2024h52M50%2036%2024%2024l-6%2024h64l-6-24L50%2036Z'%20fill='none'%20stroke='%2366CCFF'%20stroke-width='6'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='50'%20cy='62'%20r='8'%20fill='%23BBEEFF'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=LXGW+WenKai&display=swap">
+<style>
+/* ============================================================
+ * 单位换算器 —— 天依配色（对齐 style.css）
+ * 深海蓝 #062742 / 导航蓝 #225588 / 天依蓝 #66CCFF
+ * 浅冰蓝 #BBEEFF / 亮蓝 #99DDFF / 云白 #E0F5FF / 墨蓝 #113355
+ * ============================================================ */
+:root {
+  --bg: #062742;
+  --nav: #225588;
+  --tianyi: #66CCFF;
+  --ice: #BBEEFF;
+  --sky: #99DDFF;
+  --cyan: #88DDFF;
+  --cloud: #E0F5FF;
+  --ink: #113355;
+  --ink-deep: #032138;
+  --card-bg: rgba(187, 238, 255, 0.20);
+  --card-solid: rgba(187, 238, 255, 0.85);
+  --border: rgba(102, 204, 255, 0.18);
+  --border-strong: rgba(102, 204, 255, 0.22);
+  --shadow: rgba(34, 85, 136, 0.28);
+  --bar: rgba(20, 35, 55, 0.92);
+  --select-bg: rgba(40, 70, 105, 0.6);
+  --scroll: #44688C;
+  --placeholder: #739CBF;
+  --warn-bg: rgba(255, 168, 148, 0.78);
+  --radius: 18px;
+}
+* { box-sizing: border-box; }
+html { height: 100%; }
+body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--cloud);
+  font-family: 'LXGW WenKai', '霞鹜文楷', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--tianyi); }
+
+/* ---------- 顶部导航栏 ---------- */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  background-color: var(--nav);
+  box-shadow: 0 2px 10px rgba(34, 85, 136, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  z-index: 1000;
+}
+.brand { display: flex; align-items: center; gap: 12px; user-select: none; }
+.brand-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(102, 204, 255, 0.18);
+  border: 1px solid rgba(102, 204, 255, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.brand-icon svg { width: 22px; height: 22px; }
+.brand-name {
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--sky);
+  letter-spacing: 2px;
+}
+.brand-sub {
+  font-size: 12px;
+  color: rgba(187, 238, 255, 0.65);
+  margin-left: 2px;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+.nav-right { display: flex; align-items: center; gap: 14px; }
+.time-source {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  background: var(--select-bg);
+  color: var(--ice);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.time-source:hover { border-color: var(--tianyi); }
+.time-source .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--placeholder);
+  flex-shrink: 0;
+}
+.time-source.online .dot { background: #7BE38A; box-shadow: 0 0 6px rgba(123, 227, 138, 0.7); }
+.time-source.local .dot { background: #F4C96B; box-shadow: 0 0 6px rgba(244, 201, 107, 0.7); }
+
+/* ---------- 主区 ---------- */
+.main {
+  padding-top: 64px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 18px 20px 24px;
+  flex: 1;
+}
+
+/* ---------- 通用卡片 ---------- */
+.panel {
+  background-color: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 22px var(--shadow);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+.panel-title {
+  font-size: 17px;
+  color: var(--ice);
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 1px;
+}
+.panel-title::before {
+  content: '';
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background-color: var(--tianyi);
+  flex-shrink: 0;
+}
+.panel-title .tiny-tag {
+  margin-left: auto;
+  font-size: 11px;
+  color: rgba(187, 238, 255, 0.55);
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+/* ---------- 分类选择 ---------- */
+.cat-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.cat-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  background: var(--select-bg);
+  border: 1px solid var(--border-strong);
+  color: var(--ice);
+  font-family: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+.cat-tab svg { width: 15px; height: 15px; opacity: 0.85; flex-shrink: 0; }
+.cat-tab:hover { background: rgba(102, 204, 255, 0.18); border-color: var(--tianyi); }
+.cat-tab.active { background: var(--tianyi); color: var(--ink-deep); border-color: var(--tianyi); }
+.cat-tab.active svg { opacity: 1; }
+
+/* ---------- 换算行 ---------- */
+.convert-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: end;
+}
+.c-group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.c-label { font-size: 12px; color: var(--sky); letter-spacing: 2px; }
+.num-input, .unit-select, .d-input {
+  height: 46px;
+  border-radius: 12px;
+  background: var(--select-bg);
+  border: 1px solid var(--border-strong);
+  color: var(--ice);
+  font-family: inherit;
+  font-size: 16px;
+  padding: 0 12px;
+  outline: none;
+  transition: border 0.18s ease, box-shadow 0.18s ease;
+  width: 100%;
+}
+.num-input:focus, .unit-select:focus, .d-input:focus {
+  border-color: var(--tianyi);
+  box-shadow: 0 0 0 3px rgba(102, 204, 255, 0.18);
+}
+.num-input { font-family: 'Microsoft YaHei', '微软雅黑', sans-serif; font-size: 18px; }
+.result-input {
+  color: var(--tianyi);
+  font-weight: bold;
+  font-size: 19px;
+  background: rgba(102, 204, 255, 0.10);
+  cursor: default;
+}
+.unit-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%3E%3Cpath%20d='M4%206l4%204%204-4'%20fill='none'%20stroke='%2366CCFF'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.unit-select option { background: #0A3352; color: var(--ice); }
+.swap-btn { height: 46px; width: 46px; align-self: end; font-size: 20px; }
+
+.tool-btn {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 36px; height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: var(--select-bg);
+  border: 1px solid var(--border-strong);
+  color: var(--ice);
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.tool-btn:hover { background: rgba(102, 204, 255, 0.25); border-color: var(--tianyi); }
+.tool-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  background: var(--select-bg);
+  border-color: var(--border);
+  box-shadow: none;
+}
+.tool-btn:disabled:hover { background: var(--select-bg); border-color: var(--border); }
+.tool-btn.primary { background: var(--tianyi); color: var(--ink-deep); font-size: 14px; }
+.tool-btn.primary:hover { background: var(--ice); }
+
+.result-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.base-note { font-size: 12px; color: var(--placeholder); }
+
+.sub-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: normal;
+  margin: 14px 0 8px 0;
+  letter-spacing: 1px;
+  color: var(--ice);
+}
+.sub-title::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--tianyi);
+}
+.sub-title .q-base { color: var(--tianyi); font-weight: bold; }
+
+/* ---------- 全单位速查表 ---------- */
+.quick-table {
+  margin-top: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.qt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 12px;
+  font-size: 13px;
+  border-bottom: 1px dashed rgba(102, 204, 255, 0.12);
+  cursor: pointer;
+  transition: background 0.14s ease;
+}
+.qt-row:last-child { border-bottom: none; }
+.qt-row:hover { background: rgba(102, 204, 255, 0.12); }
+.qt-row .q-name { color: var(--sky); flex-shrink: 0; white-space: nowrap; }
+.qt-row .q-val {
+  color: var(--ice);
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.qt-row .q-val b { color: var(--tianyi); font-weight: 600; }
+.qt-row.current { background: rgba(102, 204, 255, 0.18); border-left: 3px solid var(--tianyi); }
+
+/* ---------- 时间日期工具 ---------- */
+.view-tabs {
+  display: flex;
+  background: var(--bar);
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
+  padding: 4px;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.view-tab {
+  border: none;
+  background: transparent;
+  color: var(--ice);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.view-tab:hover { background: rgba(102, 204, 255, 0.18); }
+.view-tab.active { background: var(--tianyi); color: var(--ink-deep); }
+
+.dtool { margin-top: 14px; }
+.d-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 12px; }
+.d-field { display: flex; flex-direction: column; gap: 6px; }
+.d-label { font-size: 12px; color: var(--sky); letter-spacing: 1px; }
+.d-input { height: 44px; font-size: 14px; color-scheme: dark; }
+.d-input.d-num { width: 120px; }
+.d-output {
+  font-size: 15px;
+  color: var(--cloud);
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(102, 204, 255, 0.10);
+  border: 1px dashed var(--border-strong);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  line-height: 1.5;
+}
+.d-output b { color: var(--tianyi); font-weight: bold; }
+.d-output .dim { color: var(--placeholder); font-size: 13px; }
+
+/* ---------- 页脚 ---------- */
+.footer {
+  margin-top: auto;
+  padding: 18px 0 26px;
+  text-align: center;
+  color: var(--sky);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.footer .foot-note { font-size: 12px; color: var(--placeholder); }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bar);
+  border: 1px solid var(--border-strong);
+  color: var(--ice);
+  padding: 10px 22px;
+  border-radius: 9999px;
+  font-size: 14px;
+  box-shadow: 0 8px 26px rgba(4, 22, 40, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.28s ease;
+  z-index: 1300;
+  max-width: 80vw;
+  text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 640px) {
+  .brand-sub { display: none; }
+  .brand-name { font-size: 20px; }
+  .content { padding: 14px 14px 20px; }
+  .convert-row { grid-template-columns: 1fr; }
+  .swap-btn { width: 100%; height: 42px; }
+  .cat-tab { min-height: 44px; padding: 8px 12px; font-size: 14px; }
+  .cat-tab svg { width: 16px; height: 16px; }
+  .tool-btn { min-width: 44px; min-height: 44px; }
+  .time-source { font-size: 13px; padding: 6px 10px; }
+  .unit-select, .d-input { font-size: 16px; }
+  .d-input.d-num { width: 100%; }
+  .view-tabs { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= 顶部导航栏 ================= -->
+<header class="navbar">
+  <div class="brand">
+    <span class="brand-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M4 21h16M6 6h12M12 9 6 6l-1.6 6h15.2L18 6 12 9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="15.5" r="1.7" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">一只松鸦羽的网页换算器</span>
+    <span class="brand-sub">单位换算 · 万物可量</span>
+  </div>
+  <div class="nav-right">
+    <span class="time-source" id="fxStatus" title="点击重新检测汇率来源">
+      <span class="dot"></span><span id="fxStatusText">汇率检测中…</span>
+    </span>
+  </div>
+</header>
+
+<!-- ================= 主区 ================= -->
+<main class="main">
+  <div class="content">
+
+    <!-- 分类选择 -->
+    <section class="panel">
+      <h3 class="panel-title">选择单位类型 <span class="tiny-tag">共 14 类 · 支持同类型互转</span></h3>
+      <div class="cat-tabs" id="catTabs"></div>
+    </section>
+
+    <!-- 换算器（通用类别 + 货币 + 时间） -->
+    <section class="panel" id="converterPanel">
+      <h3 class="panel-title" id="convTitle">长度换算 <span class="tiny-tag" id="convNote"></span></h3>
+      <div class="convert-row">
+        <div class="c-group">
+          <label class="c-label" for="fromVal">输入值</label>
+          <input class="num-input" id="fromVal" type="number" inputmode="decimal" value="1" autocomplete="off" spellcheck="false">
+          <select class="unit-select" id="fromUnit" aria-label="源单位"></select>
+        </div>
+        <button class="tool-btn swap-btn" id="swapBtn" title="交换单位" aria-label="交换单位">⇄</button>
+        <div class="c-group">
+          <label class="c-label" for="toVal">换算结果</label>
+          <input class="num-input result-input" id="toVal" type="text" readonly tabindex="-1" value="—">
+          <select class="unit-select" id="toUnit" aria-label="目标单位"></select>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="tool-btn" id="copyBtn" title="复制结果数值">复制结果</button>
+        <span class="base-note" id="baseNote"></span>
+      </div>
+      <h4 class="sub-title">1 <span class="q-base" id="qFromName">米</span> 等于 …（点击行可设为目标单位）</h4>
+      <div class="quick-table" id="quickTable"></div>
+    </section>
+
+    <!-- 时间日期工具 -->
+    <section class="panel" id="datePanel" hidden>
+      <h3 class="panel-title">时间日期工具 <span class="tiny-tag">时间戳 · 加减 · 相差</span></h3>
+      <div class="view-tabs" id="dateTabs">
+        <button class="view-tab active" data-dtab="ts">时间戳互转</button>
+        <button class="view-tab" data-dtab="add">日期加减</button>
+        <button class="view-tab" data-dtab="diff">日期相差</button>
+      </div>
+
+      <div class="dtool" id="dt-ts">
+        <div class="d-row">
+          <div class="d-field">
+            <label class="d-label" for="tsDt">日期时间</label>
+            <input class="d-input" id="tsDt" type="datetime-local">
+          </div>
+          <button class="tool-btn primary" id="tsNowBtn">现在</button>
+          <div class="d-output" id="tsOut"><span class="dim">Unix 时间戳：</span><b id="tsOutSec">—</b><span class="dim">秒 · </span><b id="tsOutMs">—</b><span class="dim">毫秒</span></div>
+        </div>
+        <div class="d-row">
+          <div class="d-field">
+            <label class="d-label" for="tsNum">Unix 时间戳</label>
+            <input class="d-input d-num" id="tsNum" type="number" inputmode="numeric" autocomplete="off" placeholder="例如 1777298400">
+          </div>
+          <div class="d-field">
+            <label class="d-label" for="tsUnit">单位</label>
+            <select class="d-input unit-select" id="tsUnit" style="width:110px;"><option value="s">秒</option><option value="ms">毫秒</option></select>
+          </div>
+          <div class="d-output" id="tsOutDate"><span class="dim">对应时间：</span><b id="tsDateText">—</b></div>
+        </div>
+      </div>
+
+      <div class="dtool" id="dt-add" hidden>
+        <div class="d-row">
+          <div class="d-field">
+            <label class="d-label" for="addDate">起始日期</label>
+            <input class="d-input" id="addDate" type="date">
+          </div>
+          <div class="d-field">
+            <label class="d-label" for="addNum">增减量</label>
+            <input class="d-input d-num" id="addNum" type="number" inputmode="numeric" value="30" autocomplete="off">
+          </div>
+          <div class="d-field">
+            <label class="d-label" for="addUnit">单位</label>
+            <select class="d-input unit-select" id="addUnit" style="width:100px;"><option value="d">天</option><option value="w">周</option><option value="m">月</option><option value="y">年</option></select>
+          </div>
+          <button class="tool-btn primary" id="addCalcBtn">计算</button>
+          <button class="tool-btn" id="addTodayBtn">今天</button>
+        </div>
+        <div class="d-output" id="addResult">结果：<b id="addResultText">—</b></div>
+      </div>
+
+      <div class="dtool" id="dt-diff" hidden>
+        <div class="d-row">
+          <div class="d-field">
+            <label class="d-label" for="diffA">起始日期</label>
+            <input class="d-input" id="diffA" type="date">
+          </div>
+          <div class="d-field">
+            <label class="d-label" for="diffB">结束日期</label>
+            <input class="d-input" id="diffB" type="date">
+          </div>
+          <button class="tool-btn primary" id="diffCalcBtn">计算</button>
+        </div>
+        <div class="d-output" id="diffResult">结果：<b id="diffResultText">—</b></div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ================= 页脚 ================= -->
+<footer class="footer">
+  <span>一只松鸦羽的网页换算器 · Jayfeather 导航站工具集</span>
+  <span class="foot-note" id="footNote"></span>
+</footer>
+
+<div class="toast" id="toast">已复制</div>
+
+<script>
+/* ================= 数据与换算引擎 ================= */
+const PI = Math.PI;
+
+/* 本地留存的离线基准汇率（获取自 open.er-api.com，2026-09-27） */
+const LOCAL_FX_DATE = '2026-09-27';
+const LOCAL_FX_RATES = {
+  CNY: 1, USD: 0.14861, EUR: 0.130531, JPY: 23.416463, GBP: 0.112301,
+  HKD: 1.165337, TWD: 4.739336, KRW: 203.086921, SGD: 0.189662, AUD: 0.211976,
+  CAD: 0.209809, CHF: 0.123109, NZD: 0.263856, THB: 4.963575, MYR: 0.606575,
+  IDR: 2652.519894, PHP: 9.345794, VND: 3875.968992, INR: 14.265132, RUB: 12.626263,
+  BRL: 0.769408, MXN: 2.602811, ZAR: 2.423988, TRY: 7.251632, SEK: 1.476287,
+  NOK: 1.412855, DKK: 0.975684, PLN: 0.570646, CZK: 3.196931, HUF: 47.619048,
+  AED: 0.545769, SAR: 0.557287, KWD: 0.046056, BHD: 0.055877, QAR: 0.54094,
+  ILS: 0.453767, EGP: 7.690991, ARS: 226.476278, CLP: 143.112877, COP: 484.045016,
+  PKR: 41.283078, BDT: 18.279906, LKR: 49.2086, MOP: 1.200291, MMK: 312.440719,
+  KZT: 66.225166, UAH: 6.670111, NGN: 197.470004, MNT: 536.193029, KES: 19.31,
+  GHS: 1.728636, PEN: 0.505854, UZS: 1757.479087, MAD: 1.425651, ISK: 17.867635
+};
+/* 汇率在线源（优先顺序尝试，均以 CNY 为基准） */
+const FX_ENDPOINTS = [
+  'https://open.er-api.com/v6/latest/CNY',
+  'https://api.frankfurter.app/latest?from=CNY'
+];
+
+const CATS = [
+  { id: 'date',     name: '时间日期', type: 'special', icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6h12M5.5 1.5v3M10.5 1.5v3"/></svg>' },
+  { id: 'currency', name: '货币', type: 'fx', defFrom: 'CNY', defTo: 'USD',
+    note: '有网络时自动使用在线实时汇率，无网络时使用本地留存汇率',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M5.2 5.2h5.6M8 5v5.6M6.2 7.6h3.6M6.2 9.8h3.6" stroke-width="1.1" stroke-linecap="round"/></svg>',
+    units: [
+      ['CNY','人民币',1],['USD','美元',1/0.14861],['EUR','欧元',1/0.130531],['JPY','日元',1/23.416463],['GBP','英镑',1/0.112301],
+      ['HKD','港币',1/1.165337],['TWD','新台币',1/4.739336],['KRW','韩元',1/203.086921],['SGD','新加坡元',1/0.189662],['AUD','澳元',1/0.211976],
+      ['CAD','加元',1/0.209809],['CHF','瑞士法郎',1/0.123109],['NZD','新西兰元',1/0.263856],['THB','泰铢',1/4.963575],['MYR','马来西亚林吉特',1/0.606575],
+      ['IDR','印尼盾',1/2652.519894],['PHP','菲律宾比索',1/9.345794],['VND','越南盾',1/3875.968992],['INR','印度卢比',1/14.265132],['RUB','俄罗斯卢布',1/12.626263],
+      ['BRL','巴西雷亚尔',1/0.769408],['MXN','墨西哥比索',1/2.602811],['ZAR','南非兰特',1/2.423988],['TRY','土耳其里拉',1/7.251632],['SEK','瑞典克朗',1/1.476287],
+      ['NOK','挪威克朗',1/1.412855],['DKK','丹麦克朗',1/0.975684],['PLN','波兰兹罗提',1/0.570646],['CZK','捷克克朗',1/3.196931],['HUF','匈牙利福林',1/47.619048],
+      ['AED','阿联酋迪拉姆',1/0.545769],['SAR','沙特里亚尔',1/0.557287],['KWD','科威特第纳尔',1/0.046056],['BHD','巴林第纳尔',1/0.055877],['QAR','卡塔尔里亚尔',1/0.54094],
+      ['ILS','以色列新谢克尔',1/0.453767],['EGP','埃及镑',1/7.690991],['ARS','阿根廷比索',1/226.476278],['CLP','智利比索',1/143.112877],['COP','哥伦比亚比索',1/484.045016],
+      ['PKR','巴基斯坦卢比',1/41.283078],['BDT','孟加拉塔卡',1/18.279906],['LKR','斯里兰卡卢比',1/49.2086],['MOP','澳门元',1/1.200291],['MMK','缅甸元',1/312.440719],
+      ['KZT','哈萨克斯坦坚戈',1/66.225166],['UAH','乌克兰格里夫纳',1/6.670111],['NGN','尼日利亚奈拉',1/197.470004],['MNT','蒙古图格里克',1/536.193029],['KES','肯尼亚先令',1/19.31],
+      ['GHS','加纳塞地',1/1.728636],['PEN','秘鲁索尔',1/0.505854],['UZS','乌兹别克斯坦苏姆',1/1757.479087],['MAD','摩洛哥迪拉姆',1/1.425651],['ISK','冰岛克朗',1/17.867635]
+    ] },
+  { id: 'length', name: '长度', type: 'linear', defFrom: 'm', defTo: 'ft',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="6" width="13" height="4.5" rx="1"/><path d="M3.5 6v2.2M6 6v2.2M8.5 6v2.2M11 6v2.2M13.5 6v2.2" stroke-width="1.1" stroke-linecap="round"/></svg>',
+    units: [
+      ['pm','皮米',1e-12],['nm','纳米',1e-9],['um','微米',1e-6],['mm','毫米',1e-3],['cm','厘米',1e-2],['dm','分米',1e-1],['m','米',1],
+      ['dam','十米',10],['hm','百米',1e2],['km','千米',1e3],['Mm','兆米',1e6],
+      ['mil','密耳',2.54e-5],['in','英寸',0.0254],['ft','英尺',0.3048],['yd','码',0.9144],['fm','英寻',1.8288],['rod','杆',5.0292],
+      ['ch','链',20.1168],['fur','弗隆',201.168],['mi','英里',1609.344],['nmi','海里',1852],
+      ['li','市里',500],['zhang','丈',10/3],['chi','尺',1/3],['cun','寸',1/30],['fen','市分',1/300],
+      ['ang','埃',1e-10],['AU','天文单位',1.495978707e11],['ly','光年',9.4607304725808e15],['pc','秒差距',3.0856775814913673e16]
+    ] },
+  { id: 'volume', name: '体积', type: 'linear', defFrom: 'L', defTo: 'galUS',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M5 1.5h6M5.5 1.5v3.2L3.4 12a1.6 1.6 0 0 0 1.5 2h6.2a1.6 1.6 0 0 0 1.5-2L10.5 4.7V1.5"/><path d="M5 9h6" stroke-width="1.1"/></svg>',
+    units: [
+      ['mm3','立方毫米',1e-9],['cm3','立方厘米',1e-6],['mL','毫升',1e-6],['dm3','立方分米',1e-3],['L','升',1e-3],['m3','立方米',1],['km3','立方千米',1e9],
+      ['tsp','茶匙(美)',4.92892159375e-6],['tbsp','汤匙(美)',1.478676478125e-5],['flozUS','液盎司(美)',2.95735295625e-5],['cupUS','杯(美)',2.365882365e-4],
+      ['pintUS','品脱(美)',4.73176473e-4],['quartUS','夸脱(美)',9.46352946e-4],['galUS','加仑(美)',3.785411784e-3],
+      ['flozUK','液盎司(英)',2.84130625e-5],['pintUK','品脱(英)',5.6826125e-4],['galUK','加仑(英)',4.54609e-3],
+      ['in3','立方英寸',1.6387064e-5],['ft3','立方英尺',0.028316846592],['yd3','立方码',0.764554857984],['bbl','桶(石油)',0.158987294928],
+      ['acft','英亩英尺',1233.48183754752],['dou','斗(市制)',0.01],['dan','石(市制)',0.1]
+    ] },
+  { id: 'weight', name: '重量', type: 'linear', defFrom: 'kg', defTo: 'lb',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 15V7"/><path d="M2 15h12"/><path d="M3 3h10"/><path d="M8 7 3 3l-.8 4h11.6L13 3 8 7Z"/></svg>',
+    units: [
+      ['ug','微克',1e-9],['mg','毫克',1e-6],['g','克',1e-3],['kg','千克',1],['q','公担',1e2],['t','吨',1e3],
+      ['ct','克拉',2e-4],['gr','格令',6.479891e-5],['dr','打兰',0.0017718451953125],['oz','盎司',0.028349523125],['ozt','金衡盎司',0.0311034768],
+      ['lb','磅',0.45359237],['st','英石',6.35029318],['slug','斯勒格',14.59390294],
+      ['cwtUS','美担',45.359237],['cwtUK','英担',50.80234544],['tonUS','短吨',907.18474],['tonUK','长吨',1016.0469088],
+      ['jin','斤',0.5],['liang','两',0.05],['qian','钱',0.005],['danW','担',50]
+    ] },
+  { id: 'temperature', name: '温度', type: 'temp', defFrom: 'C', defTo: 'F',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M6.5 8.5V3a1.5 1.5 0 0 1 3 0v5.5a3.2 3.2 0 1 1-3 0Z"/><path d="M8 12.5V9.5" stroke-linecap="round"/></svg>',
+    units: [
+      ['C','摄氏度', v=>v, v=>v],
+      ['F','华氏度', v=>(v-32)*5/9, v=>v*9/5+32],
+      ['K','开尔文', v=>v-273.15, v=>v+273.15],
+      ['R','兰氏度', v=>(v-491.67)*5/9, v=>v*9/5+491.67],
+      ['Re','列氏度', v=>v*5/4, v=>v*4/5],
+      ['N','牛顿温标', v=>v*100/33, v=>v*33/100],
+      ['Ro','罗氏温标', v=>(v-7.5)*40/21, v=>v*21/40+7.5],
+      ['De','德利尔度', v=>(100-v)*2/3, v=>100-v*3/2]
+    ] },
+  { id: 'energy', name: '能量', type: 'linear', defFrom: 'J', defTo: 'kWh',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9 1 3.5 9h4L7 15l5.5-8h-4L9 1Z"/></svg>',
+    units: [
+      ['eV','电子伏特',1.602176634e-19],['erg','尔格',1e-7],['J','焦耳',1],['kJ','千焦',1e3],['MJ','兆焦',1e6],['GJ','吉焦',1e9],
+      ['Wh','瓦时',3600],['kWh','千瓦时',3.6e6],['MWh','兆瓦时',3.6e9],
+      ['cal','卡路里',4.184],['kcal','千卡/大卡',4184],['BTU','英热单位',1055.05585262],['therm','撒姆(美)',1.054804e8],
+      ['ftlb','英尺磅力',1.3558179483314004],['hph','马力小时',2.6845195376961728e6],
+      ['kgTNT','千克TNT当量',4.184e6],['tce','吨标准煤',2.93076e10],['toe','吨油当量',4.1868e10]
+    ] },
+  { id: 'area', name: '面积', type: 'linear', defFrom: 'm2', defTo: 'mu',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/><path d="M6 2.5 2.5 6M10 13.5 13.5 10" stroke-linecap="round"/></svg>',
+    units: [
+      ['mm2','平方毫米',1e-6],['cm2','平方厘米',1e-4],['dm2','平方分米',1e-2],['m2','平方米',1],['are','公亩',1e2],['ha','公顷',1e4],['km2','平方千米',1e6],
+      ['in2','平方英寸',6.4516e-4],['ft2','平方英尺',0.09290304],['yd2','平方码',0.83612736],['rood','路得',1011.7141056],['acre','英亩',4046.8564224],['mi2','平方英里',2.589988110336e6],
+      ['ping','坪',3.3057851239669422],['fenA','市分',66.66666666666667],['mu','亩',2000/3],['qing','市顷',66666.66666666667],['barn','靶恩',1e-28]
+    ] },
+  { id: 'speed', name: '速度', type: 'linear', defFrom: 'kmh', defTo: 'mph',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 13.5a5.5 5.5 0 1 1 4.6-8.4"/><path d="M8 8l2.6-2.6"/><circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/></svg>',
+    units: [
+      ['mms','毫米每秒',1e-3],['cms','厘米每秒',1e-2],['ms','米每秒',1],['kms','千米每秒',1e3],['kmh','千米每小时',1/3.6],
+      ['ins','英寸每秒',0.0254],['fts','英尺每秒',0.3048],['yds','码每秒',0.9144],['mph','英里每小时',0.44704],['knot','节',0.5144444444444445],
+      ['mach','马赫(海平面)',340.3],['cSpeed','光速',299792458]
+    ] },
+  { id: 'duration', name: '时间', type: 'linear', defFrom: 'h', defTo: 'min',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="5.5"/><path d="M8 4.5V8l2.4 1.6" stroke-linecap="round"/></svg>',
+    units: [
+      ['ns','纳秒',1e-9],['us','微秒',1e-6],['ms','毫秒',1e-3],['s','秒',1],['min','分钟',60],
+      ['ke','刻钟',900],['shichen','时辰',7200],['h','小时',3600],['day','天',86400],['week','周',604800],['fortnight','半月',1209600],
+      ['month','月(30天)',2.592e6],['season','季(91.25天)',7.884e6],['year','年(365天)',3.1536e7],['decade','十年',3.1536e8],
+      ['century','世纪',3.1536e9],['millennium','千年',3.1536e10],['jiazi','甲子(60年)',1.89216e9]
+    ] },
+  { id: 'power', name: '功率', type: 'linear', defFrom: 'kW', defTo: 'PS',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 1.5v5M8 6.5l3.5-2M8 6.5 4.5 4.5M13.5 8A5.5 5.5 0 0 1 2.5 8"/></svg>',
+    units: [
+      ['mW','毫瓦',1e-3],['W','瓦',1],['kW','千瓦',1e3],['MW','兆瓦',1e6],['GW','吉瓦',1e9],
+      ['PS','公制马力',735.49875],['hp','英制马力',745.6998715822702],['Jps','焦耳每秒',1],['VA','伏安',1],
+      ['kcals','千卡每秒',4186.8],['kcalh','千卡每小时',1.1622222222222222],['BTUh','英热单位每小时',0.2930710701722222],
+      ['ftlbs','英尺磅力每秒',1.3558179483314004],['refT','冷吨',3516.8528420667],['boilerHp','锅炉马力',9810.657]
+    ] },
+  { id: 'data', name: '数据', type: 'linear', defFrom: 'MB', defTo: 'GB',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="4" width="12" height="8" rx="1.5"/><path d="M6.5 6.5h5M6.5 9.5h5" stroke-width="1.1"/><path d="M4.5 6.5h.01M4.5 9.5h.01" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    units: [
+      ['bit','比特',0.125],['nibble','半字节',0.5],['B','字节',1],
+      ['KB','千字节KB',1e3],['MB','兆字节MB',1e6],['GB','吉字节GB',1e9],['TB','太字节TB',1e12],['PB','拍字节PB',1e15],['EB','艾字节EB',1e18],['ZB','泽字节ZB',1e21],['YB','尧字节YB',1e24],
+      ['KiB','千字节KiB',1024],['MiB','兆字节MiB',1048576],['GiB','吉字节GiB',1073741824],['TiB','太字节TiB',1099511627776],['PiB','拍字节PiB',1125899906842624],['EiB','艾字节EiB',1152921504606846976]
+    ] },
+  { id: 'pressure', name: '压强', type: 'linear', defFrom: 'atm', defTo: 'psi',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="5.5"/><path d="M8 8 5.2 5.2"/><circle cx="8" cy="8" r="1" fill="currentColor" stroke="none"/><path d="M8 2.5V1.5M12.4 5.6l1.1-1.1" stroke-width="1.1"/></svg>',
+    units: [
+      ['Pa','帕斯卡',1],['hPa','百帕',1e2],['kPa','千帕',1e3],['MPa','兆帕',1e6],['GPa','吉帕',1e9],
+      ['mbar','毫巴',1e2],['bar','巴',1e5],['atm','标准大气压',101325],['at','工程大气压',98066.5],
+      ['mmHg','毫米汞柱',133.322387415],['Torr','托',133.32236842105263],['inHg','英寸汞柱',3386.389],
+      ['psi','磅每平方英寸',6894.757293168361],['ksi','千磅每平方英寸',6894757.293168361],
+      ['mmH2O','毫米水柱',9.80665],['inH2O','英寸水柱',249.0889083333333]
+    ] },
+  { id: 'angle', name: '角度', type: 'linear', defFrom: 'deg', defTo: 'rad',
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 13.5A5.8 5.8 0 0 1 14 13.5Z"/><path d="M3.5 13.5h9M8 13.5 5.2 8M8 13.5l3-5.2" stroke-width="1.1" stroke-linecap="round"/></svg>',
+    units: [
+      ['rad','弧度',1],['mrad','毫弧度',1e-3],['deg','度',PI/180],['arcmin','角分',PI/10800],['arcsec','角秒',PI/648000],
+      ['grad','百分度',PI/200],['turn','转',2*PI],['quad','象限',PI/2],['sextant','六分仪',PI/3],
+      ['milAngle','密位(北约)',2*PI/6400],['point','罗盘点',PI/16],['hourAngle','时角',PI/12]
+    ] }
+];
+
+/* 标准化类别：tuple 展开为对象 */
+CATS.forEach(function(c){
+  if (c.type !== 'temp' && c.units) {
+    c.units = c.units.map(function(u){ return { id: u[0], n: u[1], f: u[2] }; });
+  }
+  if (c.type === 'temp') {
+    c.units = c.units.map(function(u){ return { id: u[0], n: u[1], to: u[2], from: u[3] }; });
+  }
+});
+
+/* 换算引擎：value 从 from 单位转 to 单位（base = 基准量） */
+function convert(value, cat, fromId, toId){
+  const from = cat.units.find(u => u.id === fromId);
+  const to   = cat.units.find(u => u.id === toId);
+  if (!from || !to || !isFinite(value)) return NaN;
+  if (cat.type === 'temp') return to.from(from.to(value));
+  return value * from.f / to.f;
+}
+
+/* 数字格式化：12 位有效数字 + 千分位；极小/极大用科学计数 */
+function fmt(n){
+  if (!Number.isFinite(n)) return '—';
+  if (Object.is(n, -0)) n = 0;
+  if (n === 0) return '0';
+  const a = Math.abs(n);
+  if (a >= 1e15 || a < 1e-9) {
+    return n.toExponential(6).replace(/(\.\d*?)0+e/, '$1e').replace(/\.e/, 'e');
+  }
+  let s = n.toPrecision(12);
+  if (/e/i.test(s)) {
+    s = n.toExponential(8).replace(/(\.\d*?)0+e/, '$1e').replace(/\.e/, 'e');
+  } else {
+    if (s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
+  }
+  const neg = s.startsWith('-');
+  s = s.replace('-', '');
+  const parts = s.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return (neg ? '-' : '') + parts.join('.');
+}
+/* 复制用原始数值 */
+function rawNum(n){
+  if (!Number.isFinite(n)) return '';
+  return String(parseFloat(n.toPrecision(12)));
+}
+
+/* ================= 界面逻辑 ================= */
+const $ = id => document.getElementById(id);
+const getCat = id => CATS.find(c => c.id === id);
+
+let store = { cat: 'length', cats: {} };
+function loadStore(){
+  try { store = JSON.parse(localStorage.getItem('uc_store')) || { cat: 'length', cats: {} }; }
+  catch(e){ store = { cat: 'length', cats: {} }; }
+}
+function saveStore(){
+  try { localStorage.setItem('uc_store', JSON.stringify(store)); } catch(e){}
+}
+function remember(){
+  store.cat = state.cat;
+  if (getCat(state.cat).type === 'special') { saveStore(); return; }
+  store.cats[state.cat] = { from: $('fromUnit').value, to: $('toUnit').value, val: $('fromVal').value };
+  saveStore();
+}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function showToast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+/* ---------- 汇率：在线检测（失败回退本地留存） ---------- */
+const state = {
+  cat: 'length', fxMode: 'local', fxDate: LOCAL_FX_DATE, fxRates: Object.assign({}, LOCAL_FX_RATES)
+};
+async function checkFx(){
+  const pill = $('fxStatus'), txt = $('fxStatusText');
+  pill.classList.remove('online', 'local');
+  txt.textContent = '汇率检测中…';
+  let got = null;
+  for (const url of FX_ENDPOINTS) {
+    try {
+      const ctl = new AbortController();
+      const timer = setTimeout(() => ctl.abort(), 9000);
+      const res = await fetch(url, { signal: ctl.signal });
+      clearTimeout(timer);
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (data && data.rates && data.rates.CNY !== undefined) {
+        got = { date: data.date || data.time_last_update_utc || '', rates: data.rates };
+        break;
+      }
+    } catch(e){}
+  }
+  if (got) {
+    state.fxMode = 'online';
+    state.fxDate = String(got.date).slice(0, 10) || LOCAL_FX_DATE;
+    for (const k in got.rates) state.fxRates[k] = got.rates[k];
+    state.fxRates.CNY = 1;
+    pill.classList.add('online');
+    txt.textContent = '汇率：在线实时';
+    pill.title = '汇率来源：' + (got.date || '实时') + ' · 点击重新检测';
+  } else {
+    state.fxMode = 'local';
+    pill.classList.add('local');
+    txt.textContent = '汇率：本地留存';
+    pill.title = '离线模式，使用本地留存汇率（' + LOCAL_FX_DATE + '）· 点击重试';
+  }
+  const fx = getCat('currency');
+  if (fx) {
+    fx.units.forEach(u => {
+      const r = state.fxRates[u.id];
+      if (r) u.f = 1 / r;
+    });
+  }
+  renderBaseNote();
+  renderFooter();
+  if (state.cat === 'currency') renderAll();
+}
+
+/* ---------- 选择框填充 ---------- */
+function fillSelect(sel, cat){
+  sel.innerHTML = '';
+  cat.units.forEach(u => {
+    const op = document.createElement('option');
+    op.value = u.id;
+    op.textContent = u.n + ' ' + u.id;
+    sel.appendChild(op);
+  });
+}
+
+/* ---------- 分类切换 ---------- */
+function setCat(id){
+  state.cat = id;
+  document.querySelectorAll('.cat-tab').forEach(b => b.classList.toggle('active', b.dataset.cat === id));
+  const cat = getCat(id);
+  if (!cat) return;
+  if (cat.type === 'special') {
+    $('converterPanel').hidden = true;
+    $('datePanel').hidden = false;
+    return;
+  }
+  $('datePanel').hidden = true;
+  $('converterPanel').hidden = false;
+  $('convTitle').childNodes[0].nodeValue = cat.name + '换算 ';
+  let note = cat.type === 'temp' ? '标准公式换算' : (cat.type === 'fx' ? '在线实时 · 本地兜底' : '同类型单位互转');
+  if (cat.id === 'data') note = 'KB/MB 按 1000 · KiB/MiB 按 1024';
+  if (cat.id === 'duration') note = '月按 30 天 · 年按 365 天';
+  $('convNote').textContent = note;
+  const rec = store.cats[id] || {};
+  const fromId = rec.from && cat.units.some(u => u.id === rec.from) ? rec.from : cat.defFrom;
+  const toId   = rec.to   && cat.units.some(u => u.id === rec.to)   ? rec.to   : cat.defTo;
+  fillSelect($('fromUnit'), cat);
+  fillSelect($('toUnit'), cat);
+  $('fromUnit').value = fromId;
+  $('toUnit').value = toId;
+  $('fromVal').value = (rec.val !== undefined && rec.val !== '') ? rec.val : 1;
+  renderAll();
+}
+
+/* ---------- 换算渲染 ---------- */
+function renderAll(){
+  const cat = getCat(state.cat);
+  if (!cat || cat.type === 'special') return;
+  const v = parseFloat($('fromVal').value);
+  const ok = isFinite(v);
+  const fromId = $('fromUnit').value, toId = $('toUnit').value;
+  const res = ok ? convert(v, cat, fromId, toId) : NaN;
+  $('toVal').value = fmt(res);
+  const fromU = cat.units.find(u => u.id === fromId) || {};
+  $('qFromName').textContent = (fromU.n || '') + ' ' + fromId;
+  const curTo = toId;
+  $('quickTable').innerHTML = cat.units.map(u => {
+    const r = ok ? convert(v, cat, fromId, u.id) : NaN;
+    return '<div class="qt-row' + (u.id === curTo ? ' current' : '') + '" data-unit="' + u.id + '">'
+      + '<span class="q-name">' + u.n + ' ' + u.id + '</span>'
+      + '<span class="q-val">= <b>' + fmt(r) + '</b> ' + u.n + '</span></div>';
+  }).join('');
+  renderBaseNote();
+}
+
+function renderBaseNote(){
+  const cat = getCat(state.cat);
+  if (!cat || cat.type === 'special') return;
+  const note = $('baseNote');
+  if (cat.type === 'fx') {
+    note.textContent = state.fxMode === 'online'
+      ? '汇率来源：在线实时（' + state.fxDate + '）· 断网自动回退本地汇率'
+      : '汇率来源：本地留存（' + state.fxDate + '）· 联网后自动更新';
+    return;
+  }
+  if (cat.type === 'temp') { note.textContent = '温度换算使用标准公式（°C / °F / K / °R / °Ré / °N / °Rø / °De）'; return; }
+  if (cat.id === 'data') { note.textContent = 'KB、MB、GB 等按十进制（1000）；KiB、MiB、GiB 等按二进制（1024）'; return; }
+  if (cat.id === 'duration') { note.textContent = '月按 30 天、年按 365 天、季按 91.25 天近似换算'; return; }
+  note.textContent = '共收录 ' + cat.units.length + ' 个单位，可任意两两互转';
+}
+
+function renderFooter(){
+  $('footNote').textContent = '货币汇率：' + (state.fxMode === 'online' ? '在线实时（' + state.fxDate + '）' : '本地留存基准（' + state.fxDate + '）') + ' · 其余单位换算完全离线可用';
+}
+
+/* ---------- 复制结果 ---------- */
+function doCopy(){
+  const cat = getCat(state.cat);
+  if (!cat || cat.type === 'special') return;
+  const v = parseFloat($('fromVal').value);
+  if (!isFinite(v)) { showToast('请输入有效数值'); return; }
+  const text = rawNum(convert(v, cat, $('fromUnit').value, $('toUnit').value));
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast('已复制结果'), () => fallbackCopy());
+  } else fallbackCopy();
+}
+function fallbackCopy(){
+  const el = $('toVal');
+  el.select();
+  document.execCommand('copy');
+  showToast('已复制结果');
+}
+
+/* ================= 时间日期工具 ================= */
+function pad2(n){ return String(n).padStart(2, '0'); }
+const WEEKS = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+function dtLocalValue(d){
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate())
+       + 'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+function fmtDT(d){
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate())
+       + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds())
+       + ' ' + WEEKS[d.getDay()];
+}
+
+/* 时间戳互转 */
+let tsSyncGuard = false;
+function syncTsFromDt(){
+  const v = $('tsDt').value;
+  if (!v) return;
+  const t = new Date(v).getTime();
+  $('tsOutSec').textContent = fmt(Math.floor(t / 1000));
+  $('tsOutMs').textContent = fmt(t);
+  tsSyncGuard = true;
+  $('tsNum').value = $('tsUnit').value === 's' ? Math.floor(t / 1000) : t;
+  tsSyncGuard = false;
+}
+function syncTsFromNum(){
+  if (tsSyncGuard) return;
+  const n = parseFloat($('tsNum').value);
+  if (!isFinite(n)) { $('tsDateText').textContent = '—'; return; }
+  const ms = $('tsUnit').value === 's' ? n * 1000 : n;
+  const d = new Date(ms);
+  $('tsDateText').textContent = Number.isNaN(d.getTime()) ? '无效时间戳' : fmtDT(d);
+}
+
+/* 日期加减（月/年溢出自动按当月最后一天收尾） */
+function addClamped(d, n, unit){
+  const day = d.getDate();
+  let t;
+  if (unit === 'm' || unit === 'y') {
+    t = new Date(d.getFullYear() + (unit === 'y' ? n : 0), d.getMonth() + (unit === 'm' ? n : 0), 1);
+    const last = new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate();
+    t.setDate(Math.min(day, last));
+  } else if (unit === 'w') {
+    t = new Date(d.getTime() + n * 7 * 864e5);
+  } else {
+    t = new Date(d.getTime() + n * 864e5);
+  }
+  return t;
+}
+const UNIT_NAMES = { d: '天', w: '周', m: '月', y: '年' };
+function calcAdd(){
+  const dStr = $('addDate').value;
+  if (!dStr) { $('addResultText').textContent = '请先选择起始日期'; return; }
+  const n = parseFloat($('addNum').value) || 0;
+  const r = addClamped(new Date(dStr + 'T00:00:00'), n, $('addUnit').value);
+  $('addResultText').textContent = r.getFullYear() + '年' + (r.getMonth() + 1) + '月' + r.getDate() + '日 '
+    + WEEKS[r.getDay()] + '（' + (n < 0 ? '减' : '加') + ' ' + Math.abs(n) + ' ' + UNIT_NAMES[$('addUnit').value] + '）';
+}
+function calcDiff(){
+  const a = $('diffA').value, b = $('diffB').value;
+  if (!a || !b) { $('diffResultText').textContent = '请选择两个日期'; return; }
+  const t1 = new Date(a + 'T00:00:00').getTime(), t2 = new Date(b + 'T00:00:00').getTime();
+  const days = Math.abs(Math.round((t2 - t1) / 864e5));
+  const weeks = Math.floor(days / 7), rem = days % 7;
+  $('diffResultText').textContent = days + ' 天 ≈ ' + weeks + ' 周 ' + rem + ' 天，约 ' + (days / 30.44).toFixed(1) + ' 个月';
+}
+
+/* ================= 初始化 ================= */
+(function init(){
+  loadStore();
+
+  /* 分类标签 */
+  const wrap = $('catTabs');
+  CATS.forEach(c => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cat-tab';
+    b.dataset.cat = c.id;
+    b.innerHTML = c.icon + '<span>' + c.name + '</span>';
+    b.addEventListener('click', () => { setCat(c.id); remember(); });
+    wrap.appendChild(b);
+  });
+  setCat(store.cat && CATS.some(c => c.id === store.cat) ? store.cat : 'length');
+
+  /* 换算事件 */
+  $('fromVal').addEventListener('input', () => { renderAll(); remember(); });
+  $('fromUnit').addEventListener('change', () => { renderAll(); remember(); });
+  $('toUnit').addEventListener('change', () => { renderAll(); remember(); });
+  $('swapBtn').addEventListener('click', () => {
+    const f = $('fromUnit').value;
+    $('fromUnit').value = $('toUnit').value;
+    $('toUnit').value = f;
+    renderAll(); remember();
+  });
+  $('copyBtn').addEventListener('click', doCopy);
+  $('quickTable').addEventListener('click', e => {
+    const row = e.target.closest('.qt-row');
+    if (!row) return;
+    $('toUnit').value = row.dataset.unit;
+    renderAll(); remember();
+  });
+  $('fxStatus').addEventListener('click', checkFx);
+
+  /* 时间日期工具 */
+  $('dateTabs').addEventListener('click', e => {
+    const b = e.target.closest('.view-tab');
+    if (!b) return;
+    document.querySelectorAll('#dateTabs .view-tab').forEach(x => x.classList.toggle('active', x === b));
+    ['ts', 'add', 'diff'].forEach(k => { $('dt-' + k).hidden = (b.dataset.dtab !== k); });
+  });
+  const now = new Date();
+  $('tsDt').value = dtLocalValue(now);
+  $('tsNowBtn').addEventListener('click', () => { $('tsDt').value = dtLocalValue(new Date()); syncTsFromDt(); });
+  $('tsDt').addEventListener('input', syncTsFromDt);
+  $('tsNum').addEventListener('input', syncTsFromNum);
+  $('tsUnit').addEventListener('change', syncTsFromNum);
+  syncTsFromDt();
+
+  $('addDate').value = dtLocalValue(now).slice(0, 10);
+  $('diffA').value = dtLocalValue(new Date(now.getTime() - 7 * 864e5)).slice(0, 10);
+  $('diffB').value = dtLocalValue(now).slice(0, 10);
+  $('addCalcBtn').addEventListener('click', calcAdd);
+  $('addTodayBtn').addEventListener('click', () => { $('addDate').value = dtLocalValue(new Date()).slice(0, 10); calcAdd(); });
+  $('diffCalcBtn').addEventListener('click', calcDiff);
+  ['addDate', 'addNum', 'addUnit'].forEach(id => { $(id).addEventListener('change', calcAdd); });
+  ['diffA', 'diffB'].forEach(id => { $(id).addEventListener('change', calcDiff); });
+  calcAdd(); calcDiff();
+
+  renderFooter();
+  checkFx();
+})();
+
+</script>
+</body>
+</html>
