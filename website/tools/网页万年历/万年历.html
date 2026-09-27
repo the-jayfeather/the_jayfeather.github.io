@@ -61,6 +61,7 @@
           <ul class="info-list char-list" id="birthList"></ul>
         </div>
       </div>
+      <div id="friendBirthBlock"></div>
     </section>
     <section class="panel" id="panelHistory" data-key="showHistory">
       <h3 class="panel-title">历史上的今天</h3>
@@ -230,6 +231,29 @@
         <label class="switch"><input type="checkbox" id="setCeleb"><span class="slider"></span></label>
       </div>
       <div class="set-row">
+        <div>
+          <div>亲友生日（总开关）</div>
+          <div class="desc">亲友生日数据来自 files/friends_birthdays.js，默认关闭</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="setFriendBirth"><span class="slider"></span></label>
+      </div>
+      <div class="set-hint" id="friendBirthHint" hidden>单项内容开关需开启总体开关后调节</div>
+      <div id="friendBirthSubs">
+      <h5 class="set-sub-title">亲友生日 · 单项</h5>
+      <div class="set-row sub-row">
+        <div>日期卡星座下方轻微强调</div>
+        <label class="switch"><input type="checkbox" id="setFriendBdCard"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>日历对应日期右上角标注"XXX生日"</div>
+        <label class="switch"><input type="checkbox" id="setFriendBdMark"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>今日生日区下方显示生日人员</div>
+        <label class="switch"><input type="checkbox" id="setFriendBdList"><span class="slider"></span></label>
+      </div>
+      </div>
+      <div class="set-row">
         <div>属相 · 冲煞 · 吉神方位</div>
         <label class="switch"><input type="checkbox" id="setChong"><span class="slider"></span></label>
       </div>
@@ -268,6 +292,7 @@
 <script src="files/lunar.js"></script>
 <script src="files/festivals.js"></script>
 <script src="files/birthdays.js"></script>
+<script src="files/friends_birthdays.js"></script>
 <script src="files/celebrities.js"></script>
 <script src="files/history.js"></script>
 <script src="files/yi_ji.js"></script>
@@ -279,6 +304,7 @@
  * 天依万年历 · 主逻辑
  * ============================================================ */
 var L = window.LunarLib, F = window.FESTIVALS, B = window.BIRTHDAYS,
+    FB = window.FRIENDS_BIRTHDAYS,
     CE = window.CELEBRITIES,
     H = window.HISTORY, YJ = window.YIJI, BG = window.BAGUA, TT = window.TAROT;
 
@@ -375,6 +401,11 @@ var DEFAULT_SETTINGS = {
   showTarot: true,
   showTarotDaily: true,      // 塔罗 · 每日单牌
   showTarotSpread: true,     // 塔罗 · 往今未三牌阵
+  /* 亲友生日（总开关 + 三个展示位子开关，默认全关） */
+  showFriendBirth: false,    // 亲友生日（总开关）
+  showFriendBdCard: false,   // 星座下方轻微强调显示
+  showFriendBdMark: false,   // 日历对应日期右上角标注"XXX生日"
+  showFriendBdList: false,   // 今日生日区下方显示生日人员
   /* 农历详细信息单项开关 */
   showDetailLunar: true,      // 农历
   showDetailYearGz: true,     // 年柱
@@ -620,6 +651,15 @@ function celebritiesOf(m, d) {
   return out;
 }
 
+/* ---------- 亲友生日 ---------- */
+function friendsOf(m, d) {
+  var out = [], i;
+  for (i = 0; i < FB.length; i++) if (FB[i].m === m && FB[i].d === d) out.push(FB[i]);
+  return out;
+}
+/* 亲友生日文案：'身份（X年X班）名字 的生日' */
+function friendBirthText(f) { return f.role + '（' + f.cls + '）' + f.name + ' 的生日'; }
+
 /* ---------- 八卦（简易日卦） ---------- */
 function baguaOf(y, m, d) {
   var up = ((y * 7 + m * 13 + d * 31) % 8 + 8) % 8;
@@ -665,6 +705,7 @@ function renderSidebar() {
     '<div class="lunar-brief">农历 ' + lunarBriefTxt + '</div>' +
     taoFoHtml +
     '<div class="zodiac"><span class="w">星座</span>' + zodiacOf(sel.m, sel.d) + '</div>' +
+    '<div class="friend-birth-tip" id="friendBirthTip"></div>' +
     '<div class="lunar-grid" id="lunarDetail"></div>';
 
   var panels = ['panelYiJi', 'panelChong', 'panelBagua', 'panelHistory', 'panelTarot'];
@@ -684,6 +725,8 @@ function renderSidebar() {
   renderBagua();
   renderBirth();
   renderCeleb();
+  renderFriendBirth();
+  renderFriendTip();
   renderHistory();
   renderTarot();
 }
@@ -763,6 +806,32 @@ function renderCeleb() {
   $('celebList').innerHTML = cbs.map(function (c) {
     return '<li><span class="w">' + c.field + '</span>' + c.name + '（' + c.y + '）</li>';
   }).join('');
+}
+
+/* 今日生日区下方的亲友生日（总开关 + 子开关均开且当日有人时才显示） */
+function renderFriendBirth() {
+  var block = $('friendBirthBlock');
+  var fbs = (settings.showFriendBirth && settings.showFriendBdList) ? friendsOf(sel.m, sel.d) : [];
+  if (!fbs.length) { block.style.display = 'none'; return; }
+  block.style.display = '';
+  block.innerHTML =
+    '<h4 class="sub-title friend">亲友</h4>' +
+    '<ul class="info-list friend-list">' +
+    fbs.map(function (f) {
+      return '<li><span class="w">' + f.role + '（' + f.cls + '）</span>' + f.name + ' 的生日</li>';
+    }).join('') +
+    '</ul>';
+}
+
+/* 日期卡星座下方的轻微强调（总开关 + 子开关均开且当日有人时才显示） */
+function renderFriendTip() {
+  var el = $('friendBirthTip');
+  var fbs = (settings.showFriendBirth && settings.showFriendBdCard) ? friendsOf(sel.m, sel.d) : [];
+  if (!fbs.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = '';
+  el.innerHTML = '<span class="w">今日亲友生日</span>' + fbs.map(function (f) {
+    return '<span class="fb-name">' + friendBirthText(f) + '</span>';
+  }).join('、');
 }
 
 function renderChong(info) {
@@ -949,9 +1018,18 @@ function renderMonth() {
         return '<span class="mk ' + (f.type === '节气' ? 'term' : 'holiday') + '">' + f.name + '</span>';
       }).join('') + '</div>';
     }
+    /* 亲友生日角标（右上角，仅总开关 + 子开关均开启且当日有人时），只显示人名 */
+    var fbMark = '';
+    if (settings.showFriendBirth && settings.showFriendBdMark) {
+      var fbs = friendsOf(m, d);
+      if (fbs.length) {
+        fbMark = '<div class="fb-badge">' + fbs.map(function (f) { return f.name; }).join('、') + '</div>';
+      }
+    }
     html += '<div class="' + cls + '" data-y="' + y + '" data-m="' + m + '" data-d="' + d + '">' +
       '<div class="d">' + d + '</div>' +
       '<div class="lunar">' + lunarText + '</div>' +
+      fbMark +
       marks + '</div>';
   }
   var total = first + dim;
@@ -1214,6 +1292,10 @@ function syncSettingsUI() {
   $('setFest').checked = settings.showFestival;
   $('setBirth').checked = settings.showBirthday;
   $('setCeleb').checked = settings.showCelebrity;
+  $('setFriendBirth').checked = settings.showFriendBirth;
+  $('setFriendBdCard').checked = settings.showFriendBdCard;
+  $('setFriendBdMark').checked = settings.showFriendBdMark;
+  $('setFriendBdList').checked = settings.showFriendBdList;
   $('setChong').checked = settings.showChong;
   $('setHistory').checked = settings.showHistory;
   $('setBagua').checked = settings.showBagua;
@@ -1223,6 +1305,16 @@ function syncSettingsUI() {
   $('modeAuto').classList.toggle('active', TimeSrc.mode === 'auto');
   $('modeLocal').classList.toggle('active', TimeSrc.mode === 'local');
   updateLunarDetailSubs();
+  updateFriendSubs();
+}
+
+/* 总开关关闭时：隐藏"亲友生日 · 单项"全部子开关，显示提示文本 */
+function updateFriendSubs() {
+  var subs = $('friendBirthSubs'), hint = $('friendBirthHint');
+  if (!subs || !hint) return;
+  var on = settings.showFriendBirth;
+  subs.hidden = !on;
+  hint.hidden = on;
 }
 
 /* 总开关关闭时：隐藏"农历详细信息 · 单项"全部子开关，显示提示文本 */
@@ -1240,6 +1332,8 @@ var SET_KEY = {
   setChong: 'showChong',
   setHistory: 'showHistory', setBagua: 'showBagua', setTarot: 'showTarot',
   setTarotDaily: 'showTarotDaily', setTarotSpread: 'showTarotSpread',
+  setFriendBirth: 'showFriendBirth', setFriendBdCard: 'showFriendBdCard',
+  setFriendBdMark: 'showFriendBdMark', setFriendBdList: 'showFriendBdList',
   setDetailLunar: 'showDetailLunar', setDetailYearGz: 'showDetailYearGz',
   setDetailMonthGz: 'showDetailMonthGz', setDetailDayGz: 'showDetailDayGz',
   setHourGz: 'showHourGz', setDetailTerm: 'showDetailTerm',
@@ -1254,6 +1348,7 @@ for (var sk in SET_KEY) {
       saveSettings();
       $('quickLunar').checked = settings.showLunar;
       if (key === 'showLunarDetail') updateLunarDetailSubs();
+      if (key === 'showFriendBirth') updateFriendSubs();
       renderAll();
     });
   })(sk, SET_KEY[sk]);

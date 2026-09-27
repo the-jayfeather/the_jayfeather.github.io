@@ -269,6 +269,22 @@ body {
   color: rgba(153, 221, 255, 0.6);
   margin-right: 6px;
 }
+/* 日期卡星座下方的亲友生日轻微强调（默认关闭，设置中开启） */
+.big-date .friend-birth-tip {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(255, 227, 174, 0.85);
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+}
+.big-date .friend-birth-tip .w {
+  font-size: 11px;
+  color: rgba(255, 208, 128, 0.6);
+  margin-right: 6px;
+}
+.big-date .friend-birth-tip .fb-name {
+  white-space: nowrap;
+}
 /* 农历详历（并入日期卡片内，左右两列：左 农历/年柱/月柱/日柱/时柱，右 节气/节日/月相/星宿/六曜/十二神） */
 .big-date .lunar-grid {
   margin-top: 12px;
@@ -412,6 +428,17 @@ body {
 .fame-list li::before { background: #FFD98A; }
 .fame-list li .w { color: #FFD98A; }
 .fame-list li { color: var(--cloud); }
+
+/* 今日生日区下方的亲友生日（与上方两列做分隔，暖金色系区分） */
+#friendBirthBlock {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255, 208, 128, 0.25);
+}
+.sub-title.friend { color: #FFE3AE; }
+.sub-title.friend::before { background: #FFB86B; }
+.friend-list li::before { background: #FFB86B; }
+.friend-list li .w { color: #FFB86B; }
 
 /* 属相冲煞 */
 .chong-grid {
@@ -714,6 +741,24 @@ body {
 }
 .cal-cell .mk.holiday { background: rgba(255, 168, 148, 0.28); color: #FFD3C7; }
 .cal-cell .mk.term { background: rgba(136, 221, 255, 0.16); color: var(--cyan); }
+/* 亲友生日角标：日期格右上角（今日格需避让右上角的"今"标签）· 淡蓝色 */
+.cal-cell .fb-badge {
+  position: absolute;
+  top: 3px; right: 6px;
+  font-size: 9.5px;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 9999px;
+  background: rgba(102, 204, 255, 0.20);
+  border: 1px solid rgba(102, 204, 255, 0.35);
+  color: var(--ice);
+  white-space: nowrap;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.cal-cell.today .fb-badge { right: 22px; }
 .cal-cell.weekend .d { color: var(--cyan); }
 /* 上月/下月暗色补位日期（点击跳转邻月；今日/选中仍优先高亮） */
 .cal-cell.ghost {
