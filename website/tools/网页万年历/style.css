@@ -440,6 +440,19 @@ body {
 .friend-list li::before { background: #FFB86B; }
 .friend-list li .w { color: #FFB86B; }
 
+/* 亲友生日 · 新历 / 农历分色（农历生日金黄色 #FFD700） */
+.big-date .friend-birth-tip .fb-solar { color: rgba(255, 227, 174, 0.92); }
+.big-date .friend-birth-tip .fb-lunar { color: #FFD700; }
+#friendBirthBlock .friend-list .fb-solar { color: #FFE3AE; }
+#friendBirthBlock .friend-list .fb-lunar { color: #FFD700; }
+/* 角标人名：无底无框，新历淡蓝、农历金黄色 */
+.cal-cell .fb-badge .fb-solar {
+  color: var(--ice);
+}
+.cal-cell .fb-badge .fb-lunar {
+  color: #FFD700;
+}
+
 /* 属相冲煞 */
 .chong-grid {
   display: flex;
