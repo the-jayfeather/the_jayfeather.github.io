@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>活动事件记录表</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='5' width='20' height='16' rx='4' fill='%23225588'/%3E%3Cpath d='M8 3v4M16 3v4M3 10h18' stroke='%2366CCFF' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M9 16l2.2 2.2L15.5 14' stroke='%23FFD98A' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=LXGW+WenKai&display=swap">
+<style>
+/* ============================================================
+ * 活动事件记录表
+ * 视觉语言沿用站点「博饼游戏」/「网络热梗大事年表」：
+ * 深海蓝 #062742 / 导航蓝 #225588 / 天依蓝 #66CCFF
+ * 浅冰蓝 #BBEEFF / 亮蓝 #99DDFF / 云白 #E0F5FF / 墨蓝 #113355
+ * 状元金 #FFD98A
+ * ============================================================ */
+:root {
+  --bg:#062742; --nav:#225588; --tianyi:#66CCFF; --ice:#BBEEFF;
+  --sky:#99DDFF; --cyan:#88DDFF; --cloud:#E0F5FF; --ink:#113355; --ink-deep:#032138;
+  --card-bg:rgba(187,238,255,.20);
+  --card-solid:rgba(187,238,255,.85);
+  --border:rgba(102,204,255,.18);
+  --border-strong:rgba(102,204,255,.22);
+  --shadow:rgba(34,85,136,.28);
+  --bar:rgba(20,35,55,.92);
+  --select-bg:rgba(40,70,105,.6);
+  --scroll:#44688C; --placeholder:#739CBF;
+  --gold:#FFD98A; --gold-soft:#FFE3AE; --gold-deep:#F4C96B;
+  --green:#5FD6A0;
+  --danger:#FF9B9B;
+  --radius:18px;
+}
+
+* { box-sizing:border-box; }
+[hidden] { display:none !important; }
+html { height:100%; scroll-behavior:smooth; }
+
+body {
+  min-height:100%; margin:0;
+  background:var(--bg); color:var(--cloud);
+  font-family:'LXGW WenKai','霞鹜文楷','Kaiti SC','STKaiti','KaiTi','楷体','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  display:flex; flex-direction:column;
+}
+
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--scroll); border-radius:4px; }
+::-webkit-scrollbar-thumb:hover { background:var(--tianyi); }
+
+/* ==================== 顶部导航栏 ==================== */
+.navbar {
+  position:fixed; top:0; left:0; right:0; height:64px;
+  background-color:var(--nav);
+  box-shadow:0 2px 10px rgba(34,85,136,.4);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 22px; z-index:1000; gap:14px;
+}
+.brand { display:flex; align-items:center; gap:12px; user-select:none; flex-shrink:0; }
+.brand-icon {
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(102,204,255,.18);
+  border:1px solid rgba(102,204,255,.35);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.brand-icon svg { width:22px; height:22px; }
+.brand-name {
+  font-family:'Microsoft YaHei','微软雅黑',sans-serif;
+  font-size:22px; font-weight:bold; color:var(--sky); letter-spacing:2px; white-space:nowrap;
+}
+.brand-sub { font-size:12px; color:rgba(187,238,255,.65); margin-left:2px; align-self:flex-end; padding-bottom:4px; }
+.nav-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+
+/* ==================== 按钮 ==================== */
+.btn {
+  background:linear-gradient(180deg, rgba(102,204,255,.22), rgba(102,204,255,.10));
+  border:1px solid var(--border-strong); color:var(--sky);
+  border-radius:10px; padding:8px 14px; font-size:14px; cursor:pointer;
+  font-family:inherit; letter-spacing:.5px; white-space:nowrap;
+  transition:all .18s ease; user-select:none;
+}
+.btn:hover:not(:disabled) { background:rgba(102,204,255,.32); border-color:var(--tianyi); color:var(--ice); }
+.btn:active:not(:disabled) { transform:translateY(1px); }
+.btn:disabled { opacity:.42; cursor:not-allowed; }
+.btn.primary { background:var(--nav); color:var(--ice); border-color:var(--tianyi); box-shadow:0 2px 8px rgba(34,85,136,.35); }
+.btn.danger { border-color:rgba(255,155,155,.45); color:var(--danger); }
+.btn.danger:hover:not(:disabled) { background:rgba(255,155,155,.16); border-color:var(--danger); }
+.nav-right .btn { padding:7px 12px; font-size:13px; }
+
+/* ==================== 主布局 ==================== */
+.main {
+  padding-top:64px; flex:1;
+  width:100%; max-width:1200px; margin:0 auto;
+  padding-left:20px; padding-right:20px;
+}
+.content { padding:18px 0 24px; min-width:0; }
+
+/* ==================== 通用卡片 ==================== */
+.panel {
+  background-color:var(--card-bg); border-radius:var(--radius);
+  border:1px solid var(--border); box-shadow:0 6px 22px var(--shadow);
+  padding:18px 22px; margin-bottom:16px;
+}
+
+/* ==================== 输入控件 ==================== */
+.inp {
+  background:var(--select-bg); border:1px solid var(--border-strong);
+  border-radius:10px; color:var(--cloud); font-family:inherit; font-size:15px;
+  padding:8px 12px; outline:none; min-width:0;
+  transition:border .18s ease, box-shadow .18s ease;
+}
+.inp:focus { border-color:var(--tianyi); box-shadow:0 0 0 3px rgba(102,204,255,.18); }
+.inp::placeholder { color:var(--placeholder); }
+
+/* ==================== 欢迎区 ==================== */
+.welcome-title {
+  margin:4px 0 10px; font-size:30px; color:var(--sky); letter-spacing:3px;
+  display:flex; align-items:center; gap:10px;
+}
+.welcome-title::before {
+  content:''; width:12px; height:12px; border-radius:50%; background:var(--gold);
+  box-shadow:0 0 12px rgba(255,217,138,.6);
+}
+.intro-p { font-size:15px; line-height:1.9; margin:0 0 14px; color:var(--cloud); }
+.intro-p b { color:var(--gold-soft); }
+.hint-steps {
+  background:rgba(102,204,255,.07); border:1px dashed var(--border-strong);
+  border-radius:12px; padding:12px 16px; font-size:14px; line-height:2; color:var(--cloud); margin:0 0 12px;
+}
+.hint-steps b { color:var(--tianyi); }
+.fallback-tip { font-size:13px; color:var(--placeholder); margin:0 0 14px; line-height:1.8; }
+.fallback-tip b { color:var(--gold-soft); font-weight:normal; }
+
+/* ==================== 双栏布局 ==================== */
+.layout {
+  display:grid; grid-template-columns:280px minmax(0,1fr); gap:16px; align-items:start;
+}
+.sidebar {
+  background-color:var(--card-bg); border-radius:var(--radius);
+  border:1px solid var(--border); box-shadow:0 6px 22px var(--shadow);
+  padding:14px; position:sticky; top:80px; max-height:calc(100vh - 100px);
+  display:flex; flex-direction:column; min-height:200px;
+}
+.side-head {
+  display:flex; align-items:baseline; justify-content:space-between; gap:8px;
+  padding:0 2px 10px; border-bottom:1px solid var(--border); margin-bottom:10px;
+}
+.side-title { font-size:16px; color:var(--ice); letter-spacing:2px; }
+.side-count { font-size:12px; color:var(--placeholder); }
+.side-list { overflow-y:auto; flex:1; }
+.act-item {
+  display:flex; align-items:center; gap:9px;
+  padding:9px 10px; border-radius:10px; cursor:pointer;
+  color:var(--cloud); font-size:14.5px; letter-spacing:.5px;
+  border:1px solid transparent; transition:all .15s ease; margin-bottom:4px;
+}
+.act-item:hover { background:rgba(102,204,255,.12); border-color:var(--border); }
+.act-item.active {
+  background:rgba(102,204,255,.20); border-color:var(--tianyi); color:var(--ice);
+  box-shadow:0 0 0 2px rgba(102,204,255,.12);
+}
+.ai-ico { width:16px; height:16px; flex-shrink:0; color:var(--tianyi); }
+.act-item.active .ai-ico { color:var(--gold); }
+.ai-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.act-item.cat-lecture { border-left:3px solid var(--tianyi); }
+.act-item.cat-activity { border-left:3px solid var(--green); }
+.act-item.cat-lecture:hover { border-left-color:var(--tianyi); }
+.act-item.cat-activity:hover { border-left-color:var(--green); }
+.act-item.cat-lecture.active { border-left-color:var(--tianyi); }
+.act-item.cat-activity.active { border-left-color:var(--green); }
+.side-empty { padding:20px 8px; text-align:center; color:var(--placeholder); font-size:13px; line-height:1.9; }
+
+/* ==================== 详情区 ==================== */
+.detail {
+  background-color:var(--card-bg); border-radius:var(--radius);
+  border:1px solid var(--border); box-shadow:0 6px 22px var(--shadow);
+  padding:20px 24px; min-width:0; min-height:200px;
+}
+.empty-hint { text-align:center; padding:46px 16px; color:var(--placeholder); font-size:14px; line-height:2; }
+.empty-hint b { color:var(--tianyi); }
+
+/* 活动标题 */
+.act-head { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin:2px 0 16px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.act-title { margin:0; font-size:26px; color:var(--ice); letter-spacing:2px; }
+.act-file { font-size:12.5px; color:var(--placeholder); margin-left:auto; white-space:nowrap; }
+.act-subtitle {
+  font-size:14px; color:var(--tianyi); letter-spacing:1px;
+  padding-left:12px; border-left:2px solid rgba(102,204,255,.4);
+  word-break:break-word;
+}
+.act-date {
+  font-size:18px; color:var(--gold); font-weight:bold;
+  letter-spacing:1.5px; padding-left:12px;
+  border-left:2px solid rgba(255,217,138,.4);
+  white-space:nowrap;
+}
+
+/* 活动条目时间线 */
+.evt-list { padding-left:4px; }
+.evt-item { position:relative; padding:9px 0 9px 24px; }
+.evt-item::before {
+  content:''; position:absolute; left:29px; top:16px; bottom:-2px;
+  width:1px; background:linear-gradient(180deg, var(--border-strong), transparent);
+}
+.evt-item:last-child::before { display:none; }
+.evt-line { display:flex; align-items:center; gap:8px; }
+.evt-dot {
+  width:11px; height:11px; border-radius:50%;
+  background:var(--bg); border:2px solid var(--tianyi);
+  box-shadow:0 0 0 3px rgba(102,204,255,.10);
+  flex-shrink:0;
+}
+.evt-time {
+  font-family:'Consolas','Courier New',monospace;
+  font-size:20px; font-weight:bold; color:var(--tianyi); letter-spacing:.5px;
+  min-width:64px; flex-shrink:0; line-height:1.15;
+}
+.evt-ico { width:16px; height:16px; flex-shrink:0; }
+.evt-name { font-size:16.5px; color:var(--ice); font-weight:bold; letter-spacing:1px; word-break:break-word; }
+.evt-subs {
+  position:relative; margin:4px 0 0 107px; padding-left:12px;
+}
+.evt-subs::before {
+  content:''; position:absolute; left:0; top:1px; bottom:1px;
+  width:1px; background:linear-gradient(180deg, var(--border-strong), rgba(102,204,255,.28));
+}
+.evt-sub {
+  font-size:13px; color:rgba(224,245,255,.72); line-height:1.7;
+  margin:0 0 2px;
+  display:flex; gap:6px; align-items:baseline;
+}
+.evt-dur { flex-shrink:0; white-space:nowrap; }
+.evt-note { min-width:0; word-break:break-word; }
+.evt-sub:last-child { margin-bottom:0; }
+
+/* ==================== 编辑模式 ==================== */
+.ed-head { display:grid; gap:8px; margin:2px 0 16px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.ed-field { display:flex; align-items:center; gap:10px; }
+.ed-label { font-size:14px; color:var(--placeholder); flex-shrink:0; letter-spacing:1px; width:52px; }
+.ed-title { flex:1; font-size:16px; font-weight:bold; color:var(--ice); }
+.ed-cats { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.cat-chip {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 12px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--border); color:var(--cloud);
+  font-size:13.5px; letter-spacing:1px; user-select:none;
+  transition:all .15s ease;
+}
+.cat-chip input { accent-color:var(--tianyi); margin:0; }
+.cat-chip.cat-lecture.on { border-color:var(--tianyi); color:var(--ice); background:rgba(102,204,255,.12); }
+.cat-chip.cat-activity.on { border-color:var(--green); color:var(--ice); background:rgba(95,214,160,.12); }
+.ed-sub { flex:1; font-size:15px; color:var(--cloud); }
+.ed-tip {
+  font-size:12px; color:var(--gold-soft); background:rgba(255,217,138,.08);
+  border:1px dashed rgba(255,217,138,.4); border-radius:10px;
+  padding:8px 12px; margin:0 0 14px; line-height:1.7;
+}
+.ed-items { margin-bottom:12px; }
+.ed-row {
+  background:rgba(102,204,255,.05);
+  border:1px solid var(--border); border-radius:12px;
+  padding:10px 12px; margin-bottom:10px;
+}
+.ed-main {
+  display:grid; grid-template-columns:76px minmax(110px,1fr) 36px;
+  gap:8px; align-items:center; margin-bottom:8px;
+}
+.ed-segs { display:grid; gap:6px; padding-left:4px; }
+.ed-seg {
+  display:grid; grid-template-columns:84px minmax(120px,1fr) 32px;
+  gap:8px; align-items:center;
+}
+.ed-row .inp { padding:7px 10px; font-size:14px; }
+.ed-row .inp.ed-dur { font-family:'Consolas','Courier New',monospace; }
+.ed-row textarea.inp.ed-note {
+  resize:vertical; min-height:36px; line-height:1.5; font-family:inherit;
+}
+.btn-icon {
+  width:36px; height:36px; padding:0; font-size:16px; color:var(--danger);
+  display:flex; align-items:center; justify-content:center; line-height:1;
+}
+.btn-add-seg {
+  margin:8px 0 0 4px; padding:5px 12px; font-size:12.5px;
+  background:transparent; border:1px dashed var(--border-strong); color:var(--placeholder);
+}
+.btn-add-seg:hover:not(:disabled) { color:var(--tianyi); border-color:var(--tianyi); background:rgba(102,204,255,.10); }
+.ed-actions { display:flex; gap:10px; align-items:center; }
+.ed-actions .ed-count { font-size:12.5px; color:var(--placeholder); margin-left:auto; }
+
+/* ==================== Toast ==================== */
+#toast {
+  position:fixed; left:50%; bottom:34px; transform:translateX(-50%) translateY(20px);
+  background:var(--bar); color:var(--gold-soft); font-size:14px; letter-spacing:.5px;
+  border:1px solid rgba(255,217,138,.4); border-radius:9999px;
+  padding:10px 20px; z-index:3000; opacity:0; pointer-events:none;
+  box-shadow:0 8px 24px rgba(4,22,40,.6);
+  transition:opacity .22s ease, transform .22s ease; max-width:86vw; text-align:center;
+}
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ==================== 页脚 ==================== */
+.footer {
+  margin-top:auto; padding:16px 0 24px; text-align:center;
+  color:var(--sky); font-size:12.5px; border-top:1px solid var(--border);
+}
+.footer b { color:var(--gold-soft); font-weight:normal; }
+
+/* ==================== 响应式 ==================== */
+@media (max-width:1000px) {
+  .layout { grid-template-columns:1fr; }
+  .sidebar { position:static; max-height:none; min-height:0; }
+  .side-list { max-height:220px; }
+  .act-file { margin-left:0; }
+}
+@media (max-width:760px) {
+  .brand-sub { display:none; }
+  .brand-name { font-size:18px; letter-spacing:1px; }
+  .navbar { padding:0 12px; gap:8px; }
+  .nav-right { gap:6px; }
+  .nav-right .btn { padding:8px 12px; font-size:13px; min-height:44px; }
+  #welcomePanel .btn { min-height:44px; }
+  .main { padding-left:12px; padding-right:12px; }
+  .welcome-title { font-size:24px; }
+  .evt-name { font-size:15px; }
+  .evt-subs { margin-left:0; padding-left:10px; }
+  .inp { font-size:16px; }
+  .ed-row .inp { font-size:16px; }
+  .ed-main { grid-template-columns:64px 1fr; }
+  .ed-main .ed-del { grid-column:1 / 3; width:100%; height:34px; }
+  .ed-seg { grid-template-columns:64px 1fr; }
+  .ed-seg .seg-del { grid-column:1 / 3; width:100%; height:32px; }
+  .btn-add-seg { grid-column:1 / 3; }
+  .act-title { font-size:21px; }
+}
+@media (max-width:520px) {
+  .navbar { flex-wrap:wrap; height:auto; min-height:64px; padding:8px 12px; row-gap:8px; }
+  .main { padding-top:118px; }
+  .brand-name { font-size:16px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { transition:none !important; animation:none !important; }
+  html { scroll-behavior:auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 顶部导航 ==================== -->
+<nav class="navbar">
+  <div class="brand">
+    <span class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#66CCFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="18" height="16" rx="3"/>
+        <path d="M8 3v4M16 3v4M3 11h18"/>
+        <path d="M9 16l2.2 2.2L15.5 14" stroke="#FFD98A"/>
+      </svg>
+    </span>
+    <span class="brand-name">活动事件记录表</span>
+    <span class="brand-sub">活动记录 · 查看 / 修改 / 新建</span>
+  </div>
+  <div class="nav-right">
+    <button class="btn" id="btnFolder">选择活动文件夹</button>
+    <button class="btn" id="btnNew" disabled>新建活动</button>
+    <button class="btn" id="btnEdit" disabled>编辑</button>
+    <button class="btn primary" id="btnSave" hidden>保存</button>
+    <button class="btn" id="btnCancel" hidden>取消</button>
+    <button class="btn" id="btnExport" disabled>导出 JS</button>
+    <button class="btn danger" id="btnDel" disabled>删除</button>
+  </div>
+</nav>
+
+<main class="main">
+  <div class="content">
+
+    <!-- 欢迎与使用引导 -->
+    <div class="panel" id="welcomePanel">
+      <h1 class="welcome-title">活动事件记录表</h1>
+      <p class="intro-p">
+        每个<b>活动</b>对应一个 <b>.js</b> 文件，保存在本网页同目录的 <b>activities</b> 文件夹内。
+        支持在网页中<b>查看、修改与新建</b>活动；环节名称包含特殊关键词时自动显示对应图标。
+      </p>
+      <div class="hint-steps">
+        ① 点击右上角「<b>选择活动文件夹</b>」，选择网页同目录下的 <b>activities</b> 文件夹；<br>
+        ② 左侧列表点击活动即可<b>查看</b>；③ 「<b>新建活动</b>」输入活动名与副标题，立即生成同名 JS 文件；<br>
+        ④ 「<b>编辑</b>」修改环节，点「<b>保存</b>」写回文件（修改活动名会自动重命名 JS 文件）；<br>
+        ⑤ 每个环节可添加<b>多段「时长 + 备注」</b>（如分幕、分段计时）。
+      </div>
+      <p class="fallback-tip">
+        若浏览器不支持直接读写文件夹，可把 <b>activities 内的 .js 文件拖入本页查看</b>，修改后点「导出 JS」下载并放回文件夹即可。
+      </p>
+      <button class="btn primary" id="btnOpen">连接 / 切换文件夹</button>
+    </div>
+
+    <!-- 双栏：活动列表 + 活动详情 -->
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="side-head">
+          <span class="side-title">活动列表</span>
+          <span class="side-count" id="sideCount">0 个</span>
+        </div>
+        <div class="side-list" id="sideList"></div>
+      </aside>
+      <section class="detail" id="detail"></section>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">活动事件记录表 · 每个活动一个 <b>活动名.js</b>，存放于同目录 <b>activities/</b> 文件夹</footer>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ==================== 工具 ==================== */
+const $ = id => document.getElementById(id);
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function safeFileName(title) {
+  const n = String(title || '').replace(/[\\/:*?"<>|]/g, '').trim();
+  return n || '未命名活动';
+}
+
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function downloadText(filename, text) {
+  const blob = new Blob([text], { type: 'text/javascript;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 400);
+}
+
+/* ==================== 图标规则 ====================
+ * 需求编号：1入场 2离场 3歌曲 4颁奖 5音乐剧 6点名 7升旗 8开始 9演奏 10舞蹈 11抽奖 12武术
+ * 匹配优先级：更具体的活动类型优先（如“武术表演”显示剑、“舞蹈表演”显示裙子、
+ * “情景剧表演”显示视频），宽泛词“表演 / 开始”排后。
+ */
+const ICON_RULES = [
+  { kw:['入场'],                               icon:'enter'  },
+  { kw:['离场','退场','散场'],                 icon:'exit'   },
+  { kw:['升旗','升国旗'],                      icon:'flag'   },
+  { kw:['点名','点人','集合'],                 icon:'people' },
+  { kw:['抽奖'],                               icon:'gift'   },
+  { kw:['武术'],                               icon:'sword'  },
+  { kw:['舞蹈','跳舞'],                        icon:'dress'  },
+  { kw:['歌曲','献词','开场白','发言','朗诵','合唱'], icon:'mic'    },
+  { kw:['演奏','乐器','器乐'],                 icon:'note'   },
+  { kw:['颁奖','献礼'],                        icon:'trophy' },
+  { kw:['音乐剧','情景剧'],                    icon:'video'  },
+  { kw:['表演'],                               icon:'video'  },
+  { kw:['开始'],                               icon:'play'   },
+  { kw:['午休','睡觉','休息'],                 icon:'zzz'    },
+  { kw:['午饭','晚饭','吃饭'],                 icon:'fork'   }
+];
+
+const ICON_SVG = {
+  enter:  '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M22 12H11"/><path d="M15 8l4 4-4 4"/>',
+  exit:   '<path d="M15 21h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-4"/><path d="M2 12h11"/><path d="M9 8l-4 4 4 4"/>',
+  flag:   '<path d="M5 22V3"/><path d="M5 4h13l-3.5 4L18 12H5"/>',
+  people: '<circle cx="8" cy="6" r="3"/><path d="M2 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/><circle cx="17" cy="7" r="2.6"/><path d="M14 19.5v-.5a4.5 4.5 0 0 1 4.5-4.5h.8a3.7 3.7 0 0 1 3.7 3.7v1.3"/>',
+  gift:   '<rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M12 8v13"/><path d="M3 12h18"/><path d="M12 8C9.8 8 7.5 7.6 7.5 5.6 7.5 4.2 8.6 3 10 3c1.6 0 2 2.2 2 5z"/><path d="M12 8c2.2 0 4.5-.4 4.5-2.4C16.5 4.2 15.4 3 14 3c-1.6 0-2 2.2-2 5z"/>',
+  sword:  '<path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/>',
+  dress:  '<path d="M12 3c1.5 0 2.5.8 2.5 2.2 0 1-.5 1.6-.7 2.8h-3.6c-.2-1.2-.7-1.8-.7-2.8C9.5 3.8 10.5 3 12 3z"/><path d="M12 8l7 13H5l7-13z"/>',
+  mic:    '<g transform="rotate(-45 12 12)"><circle cx="12" cy="5.8" r="4.2"/><path d="M12 10v5.5"/><rect x="10.2" y="15.5" width="3.6" height="5" rx="1.8"/></g>',
+  note:   '<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+  trophy: '<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v7a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a3 3 0 0 0 3 4"/><path d="M17 6h3a3 3 0 0 1-3 4"/>',
+  video:  '<rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3v-4z"/>',
+  play:   '<path d="M7 4l13 8-13 8V4z" fill="currentColor" stroke="none"/>',
+  zzz:    '<path d="M16 5h5l-5 6h5"/><path d="M11 11h4l-4 5h4"/><path d="M6.5 17h3l-3 4h3"/>',
+  fork:   '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>'
+};
+
+function matchIcon(name) {
+  for (const r of ICON_RULES) {
+    for (const k of r.kw) {
+      if (name.indexOf(k) !== -1) return r.icon;
+    }
+  }
+  return null;
+}
+
+function iconSvg(name, cls) {
+  const body = ICON_SVG[name];
+  if (!body) return '';
+  return '<svg class="' + cls + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + body + '</svg>';
+}
+
+/* ==================== 数据 ==================== */
+const state = {
+  dirHandle: null,
+  files: [],
+  meta: {},        // 文件名 -> 分类（lecture 讲座类 / activity 活动类）
+  current: null,   // { name, data:{title,subtitle,category,items[]}, external }
+  editing: false
+};
+
+function parseActivityFile(text) {
+  const m = String(text).match(/window\.ACTIVITY_DATA\s*=\s*(\{[\s\S]*\})/);
+  if (m) {
+    try {
+      return normalize(JSON.parse(m[1].replace(/,\s*}/, '}')));
+    } catch (e) { /* 继续走沙箱兜底 */ }
+  }
+  try {
+    const sandbox = {};
+    new Function('window', String(text) + '\n;return window.ACTIVITY_DATA;')(sandbox);
+    return normalize(sandbox.ACTIVITY_DATA);
+  } catch (e) { return null; }
+}
+
+function normalize(obj) {
+  if (!obj || typeof obj !== 'object') return null;
+  const items = Array.isArray(obj.items)
+    ? obj.items.map((it, i) => {
+        let segs = [];
+        if (it && Array.isArray(it.segs)) {
+          // 新格式：segs 数组，支持多个“时长+备注”
+          segs = it.segs.map(s => ({
+            duration: String((s && s.duration) != null ? s.duration : ''),
+            note: String((s && s.note) || '')
+          }));
+        } else if (it) {
+          // 兼容旧格式：单条 duration / note
+          segs = [{
+            duration: String(it.duration != null ? it.duration : ''),
+            note: String(it.note || '')
+          }];
+        }
+        if (!segs.length) segs = [{ duration: '', note: '' }];
+        return {
+          time: String((it && it.time) || ''),
+          name: String((it && it.name) || ('环节' + (i + 1))),
+          segs: segs
+        };
+      })
+    : [];
+  return { title: String(obj.title || '未命名活动'), subtitle: String(obj.subtitle || ''), date: String(obj.date || ''), category: (obj.category === 'lecture' ? 'lecture' : 'activity'), items: items };
+}
+
+function serializeActivity(data) {
+  const Q = JSON.stringify;
+  const L = [];
+  L.push('/* 活动事件记录 · ' + data.title + ' */');
+  L.push('/* 本文件由「活动事件记录表.html」生成，可手动编辑或使用网页修改保存 */');
+  L.push('window.ACTIVITY_DATA = {');
+  L.push('  "title": ' + Q(data.title) + ',');
+  L.push('  "subtitle": ' + Q(data.subtitle || '') + ',');
+  L.push('  "date": ' + Q(data.date || '') + ',');
+  L.push('  "category": ' + Q(data.category === 'lecture' ? 'lecture' : 'activity') + ',');
+  L.push('  "items": [');
+  data.items.forEach((it, i) => {
+    const tail = (i === data.items.length - 1) ? '' : ',';
+    const segs = (it.segs && it.segs.length ? it.segs : [{ duration: '', note: '' }]).map(s => {
+      const dur = parseInt(s.duration, 10);
+      const d = isNaN(dur) ? 0 : dur;
+      return '{"duration": ' + d + ', "note": ' + Q(s.note || '') + '}';
+    }).join(', ');
+    L.push('    {"time": ' + Q(it.time) + ', "name": ' + Q(it.name) + ', "segs": [' + segs + ']}' + tail);
+  });
+  L.push('  ]');
+  L.push('};');
+  return L.join('\n') + '\n';
+}
+
+/* ==================== 文件系统（File System Access API） ==================== */
+const FS = {
+  api: !!(window.showDirectoryPicker),
+  async ensureWrite() {
+    if (!state.dirHandle) return;
+    if (await state.dirHandle.queryPermission({ mode: 'readwrite' }) !== 'granted') {
+      await state.dirHandle.requestPermission({ mode: 'readwrite' });
+    }
+  },
+  async listFiles() {
+    if (!state.dirHandle) return [];
+    const names = [];
+    for await (const entry of state.dirHandle.values()) {
+      if (entry.kind === 'file' && /\.js$/i.test(entry.name)) names.push(entry.name);
+    }
+    names.sort((a, b) => a.localeCompare(b, 'zh-CN'));
+    return names;
+  },
+  async read(name) {
+    const fh = await state.dirHandle.getFileHandle(name);
+    const f = await fh.getFile();
+    return f.text();
+  },
+  async write(name, text) {
+    await this.ensureWrite();
+    const fh = await state.dirHandle.getFileHandle(name, { create: true });
+    const w = await fh.createWritable();
+    await w.write(text);
+    await w.close();
+  },
+  async remove(name) {
+    await this.ensureWrite();
+    await state.dirHandle.removeEntry(name);
+  },
+  async refresh() {
+    state.files = await this.listFiles();
+    renderList();
+    refreshMeta();
+  }
+};
+
+async function refreshMeta() {
+  if (!FS.api || !state.dirHandle) return;
+  for (const n of state.files) {
+    if (state.meta[n] !== undefined) continue;
+    try {
+      const text = await FS.read(n);
+      const d = parseActivityFile(text);
+      if (d) state.meta[n] = d.category;
+    } catch (e) { /* 读取失败跳过，下次刷新再试 */ }
+  }
+  renderList();
+}
+
+/* ==================== 记忆上次选择的文件夹（IndexedDB） ==================== */
+function idbOpen() {
+  return new Promise((res, rej) => {
+    const rq = indexedDB.open('actRecordDB', 1);
+    rq.onupgradeneeded = () => { rq.result.createObjectStore('kv'); };
+    rq.onsuccess = () => res(rq.result);
+    rq.onerror = () => rej(rq.error);
+  });
+}
+async function idbGet(key) {
+  try {
+    const db = await idbOpen();
+    return await new Promise((res, rej) => {
+      const rq = db.transaction('kv', 'readonly').objectStore('kv').get(key);
+      rq.onsuccess = () => res(rq.result);
+      rq.onerror = () => rej(rq.error);
+    });
+  } catch (e) { return null; }
+}
+async function idbSet(key, val) {
+  try {
+    const db = await idbOpen();
+    await new Promise((res, rej) => {
+      const tx = db.transaction('kv', 'readwrite');
+      tx.objectStore('kv').put(val, key);
+      tx.oncomplete = () => res();
+      tx.onerror = () => rej(tx.error);
+    });
+  } catch (e) {}
+}
+
+/* ==================== 列表 ==================== */
+function renderList() {
+  const list = $('sideList');
+  $('sideCount').textContent = state.files.length + ' 个';
+  if (!state.files.length) {
+    list.innerHTML = '<div class="side-empty">未找到活动文件<br>点击「新建活动」创建<br>或拖入 .js 文件查看</div>';
+    return;
+  }
+  list.innerHTML = state.files.map(n => {
+    const base = n.replace(/\.js$/i, '');
+    const active = state.current && state.current.name === n ? ' active' : '';
+    const cat = (state.meta && state.meta[n]) === 'lecture' ? ' cat-lecture' : ' cat-activity';
+    return '<div class="act-item' + active + cat + '" data-name="' + escapeHtml(n) + '">' +
+      '<svg class="ai-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>' +
+      '<span class="ai-name">' + escapeHtml(base) + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+/* ==================== 详情（查看模式） ==================== */
+function renderDetail() {
+  const box = $('detail');
+  const cur = state.current;
+  if (!cur) {
+    box.innerHTML = '<div class="empty-hint">尚未加载活动<br>点击右上角「<b>选择活动文件夹</b>」选择 <b>activities</b> 文件夹，<br>或把活动 JS 文件直接<b>拖入本页</b></div>';
+    return;
+  }
+  const d = cur.data;
+  const items = d.items.map(it => {
+    const icon = matchIcon(it.name);
+    const ico = icon ? iconSvg(icon, 'evt-ico') : '';
+    const segs = (it.segs && it.segs.length ? it.segs : [{ duration: '', note: '' }]);
+    const subs = segs
+      .filter(s => (s && (String(s.duration || '').trim() !== '' || String(s.note || '').trim() !== '')))
+      .map(s => {
+        return '<div class="evt-sub">' +
+          '<span class="evt-dur">' + (s.duration || '0') + '分钟</span>' +
+          '<span class="evt-note">' + escapeHtml(s.note || '').replace(/\n/g, '<br>') + '</span>' +
+        '</div>';
+      }).join('');
+    return '<div class="evt-item">' +
+      '<div class="evt-line">' +
+        '<span class="evt-dot"></span>' +
+        '<span class="evt-time">' + escapeHtml(it.time || '--:--') + '</span>' +
+        ico +
+        '<span class="evt-name">' + escapeHtml(it.name) + '</span>' +
+      '</div>' +
+      (subs ? '<div class="evt-subs">' + subs + '</div>' : '') +
+    '</div>';
+  }).join('');
+  box.innerHTML =
+    '<div class="act-head">' +
+      '<h2 class="act-title">' + escapeHtml(d.title) + '</h2>' +
+      (d.subtitle ? '<span class="act-subtitle">' + escapeHtml(d.subtitle) + '</span>' : '') +
+      (d.date ? '<span class="act-date">' + escapeHtml(d.date) + '</span>' : '') +
+      '<span class="act-file">' + escapeHtml(cur.name) + ' · 共 ' + d.items.length + ' 个环节</span>' +
+    '</div>' +
+    '<div class="evt-list">' + (items || '<div class="empty-hint">该活动还没有环节，点击「编辑」添加</div>') + '</div>';
+}
+
+/* ==================== 编辑模式 ==================== */
+function enterEdit() {
+  if (!state.current) return;
+  state.editing = true;
+  state.snapshot = JSON.parse(JSON.stringify(state.current.data));
+  renderEditor();
+  updateButtons();
+}
+
+function editorRow(it, i) {
+  const segs = (it.segs && it.segs.length ? it.segs : [{ duration: '', note: '' }]).map((s, j) =>
+    '<div class="ed-seg" data-seg="' + j + '">' +
+      '<input class="inp ed-dur" type="number" min="0" placeholder="分钟" value="' + escapeHtml(s.duration) + '">' +
+      '<textarea class="inp ed-note" rows="1" placeholder="备注（可选，可换行）">' + escapeHtml(s.note) + '</textarea>' +
+      '<button class="btn btn-icon seg-del" title="删除该时长">&#215;</button>' +
+    '</div>'
+  ).join('');
+  return '<div class="ed-row" data-idx="' + i + '">' +
+    '<div class="ed-main">' +
+      '<input class="inp ed-time" placeholder="08:00" value="' + escapeHtml(it.time) + '">' +
+      '<input class="inp ed-name" placeholder="环节名称" value="' + escapeHtml(it.name) + '">' +
+      '<button class="btn btn-icon ed-del" title="删除该环节">&#215;</button>' +
+    '</div>' +
+    '<div class="ed-segs">' + segs + '</div>' +
+    '<button class="btn btn-add-seg">+ 添加时长 / 备注</button>' +
+  '</div>';
+}
+
+function renderEditor() {
+  const d = state.current.data;
+  const box = $('detail');
+  const rows = d.items.map((it, i) => editorRow(it, i)).join('');
+  box.innerHTML =
+    '<div class="ed-head">' +
+      '<div class="ed-field">' +
+        '<span class="ed-label">活动名</span>' +
+        '<input class="inp ed-title" id="edTitle" value="' + escapeHtml(d.title) + '">' +
+      '</div>' +
+      '<div class="ed-field">' +
+        '<span class="ed-label">副标题</span>' +
+        '<input class="inp ed-sub" id="edSub" placeholder="如：2026 秋季校庆晚会（可留空）" value="' + escapeHtml(d.subtitle || '') + '">' +
+      '</div>' +
+      '<div class="ed-field">' +
+        '<span class="ed-label">日期</span>' +
+        '<input class="inp ed-date" id="edDate" placeholder="如：2026-10-02" value="' + escapeHtml(d.date || '') + '">' +
+      '</div>' +
+      '<div class="ed-field">' +
+        '<span class="ed-label">分类</span>' +
+        '<div class="ed-cats">' +
+          '<label class="cat-chip' + (d.category === 'lecture' ? ' on' : '') + ' cat-lecture"><input type="radio" name="edCat" value="lecture"' + (d.category === 'lecture' ? ' checked' : '') + '> 讲座类</label>' +
+          '<label class="cat-chip' + (d.category !== 'lecture' ? ' on' : '') + ' cat-activity"><input type="radio" name="edCat" value="activity"' + (d.category !== 'lecture' ? ' checked' : '') + '> 活动类</label>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="ed-tip">编辑模式：修改内容后点击右上角「保存」写回 JS 文件；修改活动名将自动重命名文件；每个环节可添加多段「时长 + 备注」。</div>' +
+    '<div class="ed-items" id="edItems">' + rows + '</div>' +
+    '<div class="ed-actions">' +
+      '<button class="btn" id="btnAddItem">+ 添加环节</button>' +
+      '<span class="ed-count">共 ' + d.items.length + ' 个环节</span>' +
+    '</div>';
+
+  $('edTitle').addEventListener('input', e => { d.title = e.target.value; });
+  $('edSub').addEventListener('input', e => { d.subtitle = e.target.value; });
+  $('edDate').addEventListener('input', e => { d.date = e.target.value; });
+  box.querySelectorAll('input[name="edCat"]').forEach(r => {
+    r.addEventListener('change', () => { d.category = r.value; });
+  });
+  box.querySelectorAll('.ed-row').forEach(row => {
+    const idx = parseInt(row.dataset.idx, 10);
+    row.querySelector('.ed-time').addEventListener('input', e => { d.items[idx].time = e.target.value; });
+    row.querySelector('.ed-name').addEventListener('input', e => { d.items[idx].name = e.target.value; });
+    row.querySelectorAll('.ed-seg').forEach(seg => {
+      const j = parseInt(seg.dataset.seg, 10);
+      seg.querySelector('.ed-dur').addEventListener('input', e => { d.items[idx].segs[j].duration = e.target.value; });
+      seg.querySelector('.ed-note').addEventListener('input', e => { d.items[idx].segs[j].note = e.target.value; });
+      seg.querySelector('.seg-del').addEventListener('click', () => {
+        d.items[idx].segs.splice(j, 1);
+        if (!d.items[idx].segs.length) d.items[idx].segs = [{ duration: '', note: '' }];
+        renderEditor();
+      });
+    });
+    row.querySelector('.ed-del').addEventListener('click', () => { d.items.splice(idx, 1); renderEditor(); });
+    row.querySelector('.btn-add-seg').addEventListener('click', () => { d.items[idx].segs.push({ duration: '', note: '' }); renderEditor(); });
+  });
+  $('btnAddItem').addEventListener('click', () => { d.items.push({ time: '', name: '', segs: [{ duration: '', note: '' }] }); renderEditor(); });
+}
+
+/* ==================== 保存 / 新建 / 删除 / 导出 ==================== */
+async function saveActivity() {
+  const cur = state.current;
+  if (!cur) return;
+  const d = cur.data;
+  if (!d.title.trim()) { toast('活动名不能为空'); return; }
+  const text = serializeActivity(d);
+  const newName = safeFileName(d.title) + '.js';
+  const renamed = newName !== cur.name;
+
+  if (renamed && state.files.indexOf(newName) !== -1) {
+    if (!confirm('已存在同名活动文件「' + newName + '」，保存将覆盖它，继续？')) return;
+  }
+
+  if (FS.api && state.dirHandle) {
+    try {
+      await FS.write(newName, text);
+      if (renamed) await FS.remove(cur.name);
+      state.current = { name: newName, data: d, external: false };
+      await FS.refresh();
+      state.snapshot = null;
+      state.editing = false;
+      renderDetail();
+      updateButtons();
+      toast(renamed ? '已保存，并重命名为「' + newName + '」' : '已保存到 activities 文件夹');
+    } catch (e) {
+      toast('保存失败：' + e.message);
+    }
+  } else {
+    downloadText(newName, text);
+    state.current = { name: newName, data: d, external: true };
+    state.snapshot = null;
+    state.editing = false;
+    renderDetail();
+    updateButtons();
+    toast(renamed ? '已导出「' + newName + '」，请替换原文件' : '已导出「' + newName + '」，请保存到 activities 文件夹');
+  }
+}
+
+async function newActivity() {
+  if (state.editing && state.current && !confirm('当前有未保存的修改，放弃并新建？')) return;
+  state.snapshot = null;
+  const title = prompt('请输入活动名（将直接作为 JS 文件名）：', '');
+  if (title === null) return;
+  const t = title.trim();
+  if (!t) { toast('活动名不能为空'); return; }
+  const cat = confirm('请选择活动分类：\n「确定」= 讲座类（蓝）\n「取消」= 活动类（绿）') ? 'lecture' : 'activity';
+  let date = '';
+  while (true) {
+    const inp = prompt('请输入活动日期（必填，如：2026-10-02）：', date);
+    if (inp === null) return;
+    date = inp.trim();
+    if (date) break;
+    toast('活动日期不能为空');
+  }
+  const sub = prompt('请输入副标题（如：2026 秋季校庆晚会，可留空）：', '');
+  if (sub === null) return;
+  const name = safeFileName(t) + '.js';
+  const data = { title: t, subtitle: sub.trim(), date: date, category: cat, items: [] };
+  state.editing = true;
+  if (FS.api && state.dirHandle) {
+    try {
+      await FS.write(name, serializeActivity(data));
+      state.current = { name, data, external: false };
+      state.meta[name] = cat;
+      await FS.refresh();
+      renderEditor();
+      updateButtons();
+      toast('已创建「' + name + '」，请填写环节');
+    } catch (e) {
+      toast('创建失败：' + e.message);
+    }
+  } else {
+    state.current = { name, data, external: true };
+    renderEditor();
+    updateButtons();
+    toast('已创建草稿，保存时将导出「' + name + '」');
+  }
+}
+
+async function deleteActivity() {
+  const cur = state.current;
+  if (!cur) return;
+  if (cur.external || !FS.api || !state.dirHandle) { toast('当前活动无法直接删除，请手动删除文件'); return; }
+  if (!confirm('确定删除活动「' + cur.data.title + '」？\n将永久删除文件：' + cur.name)) return;
+  try {
+    await FS.remove(cur.name);
+    delete state.meta[cur.name];
+    state.current = null;
+    await FS.refresh();
+    renderDetail();
+    updateButtons();
+    toast('已删除「' + cur.name + '」');
+  } catch (e) {
+    toast('删除失败：' + e.message);
+  }
+}
+
+function exportActivity() {
+  const cur = state.current;
+  if (!cur) return;
+  downloadText(cur.name, serializeActivity(cur.data));
+  toast('已导出「' + cur.name + '」');
+}
+
+/* ==================== 加载活动 ==================== */
+async function loadActivity(name) {
+  if (state.editing && !confirm('当前有未保存的修改，放弃并切换？')) return;
+  try {
+    const text = await FS.read(name);
+    const data = parseActivityFile(text);
+    if (!data) { toast('无法解析「' + name + '」'); return; }
+    state.current = { name, data, external: false };
+    state.meta[name] = data.category;
+    state.editing = false;
+    renderList();
+    renderDetail();
+    updateButtons();
+  } catch (e) {
+    toast('读取失败：' + e.message);
+  }
+}
+
+/* ==================== 按钮状态 ==================== */
+function updateButtons() {
+  const hasDir = !!(FS.api && state.dirHandle);
+  const hasCur = !!state.current;
+  $('btnFolder').textContent = hasDir ? '切换文件夹' : '选择活动文件夹';
+  $('btnNew').disabled = false;
+  $('btnEdit').disabled = !hasCur || state.editing;
+  $('btnSave').hidden = !state.editing;
+  $('btnCancel').hidden = !state.editing;
+  $('btnExport').disabled = !hasCur;
+  $('btnDel').disabled = !hasCur || (state.current && state.current.external);
+  $('welcomePanel').style.display = hasCur ? 'none' : '';
+}
+
+/* ==================== 初始化 ==================== */
+async function openFolder() {
+  if (!FS.api) {
+    toast('当前浏览器不支持文件夹访问，请将 activities 内的 JS 文件拖入本页查看');
+    return;
+  }
+  try {
+    let dir = state.dirHandle;
+    if (dir) {
+      const perm = await dir.queryPermission({ mode: 'readwrite' });
+      if (perm === 'prompt') {
+        if (await dir.requestPermission({ mode: 'readwrite' }) !== 'granted') { toast('未获得文件夹读写权限'); return; }
+      } else if (perm !== 'granted') {
+        dir = null; // 已被拒绝 → 重新选择
+      }
+    }
+    if (!dir) dir = await window.showDirectoryPicker({ id: 'activity-dir', mode: 'readwrite' });
+    state.dirHandle = dir;
+    try { await idbSet('dirHandle', dir); } catch (e) {}
+    await FS.refresh();
+    const names = state.files;
+    if (names.length && !state.current) await loadActivity(names[0]);
+    if (names.length) toast('已打开 activities 文件夹，共 ' + names.length + ' 个活动');
+    else toast('文件夹中没有 .js 文件，点「新建活动」创建');
+  } catch (e) {
+    if (e.name !== 'AbortError') toast('无法打开文件夹：' + e.message);
+  }
+}
+
+function bind() {
+  $('btnFolder').addEventListener('click', openFolder);
+  $('btnOpen').addEventListener('click', openFolder);
+  $('btnNew').addEventListener('click', newActivity);
+  $('btnEdit').addEventListener('click', enterEdit);
+  $('btnSave').addEventListener('click', saveActivity);
+  $('btnCancel').addEventListener('click', () => {
+    if (!confirm('放弃未保存的修改？')) return;
+    if (state.snapshot) Object.assign(state.current.data, state.snapshot);
+    state.snapshot = null;
+    state.editing = false;
+    renderDetail();
+    updateButtons();
+  });
+  $('btnExport').addEventListener('click', exportActivity);
+  $('btnDel').addEventListener('click', deleteActivity);
+  $('sideList').addEventListener('click', e => {
+    const item = e.target.closest('.act-item');
+    if (item) loadActivity(item.dataset.name);
+  });
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', e => {
+    e.preventDefault();
+    const files = e.dataTransfer && e.dataTransfer.files;
+    if (!files || !files.length) return;
+    const jsFiles = Array.prototype.filter.call(files, f => /\.js$/i.test(f.name));
+    if (!jsFiles.length) { toast('未找到 .js 活动文件'); return; }
+    if (state.editing && !confirm('当前有未保存的修改，放弃并切换？')) return;
+    let loaded = 0, failed = 0;
+    jsFiles.forEach(f => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const data = parseActivityFile(String(reader.result));
+        if (!data) { failed++; toast('无法解析「' + f.name + '」'); return; }
+        state.current = { name: f.name, data, external: true };
+        state.editing = false;
+        loaded++;
+        renderList();
+        renderDetail();
+        updateButtons();
+        if (loaded + failed === jsFiles.length) {
+          toast('已载入 ' + loaded + ' 个外部文件' + (failed ? '，' + failed + ' 个解析失败' : '') + '（修改后请用「导出 JS」保存）');
+        }
+      };
+      reader.readAsText(f, 'utf-8');
+    });
+  });
+}
+
+renderList();
+renderDetail();
+updateButtons();
+bind();
+if (!FS.api) toast('当前浏览器不支持文件夹读写，可用「拖入 JS 文件」方式查看');
+tryAutoConnect();
+
+/* ==================== 自动重连上次选择的文件夹 ==================== */
+async function tryAutoConnect() {
+  if (!FS.api) return;
+  const saved = await idbGet('dirHandle');
+  if (!saved) return;
+  try {
+    const perm = await saved.queryPermission({ mode: 'readwrite' });
+    if (perm !== 'granted') return;
+    state.dirHandle = saved;
+    await FS.refresh();
+    updateButtons();
+    const names = state.files;
+    if (names.length && !state.current) await loadActivity(names[0]);
+    if (names.length) toast('已自动连接 activities 文件夹，共 ' + names.length + ' 个活动');
+    else toast('已连接 activities 文件夹，点「新建活动」创建');
+  } catch (e) { /* 句柄已失效，忽略，由用户手动选择 */ }
+}
+</script>
+</body>
+</html>
