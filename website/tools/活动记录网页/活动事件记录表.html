@@ -448,21 +448,27 @@ function downloadText(filename, text) {
  * “情景剧表演”显示视频），宽泛词“表演 / 开始”排后。
  */
 const ICON_RULES = [
-  { kw:['入场'],                               icon:'enter'  },
-  { kw:['离场','退场','散场'],                 icon:'exit'   },
-  { kw:['升旗','升国旗'],                      icon:'flag'   },
-  { kw:['点名','点人','集合'],                 icon:'people' },
-  { kw:['抽奖'],                               icon:'gift'   },
-  { kw:['武术'],                               icon:'sword'  },
-  { kw:['舞蹈','跳舞'],                        icon:'dress'  },
-  { kw:['歌曲','献词','开场白','发言','朗诵','合唱'], icon:'mic'    },
-  { kw:['演奏','乐器','器乐'],                 icon:'note'   },
-  { kw:['颁奖','献礼'],                        icon:'trophy' },
-  { kw:['音乐剧','情景剧'],                    icon:'video'  },
-  { kw:['表演'],                               icon:'video'  },
-  { kw:['开始'],                               icon:'play'   },
-  { kw:['午休','睡觉','休息'],                 icon:'zzz'    },
-  { kw:['午饭','晚饭','吃饭'],                 icon:'fork'   }
+  { kw:['入场'],                               icon:'enter'   },
+  { kw:['到达'],                               icon:'pin'     },
+  { kw:['离场','退场','散场','放人','放学','回'], icon:'exit'    },
+  { kw:['升旗','升国旗','授旗','旗'],           icon:'flag'    },
+  { kw:['点名','点人','集合','训','彩排'],          icon:'people'  },
+  { kw:['抽奖'],                               icon:'gift'    },
+  { kw:['武术'],                               icon:'sword'   },
+  { kw:['京剧'],                               icon:'opera'   },
+  { kw:['操'],                                 icon:'dress'   },
+  { kw:['舞'],                                 icon:'dress'   },
+  { kw:['致辞','发言','尾声','寄语','结语','发表'], icon:'standmic'},
+  { kw:['歌曲','献词','开场白','朗诵','合唱','拉歌'], icon:'mic' },
+  { kw:['演奏','乐器','器乐'],                 icon:'note'    },
+  { kw:['颁奖','献礼'],                        icon:'trophy'  },
+  { kw:['音乐剧','情景剧','视频'],               icon:'video'   },
+  { kw:['表演','小品'],                         icon:'video'   },
+  { kw:['开始'],                               icon:'play'    },
+  { kw:['结束'],                               icon:'pause'   },
+  { kw:['午休','睡觉','休息'],                 icon:'zzz'     },
+  { kw:['午饭','晚饭','吃饭'],                 icon:'fork'    },
+  { kw:['生日'],                               icon:'cake'    }
 ];
 
 const ICON_SVG = {
@@ -479,7 +485,12 @@ const ICON_SVG = {
   video:  '<rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3v-4z"/>',
   play:   '<path d="M7 4l13 8-13 8V4z" fill="currentColor" stroke="none"/>',
   zzz:    '<path d="M16 5h5l-5 6h5"/><path d="M11 11h4l-4 5h4"/><path d="M6.5 17h3l-3 4h3"/>',
-  fork:   '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>'
+  fork:   '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>',
+  standmic:'<rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v4"/><path d="M8 22h8"/>',
+  pin:    '<path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  pause:  '<path d="M8 5v14"/><path d="M16 5v14"/>',
+  cake:   '<path d="M5 20h14v-1.8a1.8 1.8 0 0 0-1.8-1.8H6.8A1.8 1.8 0 0 0 5 18.2V20z"/><path d="M6.8 16.4L7.9 12.3A1.5 1.5 0 0 1 9.4 11h5.2a1.5 1.5 0 0 1 1.5 1.3l1.1 4.1"/><path d="M12 11V6.8"/><path d="M12 6.8a2 2 0 0 0 0-3.6"/>',
+  opera:  '<path d="M12 3.5C7.6 3.5 4.5 6.8 4.5 10.8c0 4.2 3 7 7.5 9.7 4.5-2.7 7.5-5.5 7.5-9.7 0-4-3.1-7.3-7.5-7.3z"/><path d="M7.2 9.6c.9-.8 2.2-.8 3.1 0"/><path d="M13.7 9.6c.9-.8 2.2-.8 3.1 0"/><path d="M7.8 13.4c2.6-1.2 5.8-1.2 8.4 0"/><path d="M12 13.4v2.6"/>'
 };
 
 function matchIcon(name) {
@@ -692,7 +703,13 @@ function renderDetail() {
     const ico = icon ? iconSvg(icon, 'evt-ico') : '';
     const segs = (it.segs && it.segs.length ? it.segs : [{ duration: '', note: '' }]);
     const subs = segs
-      .filter(s => (s && (String(s.duration || '').trim() !== '' || String(s.note || '').trim() !== '')))
+      .filter(s => {
+        if (!s) return false;
+        const dur = String(s.duration == null ? '' : s.duration).trim();
+        const note = String(s.note == null ? '' : s.note).trim();
+        if (dur !== '' && Number(dur) === 0) return false; // 0 分钟不显示
+        return dur !== '' || note !== '';
+      })
       .map(s => {
         return '<div class="evt-sub">' +
           '<span class="evt-dur">' + (s.duration || '0') + '分钟</span>' +
