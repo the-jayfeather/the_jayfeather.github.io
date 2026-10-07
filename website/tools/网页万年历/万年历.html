@@ -23,6 +23,11 @@
     <span class="time-source" id="timeSource" title="点击重新检测时间源">
       <span class="dot"></span><span id="timeSourceText">检测中…</span>
     </span>
+    <button class="settings-btn" id="searchBtn" title="搜索" aria-label="搜索">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+    </button>
     <button class="settings-btn" id="settingsBtn" title="设置" aria-label="设置">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
         <circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.08a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.08a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/>
@@ -290,6 +295,19 @@
   </div>
 </div>
 
+<!-- ================= 搜索模态 ================= -->
+<div class="modal-mask" id="searchMask">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="搜索">
+    <div class="modal-head">
+      <h2>搜索</h2>
+      <button class="modal-close" id="searchClose" aria-label="关闭">×</button>
+    </div>
+    <div class="search-tip">键入关键词搜索角色生日 / 历史事件 / 名人生日 / 亲友生日</div>
+    <input class="search-input" id="searchInput" type="text" placeholder="输入关键词，如：桐人 / 洛天依 / 玻尔 / 罗鑫悦…" autocomplete="off">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- ================= 数据与逻辑 ================= -->
@@ -520,6 +538,71 @@ function festivalsOf(y, m, d) {
   }
   return list;
 }
+/* ---------- 大型节日主题卡片 ---------- */
+/* 按节日名称匹配左侧日期卡主题（数组顺序即优先级，同日多节取靠前者） */
+var FEST_THEME = [
+  { name: '国庆节', cls: 'theme-national' },
+  { name: '中秋节', cls: 'theme-midautumn' },
+  { name: '春节', cls: 'theme-spring' },
+  { name: '除夕', cls: 'theme-spring' },
+  { name: '元宵节', cls: 'theme-lantern' },
+  { name: '元旦', cls: 'theme-spring' },
+  { name: '国际劳动节', cls: 'theme-labour' },
+  { name: '端午节', cls: 'theme-dragon' },
+  { name: '清明', cls: 'theme-qingming' },
+  { name: '七夕节', cls: 'theme-qixi' },
+  { name: '重阳节', cls: 'theme-chongyang' },
+  { name: '情人节', cls: 'theme-valentine' },
+  { name: '国际妇女节', cls: 'theme-women' },
+  { name: '中国植树节', cls: 'theme-tree' },
+  { name: '五四青年节', cls: 'theme-youth' },
+  { name: '国际儿童节', cls: 'theme-children' },
+  { name: '中国共产党成立纪念日', cls: 'theme-party' },
+  { name: '中国人民解放军建军节', cls: 'theme-army' },
+  { name: '教师节', cls: 'theme-teacher' },
+  { name: '万圣夜', cls: 'theme-halloween' },
+  { name: '平安夜', cls: 'theme-christmas' },
+  { name: '圣诞节', cls: 'theme-christmas' },
+  { name: '跨年夜', cls: 'theme-newyear' },
+  { name: '母亲节', cls: 'theme-mother' },
+  { name: '父亲节', cls: 'theme-father' },
+  { name: '感恩节', cls: 'theme-thanksgiving' },
+  { name: '腊八节', cls: 'theme-laba' },
+  { name: '北方小年', cls: 'theme-xiaonian' },
+  { name: '南方小年', cls: 'theme-xiaonian' },
+  { name: '小寒', cls: 'theme-term-xiaohan' },
+  { name: '大寒', cls: 'theme-term-dahan' },
+  { name: '立春', cls: 'theme-term-lichun' },
+  { name: '雨水', cls: 'theme-term-yushui' },
+  { name: '惊蛰', cls: 'theme-term-jingzhe' },
+  { name: '春分', cls: 'theme-term-chunfen' },
+  { name: '谷雨', cls: 'theme-term-guyu' },
+  { name: '立夏', cls: 'theme-term-lixia' },
+  { name: '小满', cls: 'theme-term-xiaoman' },
+  { name: '芒种', cls: 'theme-term-mangzhong' },
+  { name: '夏至', cls: 'theme-term-xiazhi' },
+  { name: '小暑', cls: 'theme-term-xiaoshu' },
+  { name: '大暑', cls: 'theme-term-dashu' },
+  { name: '立秋', cls: 'theme-term-liqiu' },
+  { name: '处暑', cls: 'theme-term-chushu' },
+  { name: '白露', cls: 'theme-term-bailu' },
+  { name: '秋分', cls: 'theme-term-qiufen' },
+  { name: '寒露', cls: 'theme-term-hanlu' },
+  { name: '霜降', cls: 'theme-term-shuangjiang' },
+  { name: '立冬', cls: 'theme-term-lidong' },
+  { name: '小雪', cls: 'theme-term-xiaoxue' },
+  { name: '大雪', cls: 'theme-term-daxue' },
+  { name: '冬至', cls: 'theme-term-dongzhi' }
+];
+function festThemeOf(y, m, d) {
+  var fests = festivalsOf(y, m, d), i, j;
+  for (i = 0; i < FEST_THEME.length; i++) {
+    for (j = 0; j < fests.length; j++) {
+      if (fests[j].name === FEST_THEME[i].name) return FEST_THEME[i].cls;
+    }
+  }
+  return '';
+}
 
 /* ---------- 星座 ---------- */
 function zodiacOf(m, d) {
@@ -710,6 +793,8 @@ function renderSidebar() {
       (settings.showFoLi ? '佛历 ' + foLiYearOf(sel.y) + ' 年 · ' + lunarBriefTxt : '') +
       '</div>';
   }
+  var festTheme = festThemeOf(sel.y, sel.m, sel.d);
+  $('bigDateCard').className = 'panel big-date' + (festTheme ? ' ' + festTheme : '');
   $('bigDateCard').innerHTML =
     '<div class="week">星期' + L.WEEK_CN[info.week] + '</div>' +
     '<div class="day">' + sel.d + '</div>' +
@@ -1062,8 +1147,12 @@ function renderMonth() {
       if (fsS.length || fsL.length) {
         var fparts = fsS.map(function (f) { return '<span class="fb-solar">' + f.name + '</span>'; })
           .concat(fsL.map(function (f) { return '<span class="fb-lunar">' + f.name + '</span>'; }));
-        /* 右上角统一显示"XX生日"（单人与多人均带"生日"二字） */
-        fbMark = '<div class="fb-badge">' + fparts.join('、') + '生日</div>';
+        /* 右上角角标：单人显示人名，多人显示"X人生日" */
+        if (fsS.length + fsL.length === 1) {
+          fbMark = '<div class="fb-badge">' + fparts[0] + '</div>';
+        } else {
+          fbMark = '<div class="fb-badge">' + (fsS.length + fsL.length) + '人生日</div>';
+        }
       }
     }
     html += '<div class="' + cls + '" data-y="' + y + '" data-m="' + m + '" data-d="' + d + '">' +
@@ -1308,7 +1397,140 @@ function closeSettings() { $('modalMask').classList.remove('open'); }
 $('settingsBtn').addEventListener('click', openSettings);
 $('modalClose').addEventListener('click', closeSettings);
 $('modalMask').addEventListener('click', function (e) { if (e.target === this) closeSettings(); });
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSettings(); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeSettings(); closeSearch(); } });
+
+/* ---------- 搜索面板 ---------- */
+function openSearch() {
+  $('searchMask').classList.add('open');
+  $('searchInput').value = '';
+  renderSearch('');
+  $('searchInput').focus();
+}
+function closeSearch() { $('searchMask').classList.remove('open'); }
+$('searchBtn').addEventListener('click', openSearch);
+$('searchClose').addEventListener('click', closeSearch);
+$('searchMask').addEventListener('click', function (e) { if (e.target === this) closeSearch(); });
+$('searchInput').addEventListener('input', function () { renderSearch(this.value.trim()); });
+$('searchInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+
+function dayGap(y1, m1, d1, y0, m0, d0) {
+  return Math.round((new Date(y1, m1 - 1, d1).getTime() - new Date(y0, m0 - 1, d0).getTime()) / 86400000);
+}
+/* 下一次公历 m/d（含今天；今年已过则取次年，兼容 2/29 等特殊日期） */
+function nextSolar(m, d, y0, m0, d0) {
+  for (var y = y0; y <= y0 + 3; y++) {
+    if (d > new Date(y, m, 0).getDate()) continue;
+    var g = dayGap(y, m, d, y0, m0, d0);
+    if (g >= 0) return { y: y, m: m, d: d };
+  }
+  return { y: y0, m: m, d: d };
+}
+/* 下一次农历 lm/ld 对应的公历日期（从今天起向后扫描） */
+function nextSolarFromLunar(lm, ld, y0, m0, d0) {
+  var base = new Date(y0, m0 - 1, d0).getTime();
+  var i, dt, lu;
+  for (i = 0; i <= 900; i++) {
+    dt = new Date(base + i * 86400000);
+    lu = L.solarToLunar(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
+    if (!lu.outOfRange && !lu.isLeap && lu.lMonth === lm && lu.lDay === ld) {
+      return { y: dt.getFullYear(), m: dt.getMonth() + 1, d: dt.getDate() };
+    }
+  }
+  return null;
+}
+function lunarTxtOf(y, m, d) {
+  var lu = L.solarToLunar(y, m, d);
+  if (lu.outOfRange) return '';
+  return L.lunarMonthCN(lu.lMonth, lu.isLeap) + L.lunarDayCN(lu.lDay);
+}
+function escHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function renderSearch(kw) {
+  var box = $('searchResults');
+  if (!kw) { box.innerHTML = '<div class="search-empty">输入关键词开始搜索</div>'; return; }
+  var items = [], i, r, k, j, e;
+  var push = function (it) { if (items.length < 300) items.push(it); };
+  var now = TimeSrc.nowDate();
+  var y0 = now.getFullYear(), m0 = now.getMonth() + 1, d0 = now.getDate();
+  var friendLunarByName = {};
+  for (i = 0; i < FBL.length; i++) {
+    if (!friendLunarByName[FBL[i].name]) friendLunarByName[FBL[i].name] = { lm: FBL[i].lm, ld: FBL[i].ld };
+  }
+  for (i = 0; i < B.length; i++) {
+    r = B[i];
+    if (r.name.indexOf(kw) >= 0 || (r.work || '').indexOf(kw) >= 0) {
+      var tg = nextSolar(r.m, r.d, y0, m0, d0);
+      push({ type: '角色', name: r.name, sub: r.work, solar: r.m + '月' + r.d + '日', lunar: lunarTxtOf(tg.y, r.m, r.d), m: r.m, d: r.d, y: tg.y });
+    }
+  }
+  for (i = 0; i < CE.length; i++) {
+    r = CE[i];
+    if (r.name.indexOf(kw) >= 0 || (r.field || '').indexOf(kw) >= 0) {
+      var tg2 = nextSolar(r.m, r.d, y0, m0, d0);
+      push({ type: '名人', name: r.name, sub: (r.field || '') + (r.y ? ' · ' + r.y : ''), solar: r.m + '月' + r.d + '日', lunar: lunarTxtOf(tg2.y, r.m, r.d), m: r.m, d: r.d, y: tg2.y });
+    }
+  }
+  for (i = 0; i < FB.length; i++) {
+    r = FB[i];
+    if (r.name.indexOf(kw) >= 0) {
+      var fl = friendLunarByName[r.name];
+      var tg3 = nextSolar(r.m, r.d, y0, m0, d0);
+      push({ type: '亲友', name: r.name, sub: r.role + '（' + r.cls + '）', solar: r.m + '月' + r.d + '日', lunar: fl ? (L.lunarMonthCN(fl.lm, false) + L.lunarDayCN(fl.ld)) : lunarTxtOf(tg3.y, r.m, r.d), m: r.m, d: r.d, y: tg3.y });
+    }
+  }
+  for (i = 0; i < FBL.length; i++) {
+    r = FBL[i];
+    if (r.name.indexOf(kw) >= 0) {
+      push({ type: '亲友·农历', name: r.name, sub: r.role + '（' + r.cls + '）', solar: '', lunar: L.lunarMonthCN(r.lm, false) + L.lunarDayCN(r.ld), lm: r.lm, ld: r.ld });
+    }
+  }
+  for (k in H) {
+    if (!H.hasOwnProperty(k)) continue;
+    var md = k.split('-'), mm = +md[0], dd = +md[1];
+    var evs = H[k];
+    for (j = 0; j < evs.length; j++) {
+      e = evs[j];
+      if (String(e[1]).indexOf(kw) >= 0) {
+        push({ type: '事件', name: String(e[1]), sub: (e[0] < 0 ? '公元前' + (-e[0]) : e[0]) + ' 年', solar: mm + '月' + dd + '日', lunar: '', m: mm, d: dd });
+      }
+    }
+  }
+  if (!items.length) { box.innerHTML = '<div class="search-empty">未找到匹配内容</div>'; return; }
+  var html = '';
+  for (i = 0; i < items.length; i++) {
+    var it = items[i];
+    var dateHtml = '';
+    if (it.solar) dateHtml += '<span class="si-solar">' + it.solar + '</span>';
+    if (it.lunar) dateHtml += '<span class="si-lunar">农历' + it.lunar + '</span>';
+    html += '<div class="search-item" data-i="' + i + '">' +
+      '<span class="si-type">' + it.type + '</span>' +
+      '<span class="si-name">' + escHtml(it.name) + '</span>' +
+      '<span class="si-sub">' + escHtml(it.sub) + '</span>' +
+      '<span class="si-date">' + dateHtml + '</span></div>';
+  }
+  box.innerHTML = html;
+  var els = box.querySelectorAll('.search-item');
+  for (i = 0; i < els.length; i++) {
+    (function (idx) {
+      els[idx].addEventListener('click', function () { jumpToResult(items[idx]); });
+    })(i);
+  }
+}
+function jumpToResult(it) {
+  var now = TimeSrc.nowDate();
+  var y0 = now.getFullYear(), m0 = now.getMonth() + 1, d0 = now.getDate();
+  var target;
+  if (it.lm) target = nextSolarFromLunar(it.lm, it.ld, y0, m0, d0);
+  else target = nextSolar(it.m, it.d, y0, m0, d0);
+  if (!target) { toast('未找到对应日期'); return; }
+  sel.y = target.y; sel.m = target.m; sel.d = target.d;
+  view.mode = 'month'; view.year = target.y; view.month = target.m;
+  closeSearch();
+  syncTabs(); renderAll();
+  var lu = lunarTxtOf(target.y, target.m, target.d);
+  toast('已跳转：' + target.y + '年' + target.m + '月' + target.d + '日' + (lu ? '（农历' + lu + '）' : ''));
+}
 
 function syncSettingsUI() {
   $('setShowLunar').checked = settings.showLunar;

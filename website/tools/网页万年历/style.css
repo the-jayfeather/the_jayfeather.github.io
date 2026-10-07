@@ -1187,3 +1187,548 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* ============================================================
+ * 大型节日主题卡片（左侧大日期卡 · 节日当天生效）
+ * 主题 class 覆盖 CSS 变量实现文字换色；共享规则用属性选择器统一处理硬编码色
+ * ============================================================ */
+.big-date.theme-national {
+  --sky: #FFE9A8; --tianyi: #FFD700; --cloud: #FFF1C4; --cyan: #FFD98A; --ice: #FFE9A8;
+  --th-faint: rgba(255, 233, 168, 0.62);
+  --th-line: rgba(255, 215, 0, 0.32);
+  --th-glow: rgba(255, 215, 0, 0.35);
+  --th-border: rgba(255, 215, 0, 0.42);
+  background: linear-gradient(160deg, #C1121F 0%, #8E0E1E 55%, #5E0A18 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(120, 10, 28, 0.5);
+}
+.big-date.theme-spring,
+.big-date.theme-lantern,
+.big-date.theme-labour {
+  --sky: #FFE9A8; --tianyi: #FFD700; --cloud: #FFF1C4; --cyan: #FFD98A; --ice: #FFE9A8;
+  --th-faint: rgba(255, 233, 168, 0.62);
+  --th-line: rgba(255, 215, 0, 0.32);
+  --th-glow: rgba(255, 215, 0, 0.35);
+  --th-border: rgba(255, 215, 0, 0.42);
+  background: linear-gradient(160deg, #B3122B 0%, #80101F 55%, #530A14 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(110, 12, 26, 0.5);
+}
+.big-date.theme-midautumn {
+  --sky: #FFE9A8; --tianyi: #FFD98A; --cloud: #FFF1C4; --cyan: #FFD9A0; --ice: #FFE9A8;
+  --th-faint: rgba(255, 217, 138, 0.6);
+  --th-line: rgba(255, 209, 102, 0.28);
+  --th-glow: rgba(255, 209, 102, 0.35);
+  --th-border: rgba(255, 209, 102, 0.4);
+  background: radial-gradient(420px 170px at 50% -8%, rgba(255, 209, 102, 0.30), rgba(255, 209, 102, 0) 70%),
+              linear-gradient(160deg, #14395C 0%, #0A2340 65%, #061B30 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(20, 57, 92, 0.5);
+}
+.big-date.theme-qingming {
+  --sky: #C9F5DC; --tianyi: #9FE6C0; --cloud: #D9F7E5; --cyan: #A8E6C4; --ice: #C9F5DC;
+  --th-faint: rgba(201, 245, 220, 0.6);
+  --th-line: rgba(159, 230, 192, 0.3);
+  --th-glow: rgba(159, 230, 192, 0.35);
+  --th-border: rgba(159, 230, 192, 0.4);
+  background: linear-gradient(160deg, #2F7A5C 0%, #1B5A3E 60%, #0F3D2A 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(20, 80, 55, 0.5);
+}
+.big-date.theme-dragon {
+  --sky: #DCF7DC; --tianyi: #B9ECC9; --cloud: #E8FBE8; --cyan: #C2F0CE; --ice: #DCF7DC;
+  --th-faint: rgba(220, 247, 220, 0.6);
+  --th-line: rgba(185, 236, 201, 0.3);
+  --th-glow: rgba(185, 236, 201, 0.35);
+  --th-border: rgba(185, 236, 201, 0.4);
+  background: linear-gradient(160deg, #3E8E41 0%, #256B2E 60%, #14471C 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(22, 78, 30, 0.5);
+}
+.big-date.theme-qixi {
+  --sky: #EDD5FF; --tianyi: #E3C0FF; --cloud: #F6E8FF; --cyan: #E8CDFF; --ice: #EDD5FF;
+  --th-faint: rgba(237, 213, 255, 0.6);
+  --th-line: rgba(227, 192, 255, 0.3);
+  --th-glow: rgba(227, 192, 255, 0.35);
+  --th-border: rgba(227, 192, 255, 0.4);
+  background: linear-gradient(160deg, #7A4A9E 0%, #4E2A70 60%, #2E1A4E 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(60, 26, 92, 0.5);
+}
+.big-date.theme-chongyang {
+  --sky: #FFE9C4; --tianyi: #FFD9A0; --cloud: #FFF3DC; --cyan: #FFDFAC; --ice: #FFE9C4;
+  --th-faint: rgba(255, 233, 196, 0.6);
+  --th-line: rgba(255, 217, 160, 0.3);
+  --th-glow: rgba(255, 217, 160, 0.35);
+  --th-border: rgba(255, 217, 160, 0.4);
+  background: linear-gradient(160deg, #C96A22 0%, #8E4512 60%, #5E2C0A 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(120, 58, 12, 0.5);
+}
+/* 主题卡共享微调：硬编码浅蓝处统一换为各主题淡色 */
+.big-date[class*="theme-"] .fest-item .w,
+.big-date[class*="theme-"] .fest-item.term .w,
+.big-date[class*="theme-"] .zodiac .w,
+.big-date[class*="theme-"] .lg-label {
+  color: var(--th-faint);
+}
+.big-date[class*="theme-"] .lunar-grid {
+  border-top-color: var(--th-line);
+}
+.big-date[class*="theme-"] .day {
+  text-shadow: 0 0 22px var(--th-glow);
+}
+.big-date[class*="theme-"] .luck-shi {
+  border-bottom-color: var(--tianyi);
+}
+
+/* ============================================================
+ * 更多节日主题卡片（第二批）
+ * ============================================================ */
+.big-date.theme-valentine {
+  --sky: #FFD6E0; --tianyi: #FFA8BC; --cloud: #FFE8EE; --cyan: #FFBFCE; --ice: #FFD6E0;
+  --th-faint: rgba(255, 182, 198, 0.6);
+  --th-line: rgba(255, 168, 188, 0.3);
+  --th-glow: rgba(255, 168, 188, 0.35);
+  --th-border: rgba(255, 168, 188, 0.42);
+  background: linear-gradient(160deg, #B34A6E 0%, #7A2F4C 60%, #4E1C31 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(110, 32, 62, 0.5);
+}
+.big-date.theme-women {
+  --sky: #F3DDF5; --tianyi: #E6C3EC; --cloud: #F9EDFB; --cyan: #EED0F2; --ice: #F3DDF5;
+  --th-faint: rgba(230, 195, 236, 0.6);
+  --th-line: rgba(230, 195, 236, 0.3);
+  --th-glow: rgba(230, 195, 236, 0.35);
+  --th-border: rgba(230, 195, 236, 0.42);
+  background: linear-gradient(160deg, #8E4A7A 0%, #5E2E52 60%, #3A1C34 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(88, 38, 76, 0.5);
+}
+.big-date.theme-tree {
+  --sky: #D8F3D8; --tianyi: #AEE8AE; --cloud: #EAFBEA; --cyan: #C0EEC0; --ice: #D8F3D8;
+  --th-faint: rgba(216, 243, 216, 0.6);
+  --th-line: rgba(174, 232, 174, 0.3);
+  --th-glow: rgba(174, 232, 174, 0.35);
+  --th-border: rgba(174, 232, 174, 0.42);
+  background: linear-gradient(160deg, #3E9A4E 0%, #256B31 60%, #14471E 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(22, 86, 38, 0.5);
+}
+.big-date.theme-youth {
+  --sky: #FFE3D2; --tianyi: #FFB48F; --cloud: #FFF1E8; --cyan: #FFCBA9; --ice: #FFE3D2;
+  --th-faint: rgba(255, 180, 143, 0.6);
+  --th-line: rgba(255, 150, 110, 0.3);
+  --th-glow: rgba(255, 150, 110, 0.35);
+  --th-border: rgba(255, 170, 130, 0.42);
+  background: linear-gradient(160deg, #D0402E 0%, #8E2215 60%, #5C1209 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(128, 26, 14, 0.5);
+}
+.big-date.theme-children {
+  --sky: #FFE8C4; --tianyi: #FFC877; --cloud: #FFF5E0; --cyan: #FFDCA0; --ice: #FFE8C4;
+  --th-faint: rgba(255, 200, 120, 0.6);
+  --th-line: rgba(255, 200, 120, 0.3);
+  --th-glow: rgba(255, 200, 120, 0.35);
+  --th-border: rgba(255, 200, 120, 0.42);
+  background: linear-gradient(160deg, #E8912A 0%, #A85F16 60%, #6E3B0C 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(150, 82, 16, 0.5);
+}
+.big-date.theme-party {
+  --sky: #FFE3C8; --tianyi: #FFC890; --cloud: #FFF0DE; --cyan: #FFD7A8; --ice: #FFE3C8;
+  --th-faint: rgba(255, 200, 144, 0.6);
+  --th-line: rgba(255, 190, 110, 0.3);
+  --th-glow: rgba(255, 190, 110, 0.35);
+  --th-border: rgba(255, 190, 110, 0.42);
+  background: linear-gradient(160deg, #A81E2E 0%, #6E1220 60%, #420A12 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(110, 16, 30, 0.5);
+}
+.big-date.theme-army {
+  --sky: #E3F0E3; --tianyi: #B9D8B9; --cloud: #F0F8F0; --cyan: #CBE4CB; --ice: #E3F0E3;
+  --th-faint: rgba(227, 240, 227, 0.6);
+  --th-line: rgba(185, 216, 185, 0.3);
+  --th-glow: rgba(185, 216, 185, 0.35);
+  --th-border: rgba(185, 216, 185, 0.42);
+  background: linear-gradient(160deg, #4E6E4E 0%, #2E4A30 60%, #1A2E1C 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(30, 68, 34, 0.5);
+}
+.big-date.theme-teacher {
+  --sky: #FFEFD2; --tianyi: #FFD58C; --cloud: #FFF7E8; --cyan: #FFE2AE; --ice: #FFEFD2;
+  --th-faint: rgba(255, 213, 140, 0.6);
+  --th-line: rgba(255, 213, 140, 0.3);
+  --th-glow: rgba(255, 213, 140, 0.35);
+  --th-border: rgba(255, 213, 140, 0.42);
+  background: linear-gradient(160deg, #C98A2B 0%, #8E5C18 60%, #5E3A0C 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(130, 82, 20, 0.5);
+}
+.big-date.theme-halloween {
+  --sky: #FFD9B8; --tianyi: #FFA95C; --cloud: #FFEDDC; --cyan: #FFC08A; --ice: #FFD9B8;
+  --th-faint: rgba(255, 169, 92, 0.6);
+  --th-line: rgba(255, 150, 70, 0.3);
+  --th-glow: rgba(255, 150, 70, 0.35);
+  --th-border: rgba(255, 169, 92, 0.42);
+  background: linear-gradient(160deg, #A8512A 0%, #5E2A12 60%, #301406 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(90, 34, 10, 0.5);
+}
+.big-date.theme-christmas {
+  --sky: #FFE9D8; --tianyi: #FFC9A0; --cloud: #FFF4EA; --cyan: #FFD9BC; --ice: #FFE9D8;
+  --th-faint: rgba(255, 201, 160, 0.6);
+  --th-line: rgba(255, 190, 140, 0.3);
+  --th-glow: rgba(255, 190, 140, 0.35);
+  --th-border: rgba(255, 190, 140, 0.42);
+  background: linear-gradient(160deg, #1E5E3E 0%, #0F3A24 65%, #06201A 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(14, 62, 40, 0.5);
+}
+.big-date.theme-newyear {
+  --sky: #FFE9A8; --tianyi: #FFD700; --cloud: #FFF1C4; --cyan: #FFD98A; --ice: #FFE9A8;
+  --th-faint: rgba(255, 215, 0, 0.6);
+  --th-line: rgba(255, 215, 0, 0.3);
+  --th-glow: rgba(255, 215, 0, 0.4);
+  --th-border: rgba(255, 215, 0, 0.45);
+  background: linear-gradient(160deg, #2A2A3A 0%, #171722 60%, #0C0C14 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(40, 20, 60, 0.5);
+}
+.big-date.theme-mother {
+  --sky: #FFE0EA; --tianyi: #FFB8CC; --cloud: #FFF0F5; --cyan: #FFC9DA; --ice: #FFE0EA;
+  --th-faint: rgba(255, 184, 204, 0.6);
+  --th-line: rgba(255, 170, 195, 0.3);
+  --th-glow: rgba(255, 170, 195, 0.35);
+  --th-border: rgba(255, 170, 195, 0.42);
+  background: linear-gradient(160deg, #D88AA0 0%, #A85A70 60%, #7A3A4C 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(160, 66, 92, 0.5);
+}
+.big-date.theme-father {
+  --sky: #DCE9F5; --tianyi: #AECCE8; --cloud: #EEF5FB; --cyan: #C2D9EE; --ice: #DCE9F5;
+  --th-faint: rgba(220, 233, 245, 0.6);
+  --th-line: rgba(174, 204, 232, 0.3);
+  --th-glow: rgba(174, 204, 232, 0.35);
+  --th-border: rgba(174, 204, 232, 0.42);
+  background: linear-gradient(160deg, #3E5E7A 0%, #263E52 60%, #14242E 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(26, 52, 72, 0.5);
+}
+.big-date.theme-thanksgiving {
+  --sky: #FFE8C9; --tianyi: #FFC98A; --cloud: #FFF4E4; --cyan: #FFD9A8; --ice: #FFE8C9;
+  --th-faint: rgba(255, 201, 138, 0.6);
+  --th-line: rgba(255, 190, 120, 0.3);
+  --th-glow: rgba(255, 190, 120, 0.35);
+  --th-border: rgba(255, 201, 138, 0.42);
+  background: linear-gradient(160deg, #B06A28 0%, #7A4516 60%, #4E2A0A 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(120, 62, 16, 0.5);
+}
+.big-date.theme-laba {
+  --sky: #FFE4CE; --tianyi: #FFC092; --cloud: #FFF2E6; --cyan: #FFD2AC; --ice: #FFE4CE;
+  --th-faint: rgba(255, 192, 146, 0.6);
+  --th-line: rgba(255, 175, 120, 0.3);
+  --th-glow: rgba(255, 175, 120, 0.35);
+  --th-border: rgba(255, 192, 146, 0.42);
+  background: linear-gradient(160deg, #A85C32 0%, #6E3A1A 60%, #44220E 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(120, 52, 20, 0.5);
+}
+.big-date.theme-xiaonian {
+  --sky: #FFE9C4; --tianyi: #FFD394; --cloud: #FFF5E6; --cyan: #FFDFAC; --ice: #FFE9C4;
+  --th-faint: rgba(255, 211, 148, 0.6);
+  --th-line: rgba(255, 200, 125, 0.3);
+  --th-glow: rgba(255, 200, 125, 0.35);
+  --th-border: rgba(255, 211, 148, 0.42);
+  background: linear-gradient(160deg, #B3352B 0%, #7A201A 60%, #4C100C 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(120, 28, 18, 0.5);
+}
+
+/* ============================================================
+ * 24节气主题卡片（清明节气沿用节日 theme-qingming）
+ * ============================================================ */
+.big-date.theme-term-xiaohan {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.25);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #3E6E8E 0%, #264A64 60%, #142E40 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(30, 70, 100, 0.5);
+}
+
+.big-date.theme-term-dahan {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.20);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #2E5A7A 0%, #1C3A50 60%, #0E2030 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(20, 48, 66, 0.5);
+}
+
+.big-date.theme-term-lichun {
+  --sky: #E2F0C8; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.28);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #7A9E4A 0%, #4E6E2E 60%, #2E461C 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(60, 90, 40, 0.5);
+}
+
+.big-date.theme-term-yushui {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.22);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #4A7A9E 0%, #2E526E 60%, #1C3448 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(34, 72, 96, 0.5);
+}
+
+.big-date.theme-term-jingzhe {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.26);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #5E9E4A 0%, #3A6E2E 60%, #22461C 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(46, 88, 40, 0.5);
+}
+
+.big-date.theme-term-chunfen {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.26);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #4E9E6E 0%, #2E6E4A 60%, #1C462E 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(38, 88, 60, 0.5);
+}
+
+.big-date.theme-term-guyu {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.26);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #3E9E5E 0%, #266E3E 60%, #144628 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(30, 88, 52, 0.5);
+}
+
+.big-date.theme-term-lixia {
+  --sky: #E6F0C8; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.28);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #5EA84A 0%, #3A7228 60%, #224A16 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(46, 100, 40, 0.5);
+}
+
+.big-date.theme-term-xiaoman {
+  --sky: #F5E8C4; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.30);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #C9A84A 0%, #8E7228 60%, #5E4A16 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(110, 94, 38, 0.5);
+}
+
+.big-date.theme-term-mangzhong {
+  --sky: #F8ECC8; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.32);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #D9B44A 0%, #9E7A28 60%, #6E4E16 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(120, 100, 36, 0.5);
+}
+
+.big-date.theme-term-xiazhi {
+  --sky: #FFE3CC; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.30);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #D96A2E 0%, #A84A1C 60%, #6E2E0E 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(120, 60, 24, 0.5);
+}
+
+.big-date.theme-term-xiaoshu {
+  --sky: #FFE3D2; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.28);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #C96A3E 0%, #8E4624 60%, #5E2C14 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(110, 56, 26, 0.5);
+}
+
+.big-date.theme-term-dashu {
+  --sky: #FFDCC8; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.26);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #B85A2E 0%, #7A3A1C 60%, #4E2410 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(100, 48, 22, 0.5);
+}
+
+.big-date.theme-term-liqiu {
+  --sky: #F5ECC4; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.28);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #C9B44A 0%, #8E7E28 60%, #5E5216 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(110, 100, 36, 0.5);
+}
+
+.big-date.theme-term-chushu {
+  --sky: #F8ECC8; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.30);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #D9A84A 0%, #A87228 60%, #6E4A16 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(120, 92, 36, 0.5);
+}
+
+.big-date.theme-term-bailu {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.24);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #6E8EAE 0%, #4A6686 60%, #2E4258 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(60, 84, 106, 0.5);
+}
+
+.big-date.theme-term-qiufen {
+  --sky: #F8F0CC; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.32);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #D9BE4A 0%, #9E8628 60%, #6E5816 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(122, 100, 36, 0.5);
+}
+
+.big-date.theme-term-hanlu {
+  --sky: #FFE8D2; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.30);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #D98A3E 0%, #A85E22 60%, #6E3C12 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(120, 72, 28, 0.5);
+}
+
+.big-date.theme-term-shuangjiang {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.24);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #5E86A8 0%, #3C5E7A 60%, #243C50 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(52, 78, 100, 0.5);
+}
+
+.big-date.theme-term-lidong {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.22);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #4A5E7A 0%, #2E3E54 60%, #1C2636 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(38, 52, 68, 0.5);
+}
+
+.big-date.theme-term-xiaoxue {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.26);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #6E9EBE 0%, #4A6E8E 60%, #2E485E 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(58, 92, 114, 0.5);
+}
+
+.big-date.theme-term-daxue {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.24);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #5A86A8 0%, #3A5E7E 60%, #243C50 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(50, 78, 100, 0.5);
+}
+
+.big-date.theme-term-dongzhi {
+  --sky: #D2EBF5; --tianyi: #BFE3F5; --cloud: #E8F6FB; --cyan: #CFEAF8; --ice: #DDF1F9;
+  --th-faint: rgba(210, 235, 245, 0.62);
+  --th-line: rgba(210, 235, 245, 0.30);
+  --th-glow: rgba(255, 255, 255, 0.22);
+  --th-border: rgba(210, 235, 245, 0.40);
+  background: linear-gradient(160deg, #2A3A6E 0%, #1C264E 60%, #101630 100%);
+  border: 1px solid var(--th-border);
+  box-shadow: 0 6px 22px rgba(22, 32, 64, 0.5);
+}
+
+/* ---------- 搜索面板 ---------- */
+.search-tip { font-size: 12px; color: var(--sky); margin-bottom: 10px; letter-spacing: 1px; }
+.search-input {
+  width: 100%; box-sizing: border-box;
+  padding: 11px 14px; border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--select-bg); color: var(--ice);
+  font-size: 14px; font-family: inherit; outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.search-input:focus { border-color: var(--tianyi); box-shadow: 0 0 0 3px rgba(102, 204, 255, 0.18); }
+.search-input::placeholder { color: var(--placeholder); }
+.search-results { margin-top: 12px; max-height: 52vh; overflow-y: auto; }
+.search-empty { color: var(--placeholder); font-size: 13px; text-align: center; padding: 26px 0; }
+.search-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 10px;
+  cursor: pointer; font-size: 13.5px; color: var(--cloud);
+  transition: background 0.15s ease;
+}
+.search-item:hover { background: rgba(102, 204, 255, 0.14); }
+.si-type {
+  flex: none; font-size: 11px; padding: 2px 8px; border-radius: 9999px;
+  background: rgba(102, 204, 255, 0.16); color: var(--tianyi);
+}
+.si-name { font-weight: 600; color: var(--ice); max-width: 36%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.si-sub { color: var(--placeholder); font-size: 12px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.si-date { flex: none; font-size: 12px; white-space: nowrap; display: flex; gap: 8px; }
+.si-solar { color: var(--cloud); }
+.si-lunar { color: #FFD700; }
