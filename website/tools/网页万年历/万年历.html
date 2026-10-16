@@ -28,6 +28,11 @@
         <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
       </svg>
     </button>
+    <button class="settings-btn" id="dataEditBtn" title="数据编辑" aria-label="数据编辑">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M9 4v16"/>
+      </svg>
+    </button>
     <button class="settings-btn" id="settingsBtn" title="设置" aria-label="设置">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
         <circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.08a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.08a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/>
@@ -111,6 +116,16 @@
     <div class="modal-head">
       <h2>设置</h2>
       <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+    </div>
+
+    <div class="set-group about-group">
+      <h2 class="about-title">the_jayfeather的网页万年历</h2>
+      <span class="about-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18" stroke="currentColor" stroke-width="1.8"/><path d="M8 3v3M16 3v3" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 12.5c-1.8.5-3 2-3 3.6 0 1.2.8 1.9 1.8 1.9s1.9-.9 1.9-2.1v-4.6l1.6-.6v2.6c-.4 1.1-1.2 1.7-2.3 2z" fill="currentColor"/></svg>
+      </span>
+      <p class="about-line">这是the_jayfeather的网页万年历，</p>
+      <p class="about-line">主要代码编写：<a href="https://www.doubao.com/" target="_blank" rel="noopener">豆包</a>&nbsp|&nbsp信息来源：网络、调研、考察</p>
+      <p class="about-line">特别感谢：博主 <a href="https://www.douyin.com/user/MS4wLjABAAAAZ_8l47YYRN5FCqpA7q39jbUXntHZ4I3JiyUnWvUFK_eJ2-sXZZv8axbBDmOoPZao?from_tab_name=main&vid=7696939134048374054" target="_blank" rel="noopener">@芊莜-今天二次元发生了啥</a>&nbsp提供的二次元角色生日信息</p>
     </div>
 
     <div class="set-group">
@@ -295,6 +310,18 @@
   </div>
 </div>
 
+<!-- ================= 数据编辑模态 ================= -->
+<div class="modal-mask" id="dataEditMask">
+  <div class="modal modal-wide" role="dialog" aria-modal="true" aria-label="数据编辑">
+    <div class="modal-head">
+      <h2>数据编辑</h2>
+      <button class="modal-close" id="dataEditClose" aria-label="关闭">×</button>
+    </div>
+    <div class="data-edit-body" id="dataEditBody"></div>
+  </div>
+</div>
+<input type="file" id="extFileInput" accept=".txt,.csv,.js,.json" multiple style="display:none">
+
 <!-- ================= 搜索模态 ================= -->
 <div class="modal-mask" id="searchMask">
   <div class="modal" role="dialog" aria-modal="true" aria-label="搜索">
@@ -303,7 +330,7 @@
       <button class="modal-close" id="searchClose" aria-label="关闭">×</button>
     </div>
     <div class="search-tip">键入关键词搜索角色生日 / 历史事件 / 名人生日 / 亲友生日</div>
-    <input class="search-input" id="searchInput" type="text" placeholder="输入关键词，如：桐人 / 洛天依 / 玻尔 / 罗鑫悦…" autocomplete="off">
+    <input class="search-input" id="searchInput" type="text" placeholder="输入关键词，如：桐人 / 洛天依 / 玻尔 / 真人姓名…" autocomplete="off">
     <div class="search-results" id="searchResults"></div>
   </div>
 </div>
@@ -519,7 +546,7 @@ function nthWeekday(y, month, week, weekday) {
 }
 function festivalsOf(y, m, d) {
   var lunar = L.solarToLunar(y, m, d);
-  var list = [];
+  var list = [], ext = extFestivalOf(y, m, d, lunar);
   var i, k;
   if (F.solar[m + '-' + d]) {
     for (i = 0; i < F.solar[m + '-' + d].length; i++) list.push({ name: F.solar[m + '-' + d][i], type: '公历' });
@@ -536,6 +563,7 @@ function festivalsOf(y, m, d) {
     var mv = F.move[i];
     if (m === mv.month && d === nthWeekday(y, mv.month, mv.week, mv.day)) list.push({ name: mv.name, type: '公历' });
   }
+  for (i = 0; i < ext.length; i++) list.push(ext[i]);
   return list;
 }
 /* ---------- 大型节日主题卡片 ---------- */
@@ -745,16 +773,23 @@ function celebritiesOf(m, d) {
 function friendsOf(m, d) {
   var out = [], i;
   for (i = 0; i < FB.length; i++) if (FB[i].m === m && FB[i].d === d) out.push(FB[i]);
+  var ex = extSolarRows();
+  for (i = 0; i < ex.length; i++) if (ex[i].m === m && ex[i].d === d) out.push(ex[i]);
   return out;
 }
-/* 亲友生日：农历匹配（按农历月日，农历生日文件 friends_birthdays_lunar.json） */
-function friendsLunarOf(lm, ld) {
+/* 亲友生日：农历匹配（按农历月日，生日落在闰月时需同时匹配闰月标志） */
+function friendsLunarOf(lm, ld, isLeap) {
   var out = [], i;
-  for (i = 0; i < FBL.length; i++) if (FBL[i].lm === lm && FBL[i].ld === ld) out.push(FBL[i]);
+  for (i = 0; i < FBL.length; i++) if (FBL[i].lm === lm && FBL[i].ld === ld && ((FBL[i].isLeap || false) === !!isLeap)) out.push(FBL[i]);
+  var ex = extLunarRows();
+  for (i = 0; i < ex.length; i++) if (ex[i].lm === lm && ex[i].ld === ld && ((ex[i].isLeap || false) === !!isLeap)) out.push(ex[i]);
   return out;
 }
 /* 亲友生日文案：'身份（详细信息） 姓名 的新历生日' / '…的农历生日' */
-function friendBirthText(f, kind) { return f.role + '（' + f.cls + '）' + f.name + ' 的' + (kind === 'lunar' ? '农历' : '新历') + '生日'; }
+function friendBirthText(f, kind) {
+  var tag = f.cls ? f.role + '（' + f.cls + '）' : (f.role ? f.role : '');
+  return tag + f.name + ' 的' + (kind === 'lunar' ? '农历' : '新历') + '生日';
+}
 
 /* ---------- 八卦（简易日卦） ---------- */
 function baguaOf(y, m, d) {
@@ -891,7 +926,7 @@ function renderBirth() {
     return;
   }
   $('birthList').innerHTML = bds.map(function (b) {
-    return '<li><span class="w">' + b.work + '</span>' + b.name + ' 的生日</li>';
+    return '<li class="bd-row"><span class="w">' + b.work + '</span><span class="bd-name">' + b.name + ' 的生日</span></li>';
   }).join('');
 }
 
@@ -902,7 +937,7 @@ function renderCeleb() {
     return;
   }
   $('celebList').innerHTML = cbs.map(function (c) {
-    return '<li><span class="w">' + c.field + '</span>' + c.name + '（' + c.y + '）</li>';
+    return '<li class="bd-row"><span class="w">' + c.field + (c.y ? ' · ' + c.y : '') + '</span><span class="bd-name">' + c.name + '</span></li>';
   }).join('');
 }
 
@@ -913,7 +948,7 @@ function renderFriendBirth(info) {
   var solar = (settings.showFriendBirth && settings.showFriendBdList) ? friendsOf(sel.m, sel.d) : [];
   var lunar = [];
   if (settings.showFriendBirth && settings.showFriendBdList && settings.showFriendLunar && info && !info.lunar.outOfRange) {
-    lunar = friendsLunarOf(info.lunar.lMonth, info.lunar.lDay);
+    lunar = friendsLunarOf(info.lunar.lMonth, info.lunar.lDay, info.lunar.isLeap);
   }
   if (!solar.length && !lunar.length) { block.style.display = 'none'; return; }
   block.style.display = '';
@@ -936,7 +971,7 @@ function renderFriendTip(info) {
   var solar = (settings.showFriendBirth && settings.showFriendBdCard) ? friendsOf(sel.m, sel.d) : [];
   var lunar = [];
   if (settings.showFriendBirth && settings.showFriendBdCard && settings.showFriendLunar && info && !info.lunar.outOfRange) {
-    lunar = friendsLunarOf(info.lunar.lMonth, info.lunar.lDay);
+    lunar = friendsLunarOf(info.lunar.lMonth, info.lunar.lDay, info.lunar.isLeap);
   }
   var total = solar.length + lunar.length;
   if (!total) { el.style.display = 'none'; el.innerHTML = ''; return; }
@@ -1140,18 +1175,24 @@ function renderMonth() {
       }).join('') + '</div>';
     }
     /* 亲友生日角标（右上角，仅总开关 + 子开关均开启且当日有人时），只显示人名，按新历/农历分色 */
+    /* 一人多身份（多条记录）按姓名去重，只计一人 */
     var fbMark = '';
     if (settings.showFriendBirth && settings.showFriendBdMark) {
       var fsS = friendsOf(m, d);
       var fsL = (settings.showFriendLunar && info && !info.lunar.outOfRange) ? friendsLunarOf(info.lunar.lMonth, info.lunar.lDay) : [];
       if (fsS.length || fsL.length) {
-        var fparts = fsS.map(function (f) { return '<span class="fb-solar">' + f.name + '</span>'; })
-          .concat(fsL.map(function (f) { return '<span class="fb-lunar">' + f.name + '</span>'; }));
-        /* 右上角角标：单人显示人名，多人显示"X人生日" */
-        if (fsS.length + fsL.length === 1) {
+        var seenS = {}, seenL = {}, fparts = [], cntS = 0, cntL = 0, fi;
+        for (fi = 0; fi < fsS.length; fi++) if (!seenS[fsS[fi].name]) { seenS[fsS[fi].name] = 1; cntS++; fparts.push('<span class="fb-solar">' + fsS[fi].name + '</span>'); }
+        for (fi = 0; fi < fsL.length; fi++) if (!seenL[fsL[fi].name]) { seenL[fsL[fi].name] = 1; cntL++; fparts.push('<span class="fb-lunar">' + fsL[fi].name + '</span>'); }
+        /* 右上角角标：单人显示人名；多人显示"X人生日"，按来源着色：全新历淡蓝、全农历金黄、混合左新历右农历渐变 */
+        if (cntS + cntL === 1) {
           fbMark = '<div class="fb-badge">' + fparts[0] + '</div>';
+        } else if (cntS > 0 && cntL > 0) {
+          fbMark = '<div class="fb-badge"><span class="fb-mix-t">' + (cntS + cntL) + '人生日</span></div>';
+        } else if (cntL > 0) {
+          fbMark = '<div class="fb-badge t-lunar">' + (cntS + cntL) + '人生日</div>';
         } else {
-          fbMark = '<div class="fb-badge">' + (fsS.length + fsL.length) + '人生日</div>';
+          fbMark = '<div class="fb-badge t-solar">' + (cntS + cntL) + '人生日</div>';
         }
       }
     }
@@ -1460,8 +1501,7 @@ function renderSearch(kw) {
   for (i = 0; i < B.length; i++) {
     r = B[i];
     if (r.name.indexOf(kw) >= 0 || (r.work || '').indexOf(kw) >= 0) {
-      var tg = nextSolar(r.m, r.d, y0, m0, d0);
-      push({ type: '角色', name: r.name, sub: r.work, solar: r.m + '月' + r.d + '日', lunar: lunarTxtOf(tg.y, r.m, r.d), m: r.m, d: r.d, y: tg.y });
+      push({ type: '角色', name: r.name, sub: r.work, solar: r.m + '月' + r.d + '日', lunar: '', m: r.m, d: r.d, y: nextSolar(r.m, r.d, y0, m0, d0).y });
     }
   }
   for (i = 0; i < CE.length; i++) {
@@ -1471,18 +1511,20 @@ function renderSearch(kw) {
       push({ type: '名人', name: r.name, sub: (r.field || '') + (r.y ? ' · ' + r.y : ''), solar: r.m + '月' + r.d + '日', lunar: lunarTxtOf(tg2.y, r.m, r.d), m: r.m, d: r.d, y: tg2.y });
     }
   }
-  for (i = 0; i < FB.length; i++) {
-    r = FB[i];
+  var allFB = FB.concat(extSolarRows());
+  for (i = 0; i < allFB.length; i++) {
+    r = allFB[i];
     if (r.name.indexOf(kw) >= 0) {
       var fl = friendLunarByName[r.name];
       var tg3 = nextSolar(r.m, r.d, y0, m0, d0);
-      push({ type: '亲友', name: r.name, sub: r.role + '（' + r.cls + '）', solar: r.m + '月' + r.d + '日', lunar: fl ? (L.lunarMonthCN(fl.lm, false) + L.lunarDayCN(fl.ld)) : lunarTxtOf(tg3.y, r.m, r.d), m: r.m, d: r.d, y: tg3.y });
+      push({ type: '亲友', name: r.name, sub: r.cls ? r.role + '（' + r.cls + '）' : (r.role || ''), solar: r.m + '月' + r.d + '日', lunar: fl ? (L.lunarMonthCN(fl.lm, false) + L.lunarDayCN(fl.ld)) : lunarTxtOf(tg3.y, r.m, r.d), m: r.m, d: r.d, y: tg3.y });
     }
   }
-  for (i = 0; i < FBL.length; i++) {
-    r = FBL[i];
+  var allFBL = FBL.concat(extLunarRows());
+  for (i = 0; i < allFBL.length; i++) {
+    r = allFBL[i];
     if (r.name.indexOf(kw) >= 0) {
-      push({ type: '亲友·农历', name: r.name, sub: r.role + '（' + r.cls + '）', solar: '', lunar: L.lunarMonthCN(r.lm, false) + L.lunarDayCN(r.ld), lm: r.lm, ld: r.ld });
+      push({ type: '亲友·农历', name: r.name, sub: r.cls ? r.role + '（' + r.cls + '）' : (r.role || ''), solar: '', lunar: L.lunarMonthCN(r.lm, false) + L.lunarDayCN(r.ld), lm: r.lm, ld: r.ld });
     }
   }
   for (k in H) {
@@ -1649,6 +1691,563 @@ $('resetBtn').addEventListener('click', function () {
   toast('已恢复默认设置');
 });
 
+/* ============================================================
+ * 数据编辑（外置生日/节日表）
+ * 外置表数据保存在 localStorage，格式与内置表一致
+ * 内置生日表 / 节日表不允许在界面中修改
+ * ============================================================ */
+var EXT_KEY = 'wnlExtTables_v1';
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+var EXT_TYPE_LABEL = { solar: '新历生日表', lunar: '农历生日表', festival: '节日表' };
+var EXT_HINTS = {
+  solar: '每行一条，格式：月-日 姓名 身份（班级）<br>例：<code>3-21 陈铖骏 同学（25级初二10班）</code>　身份可省略：<code>3-21 陈铖骏</code>',
+  lunar: '每行一条，格式：月-日 姓名 身份（班级）<br>例：<code>11-1 张晨萱 同学（25级初一4班、25级初二10班）</code><br>闰月生日月份前加“闰”：<code>闰4-24 张梦涵 同学（25级初二10班）</code>',
+  festival: '每行一条：月-日 节日名<br>公历：<code>10-1 国庆节</code>　农历（L前缀）：<code>L8-15 中秋节</code><br>浮动（F月-第几周-星期几，0=周日）：<code>F5-2-0 母亲节</code>'
+};
+var extState = { tables: [] };
+var extEditingId = null;        /* 当前编辑中的表 id */
+var extPendingImports = [];     /* 待确认导入 [{name,text,type}] */
+function extLoad() {
+  try { extState = JSON.parse(localStorage.getItem(EXT_KEY) || '{"tables":[]}'); } catch (e) { extState = { tables: [] }; }
+  if (!extState || !Array.isArray(extState.tables)) extState = { tables: [] };
+  for (var i = 0; i < extState.tables.length; i++) {
+    var t = extState.tables[i];
+    var needReparse = false;
+    if (t.parsed === undefined) needReparse = true;
+    else if (t.type === 'festival') {
+      if (!t.parsed.solar || !t.parsed.move || !Array.isArray(t.parsed.move)) needReparse = true;
+    } else if (!t.parsed.rows || !Array.isArray(t.parsed.rows)) needReparse = true;
+    if (needReparse) t.parsed = extParse(t);
+  }
+}
+function extSave() { localStorage.setItem(EXT_KEY, JSON.stringify(extState)); }
+function extNewId() { return 't' + Date.now() + Math.floor(Math.random() * 1000); }
+function extCurrentTable() {
+  for (var i = 0; i < extState.tables.length; i++) if (extState.tables[i].id === extEditingId) return extState.tables[i];
+  return null;
+}
+
+/* ---------- 文本行解析 ---------- */
+function extLines(text) {
+  var ls = String(text || '').split(/\r?\n/), out = [];
+  for (var i = 0; i < ls.length; i++) {
+    var s = ls[i].trim();
+    if (!s || s.charAt(0) === '#' || s.indexOf('//') === 0) continue;
+    out.push(s);
+  }
+  return out;
+}
+/* 行拆分：返回 {leap,lunar,float,month,day,week,rest} 或 null */
+function extSplitLine(line) {
+  var m = line.match(/^(闰)?([Ll])?([Ff])?(\d{1,2})[-./月](\d{1,2})(?:[-./月](\d{1,2}))?(?:日)?\s*(.*)$/);
+  if (!m) return null;
+  return {
+    leap: !!m[1], lunar: !!m[2], float: !!m[3],
+    month: parseInt(m[4], 10), day: parseInt(m[5], 10),
+    week: m[6] ? parseInt(m[6], 10) : null, rest: (m[7] || '').trim()
+  };
+}
+/* 名称部分：姓名 + 身份（班级） 或 节日名（顿号分隔多个） */
+function extParsePerson(rest) {
+  var name, role = '', cls = '';
+  var c = rest.match(/^(.*?)[（(](.*?)[)）]\s*$/);
+  if (c) {
+    var before = c[1].trim();
+    cls = c[2].trim();
+    var sp = before.split(/\s+/);
+    if (sp.length > 1) { role = sp.pop(); name = sp.join(' '); }
+    else name = before;
+  } else {
+    var sp2 = rest.split(/\s+/);
+    if (sp2.length > 1) { name = sp2[0]; role = sp2.slice(1).join(' '); }
+    else name = rest;
+  }
+  return { name: name, role: role, cls: cls };
+}
+/* 节日多名称：顿号 / 逗号 / 空格 分隔 */
+function extSplitNames(rest) {
+  return rest.split(/[、,，;；\s]+/).filter(function (s) { return s; });
+}
+/* 按类型解析一张表 → {rows / solar/lunar/move, errs, count} */
+function extParse(t) {
+  var lines = extLines(t.text), errs = [], i;
+  if (t.type === 'solar') {
+    var rows = [];
+    for (i = 0; i < lines.length; i++) {
+      var s = extSplitLine(lines[i]);
+      if (!s || s.lunar || s.float || !s.rest) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
+      var p = extParsePerson(s.rest);
+      if (!p.name) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
+      rows.push({ m: s.month, d: s.day, name: p.name, role: p.role, cls: p.cls });
+    }
+    return { rows: rows, errs: errs, count: lines.length };
+  }
+  if (t.type === 'lunar') {
+    var lrows = [];
+    for (i = 0; i < lines.length; i++) {
+      var s2 = extSplitLine(lines[i]);
+      if (!s2 || (!s2.lunar && !s2.leap) || s2.float || !s2.rest) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
+      var p2 = extParsePerson(s2.rest);
+      if (!p2.name) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
+      lrows.push({ lm: s2.month, ld: s2.day, name: p2.name, role: p2.role, cls: p2.cls, isLeap: s2.leap });
+    }
+    return { rows: lrows, errs: errs, count: lines.length };
+  }
+  /* festival */
+  var fsolar = {}, flunar = {}, fmove = [];
+  for (i = 0; i < lines.length; i++) {
+    var s3 = extSplitLine(lines[i]);
+    if (!s3 || !s3.rest) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
+    var names = extSplitNames(s3.rest);
+    if (!names.length) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
+    if (s3.float) {
+      fmove.push({ name: names[0], month: s3.month, week: s3.day, day: s3.week === null ? 0 : s3.week });
+    } else if (s3.lunar) {
+      var lk = s3.month + '-' + s3.day;
+      flunar[lk] = (flunar[lk] || []).concat(names);
+    } else {
+      var sk = s3.month + '-' + s3.day;
+      fsolar[sk] = (fsolar[sk] || []).concat(names);
+    }
+  }
+  return { solar: fsolar, lunar: flunar, move: fmove, errs: errs, count: lines.length };
+}
+/* ---------- 渲染读取（供 friendsOf / friendsLunarOf / festivalsOf 调用） ---------- */
+function extSolarRows() {
+  var out = [];
+  for (var i = 0; i < extState.tables.length; i++) {
+    var t = extState.tables[i];
+    if (t.type !== 'solar' || !t.parsed || !t.parsed.rows) continue;
+    for (var j = 0; j < t.parsed.rows.length; j++) out.push(t.parsed.rows[j]);
+  }
+  return out;
+}
+function extLunarRows() {
+  var out = [];
+  for (var i = 0; i < extState.tables.length; i++) {
+    var t = extState.tables[i];
+    if (t.type !== 'lunar' || !t.parsed || !t.parsed.rows) continue;
+    for (var j = 0; j < t.parsed.rows.length; j++) out.push(t.parsed.rows[j]);
+  }
+  return out;
+}
+function extFestivalOf(y, m, d, lunar) {
+  var out = [], i, j;
+  for (var ti = 0; ti < extState.tables.length; ti++) {
+    var t = extState.tables[ti];
+    if (t.type !== 'festival' || !t.parsed) continue;
+    var p = t.parsed;
+    if (p.solar && p.solar[m + '-' + d]) for (j = 0; j < p.solar[m + '-' + d].length; j++) out.push({ name: p.solar[m + '-' + d][j], type: '公历' });
+    if (p.lunar && !lunar.isLeap && p.lunar[lunar.lMonth + '-' + lunar.lDay]) for (j = 0; j < p.lunar[lunar.lMonth + '-' + lunar.lDay].length; j++) out.push({ name: p.lunar[lunar.lMonth + '-' + lunar.lDay][j], type: '农历' });
+    if (p.move) for (i = 0; i < p.move.length; i++) {
+      var mv = p.move[i];
+      if (m === mv.month && d === nthWeekday(y, mv.month, mv.week, mv.day)) out.push({ name: mv.name, type: '公历' });
+    }
+  }
+  return out;
+}
+/* ---------- 导入文件：内置 JS 数组/对象 转文本行 ---------- */
+function extJsArrToText(src) {
+  var m = src.match(/window\.[A-Z_]+?\s*=\s*(\[[\s\S]*\])\s*;?\s*$/);
+  if (!m) return null;
+  var arr;
+  try { arr = new Function('return ' + m[1])(); } catch (e) { return null; }
+  if (!Array.isArray(arr)) return null;
+  var rows = [];
+  for (var i = 0; i < arr.length; i++) {
+    var o = arr[i];
+    if (!o || !o.name) continue;
+    var tag = (o.role ? o.role + (o.cls ? '（' + o.cls + '）' : '') : '');
+    if (o.m && o.d) rows.push(o.m + '-' + o.d + ' ' + o.name + (tag ? ' ' + tag : ''));
+    else if (o.lm && o.ld) rows.push((o.isLeap ? '闰' : '') + o.lm + '-' + o.ld + ' ' + o.name + (tag ? ' ' + tag : ''));
+  }
+  return rows.join('\n');
+}
+function extFestJsToText(src) {
+  var m = src.match(/window\.[A-Z_]+?\s*=\s*(\{[\s\S]*\})\s*;?\s*$/);
+  if (!m) return null;
+  var obj;
+  try { obj = new Function('return ' + m[1])(); } catch (e) { return null; }
+  var rows = [];
+  if (obj && obj.solar) for (var k in obj.solar) if (obj.solar.hasOwnProperty(k)) rows.push(k + ' ' + obj.solar[k].join('、'));
+  if (obj && obj.lunar) for (var k2 in obj.lunar) if (obj.lunar.hasOwnProperty(k2)) rows.push('L' + k2 + ' ' + obj.lunar[k2].join('、'));
+  if (obj && obj.move) for (var i = 0; i < obj.move.length; i++) rows.push('F' + obj.move[i].month + '-' + obj.move[i].week + '-' + obj.move[i].day + ' ' + obj.move[i].name);
+  return rows.join('\n');
+}
+/* 导入文件 → 文本（js 内置格式转成文本行） */
+function extFileToText(name, src) {
+  var txt = null;
+  if (/\.js$/i.test(name)) {
+    txt = extJsArrToText(src);
+    if (txt === null) txt = extFestJsToText(src);
+  }
+  return txt === null ? src : txt;
+}
+/* 自动判断表类型 */
+function extDetectType(text, filename) {
+  var fn = String(filename || '').toLowerCase();
+  if (/lunar|农历|阴历/.test(fn)) return 'lunar';
+  if (/festival|节日|fest/.test(fn)) return 'festival';
+  var lines = extLines(text);
+  var nLunar = 0, nFest = 0, nSolar = 0;
+  for (var i = 0; i < lines.length; i++) {
+    var s = extSplitLine(lines[i]);
+    if (!s) { continue; }
+    if (s.lunar || s.leap) nLunar++;
+    else if (s.float) nFest++;
+    else if (/(节|纪念日|公祭日)$/.test(s.rest)) nFest++;
+    else nSolar++;
+  }
+  if (nLunar > 0) return 'lunar';
+  if (nFest > nSolar && nFest > 0) return 'festival';
+  return 'solar';
+}
+/* ---------- 界面渲染 ---------- */
+function extOpen() { extLoad(); extEditingId = null; extPendingImports = []; extRender(); $('dataEditMask').classList.add('open'); }
+function extClose() {
+  if (extEditingId && $('extTable')) extSaveFromTable();
+  $('dataEditMask').classList.remove('open');
+}
+function extRender() {
+  var body = $('dataEditBody');
+  if (extState.tables.length === 0) { body.innerHTML = extWelcomeHtml(); }
+  else if (extState.tables.length === 1) { extEditingId = extState.tables[0].id; body.innerHTML = extEditHtml(extState.tables[0]); }
+  else { body.innerHTML = extListHtml(); }
+}
+function extWelcomeHtml() {
+  return '<div class="de-welcome">' +
+    '<h3>数据编辑</h3>' +
+    '<p>管理外置生日表 / 节日表，数据保存在本设备浏览器中。<br>内置生日表与节日表不允许在界面中修改。</p>' +
+    '<div class="de-actions">' +
+    '<button class="de-btn" data-ext-act="import">导入表文件</button>' +
+    '<button class="de-btn primary" data-ext-act="new">新建表</button>' +
+    '</div></div>';
+}
+function extListHtml() {
+  var h = '<div class="de-toolbar"><span class="de-title">已加载的表（' + extState.tables.length + '）</span>' +
+    '<button class="de-btn small" data-ext-act="import">导入</button>' +
+    '<button class="de-btn small primary" data-ext-act="new">新建</button></div><div class="de-list">';
+  for (var i = 0; i < extState.tables.length; i++) {
+    var t = extState.tables[i], p = t.parsed;
+    var n = p ? (p.count !== undefined ? p.count : (p.rows ? p.rows.length : 0)) : 0;
+    var tm = t.updatedAt ? new Date(t.updatedAt).toLocaleString('zh-CN', { hour12: false }).slice(5, 17) : '';
+    h += '<div class="de-item"><span class="de-name" title="' + escapeHtml(t.name) + '">' + escapeHtml(t.name) + '</span>' +
+      '<span class="de-tag' + (t.type === 'lunar' ? ' lunar' : (t.type === 'festival' ? ' festival' : '')) + '">' + EXT_TYPE_LABEL[t.type] + '</span>' +
+      '<span class="de-meta">' + n + ' 行' + (tm ? ' · ' + tm : '') + '</span>' +
+      '<button class="de-btn small" data-ext-act="edit" data-id="' + t.id + '">编辑</button>' +
+      '<button class="de-btn small" data-ext-act="export" data-id="' + t.id + '" title="导出表文件">导出</button>' +
+      '<button class="de-btn small danger" data-ext-act="unload" data-id="' + t.id + '" title="取消加载该表">卸载</button></div>';
+  }
+  return h + '</div>';
+}
+/* ---------- 表格编辑 ---------- */
+function extFestRows(t) {
+  var p = t.parsed || { solar: {}, lunar: {}, move: [] }, out = [], k, i;
+  if (p.solar) for (k in p.solar) if (p.solar.hasOwnProperty(k)) for (i = 0; i < p.solar[k].length; i++) out.push({ kind: 'solar', date: k, name: p.solar[k][i] });
+  if (p.lunar) for (k in p.lunar) if (p.lunar.hasOwnProperty(k)) for (i = 0; i < p.lunar[k].length; i++) out.push({ kind: 'lunar', date: k, name: p.lunar[k][i] });
+  for (i = 0; i < p.move.length; i++) out.push({ kind: 'float', date: p.move[i].month + '-' + p.move[i].week + '-' + p.move[i].day, name: p.move[i].name });
+  return out;
+}
+function extEmptyRow(t) {
+  return t.type === 'festival' ? { kind: 'solar', date: '', name: '' } : { date: '', name: '', tag: '', leap: false };
+}
+function extRowInitial(t, r) {
+  if (t.type === 'festival') return { kind: r.kind, date: r.date, name: r.name };
+  var tag = r.cls ? (r.role || '') + '（' + r.cls + '）' : (r.role || '');
+  if (t.type === 'lunar') return { leap: !!r.isLeap, date: r.lm + '-' + r.ld, name: r.name, tag: tag };
+  return { date: r.m + '-' + r.d, name: r.name, tag: tag };
+}
+function extRowHtml(t, r) {
+  var h = '<div class="de-trow">';
+  if (t.type === 'festival') {
+    h += '<select class="de-f de-f-kind">' +
+      '<option value="solar"' + (r.kind === 'solar' ? ' selected' : '') + '>公历</option>' +
+      '<option value="lunar"' + (r.kind === 'lunar' ? ' selected' : '') + '>农历</option>' +
+      '<option value="float"' + (r.kind === 'float' ? ' selected' : '') + '>浮动</option></select>';
+    h += '<input class="de-f de-f-date" value="' + escapeHtml(r.date) + '" placeholder="月-日">';
+    h += '<input class="de-f de-f-name" value="' + escapeHtml(r.name) + '" placeholder="节日名">';
+  } else {
+    if (t.type === 'lunar') {
+      h += '<label class="de-f-leap-wrap"><input type="checkbox" class="de-f-leap"' + (r.leap ? ' checked' : '') + '> 闰</label>';
+    }
+    h += '<input class="de-f de-f-date" value="' + escapeHtml(r.date) + '" placeholder="月-日">';
+    h += '<input class="de-f de-f-name" value="' + escapeHtml(r.name) + '" placeholder="姓名">';
+    h += '<input class="de-f de-f-tag" value="' + escapeHtml(r.tag) + '" placeholder="身份（班级）">';
+  }
+  h += '<button class="de-btn small danger de-f-del" data-ext-act="del-row" title="删除此行">×</button></div>';
+  return h;
+}
+function extEditHtml(t) {
+  var rows = [];
+  if (t.type === 'festival') rows = extFestRows(t);
+  else rows = (t.parsed && t.parsed.rows ? t.parsed.rows : []).map(function (r) { return extRowInitial(t, r); });
+  if (!rows.length) rows = [extEmptyRow(t), extEmptyRow(t), extEmptyRow(t)];
+  var head = t.type === 'festival'
+    ? '<div class="de-thead"><span class="de-f-kind">类型</span><span class="de-f-date">日期</span><span class="de-f-name">节日名</span><span style="width:30px;flex-shrink:0"></span></div>'
+    : '<div class="de-thead">' + (t.type === 'lunar' ? '<span class="de-f-leap-wrap">闰</span>' : '') + '<span class="de-f-date">日期</span><span class="de-f-name">姓名</span><span class="de-f-tag">身份（班级）</span><span style="width:30px;flex-shrink:0"></span></div>';
+  var body = rows.map(function (r) { return extRowHtml(t, r); }).join('');
+  var errHtml = '';
+  if (t.parsed && t.parsed.errs && t.parsed.errs.length) {
+    errHtml = '<div class="de-status err">' + t.parsed.errs.length + ' 行有格式问题：' + escapeHtml(t.parsed.errs.slice(0, 5).join('；')) + (t.parsed.errs.length > 5 ? '…' : '') + '</div>';
+  }
+  return '<div class="de-toolbar">' +
+    '<span class="de-title">' + escapeHtml(t.name) + ' <span class="de-tag' + (t.type === 'lunar' ? ' lunar' : (t.type === 'festival' ? ' festival' : '')) + '">' + EXT_TYPE_LABEL[t.type] + '</span></span>' +
+    '<button class="de-btn small primary" data-ext-act="export" title="导出表文件">导出</button>' +
+    '<button class="de-btn small" data-ext-act="import" title="导入表文件">导入</button>' +
+    '<button class="de-btn small" data-ext-act="new" title="新建表">新建</button>' +
+    '<button class="de-btn small danger" data-ext-act="unload-current" title="取消加载当前表">卸载</button>' +
+    (extState.tables.length > 1 ? '<button class="de-btn small" data-ext-act="back">返回</button>' : '') +
+    '</div>' +
+    '<div class="de-table" id="extTable">' + head + body + '</div>' +
+    '<button class="de-btn small de-add-row" data-ext-act="add-row">＋ 添加一行</button>' +
+    '<div class="de-status" id="extStatus"></div>' + errHtml +
+    '<div class="de-hint">' + EXT_HINTS[t.type] + '</div>';
+}
+function extNewHtml() {
+  return '<div class="de-toolbar"><span class="de-title">新建表</span>' +
+    '<button class="de-btn small" data-ext-act="back">返回</button></div>' +
+    '<div class="de-row"><span class="de-label">文件名称</span>' +
+    '<input class="de-input" id="extNewName" placeholder="如：我的生日表" maxlength="30"></div>' +
+    '<div class="de-row"><span class="de-label">表类型</span>' +
+    '<select class="de-select" id="extNewType">' +
+    '<option value="solar">新历生日表</option><option value="lunar">农历生日表</option><option value="festival">节日表</option>' +
+    '</select></div>' +
+    '<div class="de-actions" style="justify-content:flex-start"><button class="de-btn primary" data-ext-act="create">创建</button></div>';
+}
+function extImportConfirmHtml() {
+  var h = '<div class="de-toolbar"><span class="de-title">导入表文件（' + extPendingImports.length + '）</span>' +
+    '<button class="de-btn small" data-ext-act="import">重新选择</button></div>';
+  for (var i = 0; i < extPendingImports.length; i++) {
+    var f = extPendingImports[i];
+    var n = extLines(f.text).length;
+    h += '<div class="de-row" style="justify-content:flex-start"><span class="de-name" style="min-width:0;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</span>' +
+      '<span class="de-meta">' + n + ' 行</span>' +
+      '<select class="de-select" data-fidx="' + i + '">' +
+      '<option value="solar"' + (f.type === 'solar' ? ' selected' : '') + '>新历生日表</option>' +
+      '<option value="lunar"' + (f.type === 'lunar' ? ' selected' : '') + '>农历生日表</option>' +
+      '<option value="festival"' + (f.type === 'festival' ? ' selected' : '') + '>节日表</option>' +
+      '</select></div>';
+  }
+  h += '<div class="de-note">已自动判断每个文件的表类型（可手动修改）。确认后导入为外置表，可随时在“数据编辑”中修改。</div>' +
+    '<div class="de-actions" style="justify-content:flex-start">' +
+    '<button class="de-btn primary" data-ext-act="import-confirm">确认导入</button>' +
+    '<button class="de-btn" data-ext-act="import-cancel">取消</button></div>';
+  return h;
+}
+/* ---------- 编辑保存（表格 → 文本 → 解析） ---------- */
+function extCollectTableRows(t) {
+  var out = [];
+  var rows = document.querySelectorAll('#extTable .de-trow');
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    if (t.type === 'festival') {
+      var date = r.querySelector('.de-f-date').value.trim();
+      var name = r.querySelector('.de-f-name').value.trim();
+      if (!date && !name) continue;
+      out.push({ kind: r.querySelector('.de-f-kind').value, date: date, name: name });
+    } else {
+      var d = r.querySelector('.de-f-date').value.trim();
+      var nm2 = r.querySelector('.de-f-name').value.trim();
+      if (!d && !nm2) continue;
+      var tag = r.querySelector('.de-f-tag').value.trim();
+      if (t.type === 'lunar') out.push({ leap: r.querySelector('.de-f-leap').checked, date: d, name: nm2, tag: tag });
+      else out.push({ date: d, name: nm2, tag: tag });
+    }
+  }
+  return out;
+}
+function extRowsToText(t, rows) {
+  var keep = function (s) { return s; };
+  if (t.type === 'festival') {
+    return rows.map(function (r) {
+      if (!r.date && !r.name) return '';
+      var pre = r.kind === 'lunar' ? 'L' : (r.kind === 'float' ? 'F' : '');
+      return pre + r.date + ' ' + r.name;
+    }).filter(keep).join('\n');
+  }
+  if (t.type === 'lunar') {
+    return rows.map(function (r) {
+      if (!r.date && !r.name) return '';
+      return (r.leap ? '闰' : '') + r.date + ' ' + r.name + (r.tag ? ' ' + r.tag : '');
+    }).filter(keep).join('\n');
+  }
+  return rows.map(function (r) {
+    if (!r.date && !r.name) return '';
+    return r.date + ' ' + r.name + (r.tag ? ' ' + r.tag : '');
+  }).filter(keep).join('\n');
+}
+var extAutoSaveTimer = null;
+function extScheduleSave() {
+  clearTimeout(extAutoSaveTimer);
+  extAutoSaveTimer = setTimeout(extSaveFromTable, 600);
+}
+function extSaveFromTable() {
+  var t = extCurrentTable();
+  if (!t || !$('extTable')) return;
+  var rows = extCollectTableRows(t);
+  t.text = extRowsToText(t, rows);
+  t.parsed = extParse(t);
+  t.updatedAt = Date.now();
+  extSave();
+  var st = $('extStatus');
+  if (st) {
+    st.className = 'de-status' + (t.parsed.errs.length ? ' err' : ' saved');
+    st.innerHTML = '已自动保存 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false }) + '，共 ' + t.parsed.count + ' 行' + (t.parsed.errs.length ? '，' + t.parsed.errs.length + ' 行有格式问题' : '');
+  }
+  renderAll();
+}
+/* ---------- 导出表文件（.js，内置格式，可重新导入） ---------- */
+function extExportJs(t) {
+  var lines = [];
+  lines.push('/* ' + t.name + ' —— 由网页万年历「数据编辑」导出，可重新导入编辑 */');
+  if (t.type === 'solar') {
+    lines.push('window.EXT_TABLE = [');
+    (t.parsed.rows || []).forEach(function (r) {
+      lines.push('  {m:' + r.m + ',d:' + r.d + ',name:' + JSON.stringify(r.name) + (r.role ? ',role:' + JSON.stringify(r.role) : '') + (r.cls ? ',cls:' + JSON.stringify(r.cls) : '') + '},');
+    });
+    lines.push('];');
+  } else if (t.type === 'lunar') {
+    lines.push('window.EXT_TABLE = [');
+    (t.parsed.rows || []).forEach(function (r) {
+      lines.push('  {lm:' + r.lm + ',ld:' + r.ld + (r.isLeap ? ',isLeap:true' : '') + ',name:' + JSON.stringify(r.name) + (r.role ? ',role:' + JSON.stringify(r.role) : '') + (r.cls ? ',cls:' + JSON.stringify(r.cls) : '') + '},');
+    });
+    lines.push('];');
+  } else {
+    lines.push('window.EXT_TABLE = {');
+    lines.push('  solar: ' + JSON.stringify(t.parsed.solar || {}));
+    lines.push('  ,lunar: ' + JSON.stringify(t.parsed.lunar || {}));
+    lines.push('  ,move: ' + JSON.stringify(t.parsed.move || []));
+    lines.push('};');
+  }
+  return lines.join('\n');
+}
+function extExport(t) {
+  var js = extExportJs(t);
+  var blob = new Blob([js], { type: 'text/javascript;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = t.name.replace(/[\\/:*?"<>|]/g, '_') + '.js';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 1000);
+  toast('已导出「' + t.name + '.js」');
+}
+/* ---------- 事件 ---------- */
+function extBind() {}
+$('dataEditBtn').addEventListener('click', extOpen);
+$('dataEditClose').addEventListener('click', extClose);
+$('dataEditMask').addEventListener('click', function (e) {
+  if (e.target === this) extClose();
+});
+$('dataEditBody').addEventListener('click', function (e) {
+  var btn = e.target.closest('[data-ext-act]');
+  if (!btn) return;
+  var act = btn.dataset.extAct, id = btn.dataset.id;
+  if (act === 'import') {
+    if (extEditingId && $('extTable')) extSaveFromTable();
+    $('extFileInput').click();
+  } else if (act === 'new') {
+    if (extEditingId && $('extTable')) extSaveFromTable();
+    $('dataEditBody').innerHTML = extNewHtml(); extBind();
+  } else if (act === 'create') {
+    var nm = ($('extNewName').value || '').trim();
+    if (!nm) { toast('请输入文件名称'); return; }
+    var ty = $('extNewType').value;
+    for (var i = 0; i < extState.tables.length; i++) {
+      if (extState.tables[i].name === nm && !confirm('已存在同名表「' + nm + '」，新建将覆盖它，继续？')) return;
+    }
+    extState.tables = extState.tables.filter(function (t) { return t.name !== nm; });
+    var nt = { id: extNewId(), name: nm, type: ty, text: '',
+      parsed: ty === 'festival' ? { solar: {}, lunar: {}, move: [], errs: [], count: 0 } : { rows: [], errs: [], count: 0 },
+      updatedAt: Date.now() };
+    extState.tables.push(nt); extSave();
+    extEditingId = null;
+    extClose();
+    toast('已创建表「' + nm + '」');
+  } else if (act === 'edit') {
+    extEditingId = id;
+    for (var j = 0; j < extState.tables.length; j++) if (extState.tables[j].id === id) { $('dataEditBody').innerHTML = extEditHtml(extState.tables[j]); extBind(); break; }
+  } else if (act === 'export') {
+    for (var e2 = 0; e2 < extState.tables.length; e2++) if (extState.tables[e2].id === id) { extExport(extState.tables[e2]); break; }
+    if (!id && extCurrentTable()) extExport(extCurrentTable());
+  } else if (act === 'unload') {
+    for (var k = 0; k < extState.tables.length; k++) {
+      if (extState.tables[k].id === id) {
+        if (confirm('取消加载外置表「' + extState.tables[k].name + '」？数据将从本设备移除（可先「导出」备份）。')) {
+          extState.tables.splice(k, 1); extSave(); extEditingId = null; extRender(); extBind(); renderAll();
+          toast('已取消加载');
+        }
+        break;
+      }
+    }
+  } else if (act === 'unload-current') {
+    var cur = extCurrentTable();
+    if (cur && confirm('取消加载外置表「' + cur.name + '」？数据将从本设备移除（可先「导出」备份）。')) {
+      extState.tables = extState.tables.filter(function (t) { return t.id !== cur.id; });
+      extSave(); extEditingId = null; extRender(); extBind(); renderAll();
+      toast('已取消加载');
+    }
+  } else if (act === 'back') {
+    if (extEditingId && $('extTable')) extSaveFromTable();
+    extEditingId = null; extRender(); extBind();
+  } else if (act === 'add-row') {
+    var cur = extCurrentTable();
+    if (!cur || !$('extTable')) return;
+    var el = document.createElement('div');
+    el.innerHTML = extRowHtml(cur, extEmptyRow(cur));
+    $('extTable').appendChild(el.firstChild);
+    $('extTable').lastElementChild.scrollIntoView({ block: 'nearest' });
+  } else if (act === 'del-row') {
+    var tr = btn.closest('.de-trow');
+    if (tr && $('extTable')) { tr.parentNode.removeChild(tr); extSaveFromTable(); }
+  } else if (act === 'import-confirm') {
+    for (var m = 0; m < extPendingImports.length; m++) {
+      var f = extPendingImports[m];
+      var nt2 = { id: extNewId(), name: f.name, type: f.type, text: f.text, parsed: null, updatedAt: Date.now() };
+      nt2.parsed = extParse(nt2);
+      extState.tables.push(nt2);
+    }
+    extSave(); extPendingImports = [];
+    toast('已导入 ' + extState.tables.length + ' 个表');
+    extRender(); extBind();
+  } else if (act === 'import-cancel') {
+    extPendingImports = []; extRender(); extBind();
+  }
+});
+/* 表格输入自动保存（防抖 600ms） */
+$('dataEditBody').addEventListener('input', function () {
+  if (extEditingId && $('extTable')) extScheduleSave();
+});
+$('dataEditBody').addEventListener('change', function () {
+  if (extEditingId && $('extTable')) extScheduleSave();
+});
+$('extFileInput').addEventListener('change', function () {
+  var files = Array.prototype.slice.call(this.files);
+  if (!files.length) return;
+  extPendingImports = [];
+  var idx = 0;
+  function next() {
+    if (idx >= files.length) {
+      this.value = '';
+      if (extPendingImports.length) { $('dataEditBody').innerHTML = extImportConfirmHtml(); extBind(); }
+      return;
+    }
+    var file = files[idx++];
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      var raw = String(ev.target.result || '');
+      var text = extFileToText(file.name, raw);
+      extPendingImports.push({ name: file.name.replace(/\.(txt|csv|js|json)$/i, ''), text: text, type: extDetectType(text, file.name) });
+      next.call(this);
+    }.bind(this);
+    reader.onerror = function () { next.call(this); }.bind(this);
+    reader.readAsText(file, 'utf-8');
+  }
+  next.call(this);
+});
+
 /* ---------- Toast ---------- */
 var toastTimer = null;
 function toast(msg) {
@@ -1674,6 +2273,7 @@ function renderAll() {
 }
 
 TimeSrc.mode = settings.timeMode;
+extLoad();
 initSel();
 syncSettingsUI();
 updateTimeBadge();

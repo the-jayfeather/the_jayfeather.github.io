@@ -396,13 +396,13 @@ body {
 .info-list .empty { color: var(--placeholder); padding-left: 0; }
 .info-list .empty::before { display: none; }
 
-/* 生日两列（左：名人，右：二次元角色，颜色区分） */
+/* 生日板块：从上到下整行堆叠（名人 → 二次元角色 → 亲友） */
 .birth-cols {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 14px;
 }
-.birth-cols.one-col { grid-template-columns: 1fr; }
+.birth-cols.one-col { flex-direction: column; }
 .birth-col { min-width: 0; }
 .sub-title {
   display: flex;
@@ -451,6 +451,16 @@ body {
 }
 .cal-cell .fb-badge .fb-lunar {
   color: #FFD700;
+}
+/* 多人角标："X人生日"按来源着色：全新历淡蓝、全农历金黄、混合左上新历右下农历渐变 */
+.cal-cell .fb-badge.t-solar { color: var(--ice); }
+.cal-cell .fb-badge.t-lunar { color: #FFD700; }
+.cal-cell .fb-badge .fb-mix-t {
+  background: linear-gradient(135deg, var(--ice) 0%, var(--ice) 50%, #FFD700 50%, #FFD700 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 /* 属相冲煞 */
@@ -1028,6 +1038,51 @@ body {
   transition: all 0.2s ease;
 }
 .modal-close:hover { background: var(--tianyi); color: var(--ink-deep); }
+
+/* 设置面板 · 关于 */
+.about-group {
+  text-align: center;
+  padding: 14px 12px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(102, 204, 255, 0.25);
+  border-radius: 12px;
+  background: rgba(102, 204, 255, 0.06);
+}
+.about-title {
+  font-family: 'LXGW WenKai', '霞鹜文楷', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', 'Microsoft YaHei', sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--ice);
+  letter-spacing: 1.5px;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+.about-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: rgba(102, 204, 255, 0.18);
+  border: 1px solid rgba(102, 204, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px auto;
+  color: var(--sky);
+}
+.about-icon svg { width: 40px; height: 40px; }
+.about-line {
+  margin: 4px 0;
+  font-size: 13px;
+  color: var(--cloud);
+  text-align: center;
+}
+.about-line a {
+  color: var(--tianyi);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(102, 204, 255, 0.4);
+  transition: color 0.15s ease;
+}
+.about-line a:hover { color: #FFFFFF; }
 
 .set-group { margin-bottom: 18px; }
 .set-group-title {
@@ -1732,3 +1787,76 @@ body {
 .si-date { flex: none; font-size: 12px; white-space: nowrap; display: flex; gap: 8px; }
 .si-solar { color: var(--cloud); }
 .si-lunar { color: #FFD700; }
+
+
+/* ==================== 数据编辑（外置生日/节日表） ==================== */
+.modal-wide { max-width: 640px; }
+.data-edit-body { padding: 18px 20px 22px; max-height: 74vh; overflow-y: auto; }
+.de-welcome { text-align: center; padding: 30px 14px 22px; }
+.de-welcome h3 { color: var(--ice); margin: 0 0 6px; font-size: 17px; }
+.de-welcome p { color: var(--placeholder); font-size: 13px; margin: 0 0 20px; line-height: 1.9; }
+.de-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.de-btn { background: var(--select-bg); border: 1px solid var(--border-strong); color: var(--ice); border-radius: 12px; padding: 11px 20px; font-size: 14px; cursor: pointer; font-family: inherit; transition: all .18s; }
+.de-btn:hover { background: var(--nav); border-color: var(--tianyi); }
+.de-btn.primary { background: var(--tianyi); color: var(--ink-deep); border-color: var(--tianyi); font-weight: 600; }
+.de-btn.primary:hover { background: var(--ice); }
+.de-btn.danger { background: transparent; border-color: rgba(255,120,110,.45); color: #FFA08A; }
+.de-btn.danger:hover { background: rgba(255,120,110,.15); }
+.de-btn.small { padding: 6px 12px; font-size: 12.5px; border-radius: 10px; }
+.de-list { display: flex; flex-direction: column; gap: 10px; }
+.de-item { display: flex; align-items: center; gap: 10px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; }
+.de-item .de-name { color: var(--cloud); font-size: 14.5px; font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.de-tag { font-size: 11px; color: var(--ink-deep); background: var(--tianyi); border-radius: 7px; padding: 2px 8px; white-space: nowrap; }
+.de-tag.lunar { background: #FFD98A; }
+.de-tag.festival { background: #FFB3A7; }
+.de-meta { font-size: 11.5px; color: var(--placeholder); }
+.de-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.de-toolbar .de-title { font-size: 16px; color: var(--ice); font-weight: 600; flex: 1; min-width: 0; }
+.de-editor { width: 100%; min-height: 240px; background: var(--bar); color: var(--cloud); border: 1px solid var(--border-strong); border-radius: 12px; padding: 12px 14px; font-size: 13.5px; line-height: 1.9; font-family: 'LXGW WenKai','Segoe UI',monospace; resize: vertical; box-sizing: border-box; }
+.de-editor:focus { outline: none; border-color: var(--tianyi); }
+.de-hint { font-size: 12px; color: var(--placeholder); line-height: 1.9; margin: 10px 0 0; }
+.de-status { font-size: 12px; color: var(--placeholder); margin-top: 8px; min-height: 18px; }
+.de-status.saved { color: #7EE0B0; }
+.de-status.err { color: #FFA08A; }
+.de-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.de-label { font-size: 13px; color: var(--placeholder); }
+.de-input { background: var(--bar); border: 1px solid var(--border-strong); color: var(--cloud); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; font-family: inherit; flex: 1; min-width: 150px; }
+.de-input:focus { outline: none; border-color: var(--tianyi); }
+.de-select { background: var(--select-bg); color: var(--cloud); border: 1px solid var(--border-strong); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; font-family: inherit; }
+.de-empty { text-align: center; color: var(--placeholder); padding: 30px 12px; font-size: 13px; line-height: 2; }
+.de-note { font-size: 12.5px; color: var(--placeholder); line-height: 1.9; margin: 8px 0 12px; padding: 10px 12px; background: rgba(102,204,255,.08); border: 1px dashed var(--border-strong); border-radius: 10px; }
+.de-note code { color: var(--ice); background: rgba(102,204,255,.14); border-radius: 4px; padding: 0 4px; }
+.de-row .de-name { color: var(--cloud); font-size: 13.5px; font-weight: 600; }
+
+/* ==================== 数据编辑 · 表格模式 ==================== */
+.de-table { display:flex; flex-direction:column; gap:6px; }
+.de-thead, .de-trow { display:flex; gap:6px; align-items:center; }
+.de-thead { font-size:12px; color:var(--placeholder); padding:0 2px; }
+.de-thead .de-f-date { width:88px; flex-shrink:0; }
+.de-thead .de-f-kind { width:74px; flex-shrink:0; }
+.de-thead .de-f-name { flex:1; }
+.de-thead .de-f-tag { flex:2; }
+.de-trow { padding:2px 0; }
+.de-f { background:var(--bar); border:1px solid var(--border-strong); color:var(--cloud); border-radius:8px; padding:8px 10px; font-size:13px; font-family:inherit; min-width:0; }
+.de-f:focus { outline:none; border-color:var(--tianyi); }
+.de-f-date { width:88px; flex-shrink:0; }
+.de-f-kind { width:74px; flex-shrink:0; background:var(--select-bg); }
+.de-f-name { flex:1; }
+.de-f-tag { flex:2; }
+.de-f-del { flex-shrink:0; padding:3px 9px; font-size:14px; line-height:1; }
+.de-f-leap-wrap { display:flex; align-items:center; gap:3px; font-size:12px; color:var(--placeholder); width:46px; flex-shrink:0; }
+.de-f-leap-wrap input { accent-color: var(--tianyi); }
+.de-add-row { margin-top:8px; align-self:flex-start; }
+
+/* 生日横向分割行：IP/领域（w）在左、名字在右，横向排布，条目间横线分割 */
+.birth-cols .info-list li.bd-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.birth-cols .info-list li.bd-row::before { display: none; }
+.birth-cols .info-list li.bd-row:last-child { border-bottom: none; }
+.birth-cols .info-list li.bd-row .bd-name { color: var(--cloud); font-weight: 600; white-space: normal; }
+.birth-cols .info-list li.bd-row .w { flex-shrink: 0; }
