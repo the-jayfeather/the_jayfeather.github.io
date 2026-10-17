@@ -1790,7 +1790,7 @@ body {
 
 
 /* ==================== 数据编辑（外置生日/节日表） ==================== */
-.modal-wide { max-width: 640px; }
+.modal-wide { max-width: 760px; }
 .data-edit-body { padding: 18px 20px 22px; max-height: 74vh; overflow-y: auto; }
 .de-welcome { text-align: center; padding: 30px 14px 22px; }
 .de-welcome h3 { color: var(--ice); margin: 0 0 6px; font-size: 17px; }
@@ -1860,3 +1860,13 @@ body {
 .birth-cols .info-list li.bd-row:last-child { border-bottom: none; }
 .birth-cols .info-list li.bd-row .bd-name { color: var(--cloud); font-weight: 600; white-space: normal; }
 .birth-cols .info-list li.bd-row .w { flex-shrink: 0; }
+
+/* 日期选择单元格：月/日下拉 + 隐藏月日值 + 月日显示（不选年份） */
+.de-datecell { display:flex; align-items:center; gap:6px; flex:none; min-width:0; }
+.de-f-date-m, .de-f-date-d { width:58px; flex-shrink:0; padding:6px 4px; color-scheme:dark; }
+.de-date-txt { color:var(--sky); font-size:12px; white-space:nowrap; flex-shrink:0; }
+.de-f-date-val.de-f { width:88px; flex-shrink:0; }
+.de-thead .de-f-date { width:196px; flex-shrink:0; }
+.de-thead .de-f-name { flex:1; }
+.de-thead .de-f-tag { flex:2; }
+@media (max-width: 700px) { .de-date-txt { display: none; } }
