@@ -1790,7 +1790,7 @@ body {
 
 
 /* ==================== 数据编辑（外置生日/节日表） ==================== */
-.modal-wide { max-width: 760px; }
+.modal-wide { max-width: 1100px; }
 .data-edit-body { padding: 18px 20px 22px; max-height: 74vh; overflow-y: auto; }
 .de-welcome { text-align: center; padding: 30px 14px 22px; }
 .de-welcome h3 { color: var(--ice); margin: 0 0 6px; font-size: 17px; }
@@ -1811,7 +1811,8 @@ body {
 .de-tag.festival { background: #FFB3A7; }
 .de-meta { font-size: 11.5px; color: var(--placeholder); }
 .de-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-.de-toolbar .de-title { font-size: 16px; color: var(--ice); font-weight: 600; flex: 1; min-width: 0; }
+.de-toolbar .de-title { font-size: 16px; color: var(--ice); font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.de-toolbar .de-btn { flex-shrink: 0; }
 .de-editor { width: 100%; min-height: 240px; background: var(--bar); color: var(--cloud); border: 1px solid var(--border-strong); border-radius: 12px; padding: 12px 14px; font-size: 13.5px; line-height: 1.9; font-family: 'LXGW WenKai','Segoe UI',monospace; resize: vertical; box-sizing: border-box; }
 .de-editor:focus { outline: none; border-color: var(--tianyi); }
 .de-hint { font-size: 12px; color: var(--placeholder); line-height: 1.9; margin: 10px 0 0; }
@@ -1846,6 +1847,10 @@ body {
 .de-f-del { flex-shrink:0; padding:3px 9px; font-size:14px; line-height:1; }
 .de-f-leap-wrap { display:flex; align-items:center; gap:3px; font-size:12px; color:var(--placeholder); width:46px; flex-shrink:0; }
 .de-f-leap-wrap input { accent-color: var(--tianyi); }
+.de-kind-toggle { display:inline-flex; gap:2px; flex-shrink:0; width:96px; align-items:center; }
+.de-kind-btn { flex:1; padding:6px 2px; font-size:12px; border-radius:8px; border:1px solid var(--border-strong); background:var(--select-bg); color:var(--placeholder); cursor:pointer; font-family:inherit; transition:all .15s; }
+.de-kind-btn:hover { border-color: var(--tianyi); color: var(--ice); }
+.de-kind-btn.active { background:var(--tianyi); color:var(--ink-deep); border-color:var(--tianyi); font-weight:600; }
 .de-add-row { margin-top:8px; align-self:flex-start; }
 
 /* 生日横向分割行：IP/领域（w）在左、名字在右，横向排布，条目间横线分割 */
@@ -1867,6 +1872,7 @@ body {
 .de-date-txt { color:var(--sky); font-size:12px; white-space:nowrap; flex-shrink:0; }
 .de-f-date-val.de-f { width:88px; flex-shrink:0; }
 .de-thead .de-f-date { width:196px; flex-shrink:0; }
+.de-thead .de-kind-toggle { width:96px; flex-shrink:0; }
 .de-thead .de-f-name { flex:1; }
 .de-thead .de-f-tag { flex:2; }
 @media (max-width: 700px) { .de-date-txt { display: none; } }
