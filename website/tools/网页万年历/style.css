@@ -285,6 +285,18 @@ body {
 .big-date .friend-birth-tip .fb-name {
   white-space: nowrap;
 }
+/* 天文大潮提示（星座下方） */
+.big-date .spring-tide {
+  margin-top: 8px;
+  display: inline-block;
+  font-size: 12.5px;
+  color: #FFE9A8;
+  background: linear-gradient(135deg, rgba(255,120,110,.18), rgba(255,200,90,.16));
+  border: 1px solid rgba(255,190,120,.4);
+  border-radius: 10px;
+  padding: 5px 12px;
+  letter-spacing: 0.5px;
+}
 /* 农历详历（并入日期卡片内，左右两列：左 农历/年柱/月柱/日柱/时柱，右 节气/节日/月相/星宿/六曜/十二神） */
 .big-date .lunar-grid {
   margin-top: 12px;
@@ -1179,6 +1191,59 @@ body {
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ---------- 数据编辑 SnackBar（删除撤销，5 秒倒数光晕） ---------- */
+.de-snack-stack {
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 1350;
+  pointer-events: none;
+}
+.de-snack {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+.de-snack.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.de-snack-outer {
+  position: relative;
+  border-radius: 13px;
+  padding: 3px;
+  overflow: hidden;
+}
+.de-snack-outer::before {
+  content: '';
+  position: absolute;
+  left: -50%;
+  top: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, rgba(102, 204, 255, 0) 0deg, rgba(102, 204, 255, 0.9) 5deg, rgba(102, 204, 255, 0.55) 20deg, rgba(102, 204, 255, 0.55) calc(var(--prog) - 15deg), rgba(102, 204, 255, 0.9) calc(var(--prog) - 5deg), rgba(102, 204, 255, 0) var(--prog));
+}
+.de-snack-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0A3352;
+  border: 1px solid rgba(102, 204, 255, 0.35);
+  border-radius: 10px;
+  color: var(--ice);
+  padding: 7px 26px;
+  font-size: 12.5px;
+  max-width: 90vw;
+  white-space: nowrap;
+}
+.de-snack-inner .de-btn { padding: 3px 12px; font-size: 12px; }
+.de-snack-inner span { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
 /* ============================================================
  * 页脚
  * ============================================================ */
@@ -1790,7 +1855,22 @@ body {
 
 
 /* ==================== 数据编辑（外置生日/节日表） ==================== */
-.modal-wide { max-width: 1100px; }
+.modal-wide { width: 1500px; max-width: calc(100vw - 32px); }
+#dataEditMask { justify-content: flex-end; align-items: stretch; }
+#dataEditMask .de-drawer {
+  width: 70vw;
+  height: 100%;
+  background: #0A3352;
+  border-left: 1px solid var(--border-strong);
+  box-shadow: -16px 0 50px rgba(4, 22, 40, 0.6);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.28s ease;
+}
+#dataEditMask.open .de-drawer { transform: none; }
+#dataEditMask .de-drawer-head { padding: 16px 20px 0; margin-bottom: 0; flex-shrink: 0; }
+#dataEditMask .data-edit-body { flex: 1; min-height: 0; max-height: none; }
 .data-edit-body { padding: 18px 20px 22px; max-height: 74vh; overflow-y: auto; }
 .de-welcome { text-align: center; padding: 30px 14px 22px; }
 .de-welcome h3 { color: var(--ice); margin: 0 0 6px; font-size: 17px; }
@@ -1811,7 +1891,7 @@ body {
 .de-tag.festival { background: #FFB3A7; }
 .de-meta { font-size: 11.5px; color: var(--placeholder); }
 .de-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-.de-toolbar .de-title { font-size: 16px; color: var(--ice); font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.de-toolbar .de-title { font-size: 16px; color: var(--ice); font-weight: 600; flex: 1; min-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .de-toolbar .de-btn { flex-shrink: 0; }
 .de-editor { width: 100%; min-height: 240px; background: var(--bar); color: var(--cloud); border: 1px solid var(--border-strong); border-radius: 12px; padding: 12px 14px; font-size: 13.5px; line-height: 1.9; font-family: 'LXGW WenKai','Segoe UI',monospace; resize: vertical; box-sizing: border-box; }
 .de-editor:focus { outline: none; border-color: var(--tianyi); }
@@ -1847,6 +1927,9 @@ body {
 .de-f-del { flex-shrink:0; padding:3px 9px; font-size:14px; line-height:1; }
 .de-f-leap-wrap { display:flex; align-items:center; gap:3px; font-size:12px; color:var(--placeholder); width:46px; flex-shrink:0; }
 .de-f-leap-wrap input { accent-color: var(--tianyi); }
+.de-f-nf { display:flex; align-items:center; gap:4px; font-size:12px; color:var(--ice); white-space:nowrap; flex-shrink:0; cursor:pointer; }
+.de-f-nf input { accent-color: var(--tianyi); }
+.de-thead .de-f-nf { color:var(--placeholder); }
 .de-kind-toggle { display:inline-flex; gap:2px; flex-shrink:0; width:96px; align-items:center; }
 .de-kind-btn { flex:1; padding:6px 2px; font-size:12px; border-radius:8px; border:1px solid var(--border-strong); background:var(--select-bg); color:var(--placeholder); cursor:pointer; font-family:inherit; transition:all .15s; }
 .de-kind-btn:hover { border-color: var(--tianyi); color: var(--ice); }

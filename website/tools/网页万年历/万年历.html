@@ -224,6 +224,22 @@
         <div>彭祖百忌</div>
         <label class="switch"><input type="checkbox" id="setPengZu"><span class="slider"></span></label>
       </div>
+      <div class="set-row sub-row">
+        <div>日出日落（下一次）</div>
+        <label class="switch"><input type="checkbox" id="setDetailSun"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>月升月落（下一次）</div>
+        <label class="switch"><input type="checkbox" id="setDetailMoonRise"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>潮汐（下次最高潮/最低潮）</div>
+        <label class="switch"><input type="checkbox" id="setTide"><span class="slider"></span></label>
+      </div>
+      <div class="set-row sub-row">
+        <div>天文大潮提示</div>
+        <label class="switch"><input type="checkbox" id="setTideBig"><span class="slider"></span></label>
+      </div>
       </div>
       <h5 class="set-sub-title">日期卡片附加</h5>
       <div class="set-row sub-row">
@@ -310,10 +326,10 @@
   </div>
 </div>
 
-<!-- ================= 数据编辑模态 ================= -->
+<!-- ================= 数据编辑抽屉 ================= -->
 <div class="modal-mask" id="dataEditMask">
-  <div class="modal modal-wide" role="dialog" aria-modal="true" aria-label="数据编辑">
-    <div class="modal-head">
+  <div class="de-drawer" role="dialog" aria-modal="true" aria-label="数据编辑">
+    <div class="modal-head de-drawer-head">
       <h2>数据编辑</h2>
       <button class="modal-close" id="dataEditClose" aria-label="关闭">×</button>
     </div>
@@ -336,6 +352,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="de-snack-stack" id="deSnackStack"></div>
 
 <!-- ================= 数据与逻辑 ================= -->
 <script src="files/lunar.js"></script>
@@ -473,7 +490,11 @@ var DEFAULT_SETTINGS = {
   showDetailLuckHour: true,   // 今日吉时（最近的下一个黄道时辰）
   showPengZu: true,           // 彭祖百忌（日干支忌）
   showTaoLi: true,            // 道历
-  showFoLi: true              // 佛历
+  showFoLi: true,             // 佛历
+  showDetailSun: true,
+  showDetailMoonRise: true,
+  showTide: true,
+  showTideBig: true
 };
 var settings = loadSettings();
 function loadSettings() {
@@ -770,20 +791,32 @@ function celebritiesOf(m, d) {
 }
 
 /* ---------- 亲友生日 ---------- */
+/* 同名去重：保留身份信息（角色+班级）更长的记录 */
+function dedupeFriends(list) {
+  var map = {}, out = [], i, k;
+  for (i = 0; i < list.length; i++) {
+    var f = list[i];
+    var cur = map[f.name];
+    var ident = (f.role || '') + (f.cls || '');
+    if (!cur || ident.length > (cur.role || '').length + (cur.cls || '').length) map[f.name] = f;
+  }
+  for (k in map) if (map.hasOwnProperty(k)) out.push(map[k]);
+  return out;
+}
 function friendsOf(m, d) {
   var out = [], i;
   for (i = 0; i < FB.length; i++) if (FB[i].m === m && FB[i].d === d) out.push(FB[i]);
   var ex = extSolarRows();
-  for (i = 0; i < ex.length; i++) if (ex[i].m === m && ex[i].d === d) out.push(ex[i]);
-  return out;
+  for (i = 0; i < ex.length; i++) if (!ex[i].noFriend && ex[i].m === m && ex[i].d === d) out.push(ex[i]);
+  return dedupeFriends(out);
 }
 /* 亲友生日：农历匹配（按农历月日，生日落在闰月时需同时匹配闰月标志） */
 function friendsLunarOf(lm, ld, isLeap) {
   var out = [], i;
   for (i = 0; i < FBL.length; i++) if (FBL[i].lm === lm && FBL[i].ld === ld && ((FBL[i].isLeap || false) === !!isLeap)) out.push(FBL[i]);
   var ex = extLunarRows();
-  for (i = 0; i < ex.length; i++) if (ex[i].lm === lm && ex[i].ld === ld && ((ex[i].isLeap || false) === !!isLeap)) out.push(ex[i]);
-  return out;
+  for (i = 0; i < ex.length; i++) if (!ex[i].noFriend && ex[i].lm === lm && ex[i].ld === ld && ((ex[i].isLeap || false) === !!isLeap)) out.push(ex[i]);
+  return dedupeFriends(out);
 }
 /* 亲友生日文案：'身份（详细信息） 姓名 的新历生日' / '…的农历生日' */
 function friendBirthText(f, kind) {
@@ -829,6 +862,10 @@ function renderSidebar() {
       '</div>';
   }
   var festTheme = festThemeOf(sel.y, sel.m, sel.d);
+  var springTideHtml = '';
+  if (settings.showTideBig && !lunar.outOfRange && isSpringTide(lunar.lDay)) {
+    springTideHtml = '<div class="spring-tide">今日有天文大潮</div>';
+  }
   $('bigDateCard').className = 'panel big-date' + (festTheme ? ' ' + festTheme : '');
   $('bigDateCard').innerHTML =
     '<div class="week">星期' + L.WEEK_CN[info.week] + '</div>' +
@@ -838,6 +875,7 @@ function renderSidebar() {
     '<div class="lunar-brief">农历 ' + lunarBriefTxt + '</div>' +
     taoFoHtml +
     '<div class="zodiac"><span class="w">星座</span>' + zodiacOf(sel.m, sel.d) + '</div>' +
+    springTideHtml +
     '<div class="friend-birth-tip" id="friendBirthTip"></div>' +
     '<div class="lunar-grid" id="lunarDetail"></div>';
 
@@ -864,6 +902,132 @@ function renderSidebar() {
   renderTarot();
 }
 
+var ASTRO_LAT = 24.4798;
+var ASTRO_LON = 118.0894;
+function astroDayNum(y, m, d) {
+  return Date.UTC(y, m - 1, d) / 86400000 - 10957.5;
+}
+function astroClamp(x) {
+  return x < -1 ? -1 : (x > 1 ? 1 : x);
+}
+function astroSun(y, m, d) {
+  var N = astroDayNum(y, m, d);
+  var L0 = 280.46 + 0.9856474 * N;
+  var g = (357.528 + 0.9856003 * N) * Math.PI / 180;
+  var L = L0 + 1.915 * Math.sin(g) + 0.02 * Math.sin(2 * g);
+  var e = (23.439 - 0.0000004 * N) * Math.PI / 180;
+  var decl = Math.asin(Math.sin(e) * Math.sin(L * Math.PI / 180));
+  var eot = 4 * (L0 - 0.005718 - L);
+  return { decl: decl, eot: eot };
+}
+function astroSunTimes(y, m, d) {
+  var s = astroSun(y, m, d);
+  var latR = ASTRO_LAT * Math.PI / 180;
+  var cosH = (Math.cos(90.833 * Math.PI / 180) - Math.sin(latR) * Math.sin(s.decl)) / (Math.cos(latR) * Math.cos(s.decl));
+  if (cosH < -1 || cosH > 1) return null;
+  var H = Math.acos(astroClamp(cosH)) * 180 / Math.PI;
+  var rise = 12 - H / 15 - s.eot / 60 - ASTRO_LON / 15 + 8;
+  var set = 12 + H / 15 - s.eot / 60 - ASTRO_LON / 15 + 8;
+  return { rise: ((rise % 24) + 24) % 24, set: ((set % 24) + 24) % 24 };
+}
+function astroMoon(y, m, d) {
+  var N = astroDayNum(y, m, d);
+  var lam = (218.316 + 13.176396 * N) * Math.PI / 180;
+  var e = 23.439 * Math.PI / 180;
+  var decl = Math.asin(Math.sin(e) * Math.sin(lam));
+  return { lam: lam, decl: decl };
+}
+function astroMoonTransit(y, m, d) {
+  var N = astroDayNum(y, m, d);
+  var jd0 = 2451545.0 + N + 0.5;
+  var gmst0 = ((280.46061837 + 360.98564736629 * (jd0 - 2451545.0)) % 360 + 360) % 360;
+  var lam0 = 218.316 + 13.176396 * N;
+  var ra0 = Math.atan2(Math.sin(lam0 * Math.PI / 180) * Math.cos(23.439 * Math.PI / 180), Math.cos(lam0 * Math.PI / 180)) * 180 / Math.PI;
+  if (ra0 < 0) ra0 += 360;
+  var x = (ra0 - gmst0 - ASTRO_LON) / 347.80925;
+  x = ((x % 1) + 1) % 1;
+  var t1 = x * 24 + 8;
+  if (t1 >= 24) t1 -= 24;
+  var t2 = t1 + 12.4;
+  if (t2 >= 24) t2 -= 24;
+  return { t1: t1, t2: t2 };
+}
+function astroMoonEvents(y, m, d) {
+  var moon = astroMoon(y, m, d);
+  var latR = ASTRO_LAT * Math.PI / 180;
+  var cosH = (Math.cos(90.55 * Math.PI / 180) - Math.sin(latR) * Math.sin(moon.decl)) / (Math.cos(latR) * Math.cos(moon.decl));
+  var ev = [];
+  if (cosH >= -1 && cosH <= 1) {
+    var Hh = Math.acos(astroClamp(cosH)) * 180 / Math.PI / 15;
+    var mt = astroMoonTransit(y, m, d);
+    var cand = [mt.t1 - Hh, mt.t1 + Hh, mt.t2 - Hh, mt.t2 + Hh];
+    for (var i = 0; i < cand.length; i++) {
+      ev.push({ type: (i % 2 === 0) ? 'rise' : 'set', t: ((cand[i] % 24) + 24) % 24 });
+    }
+  }
+  return ev;
+}
+function astroTideEvents(y, m, d) {
+  var mt = astroMoonTransit(y, m, d);
+  var lag = 1.6;
+  var base = [mt.t1 + lag, mt.t1 + lag + 6.21, mt.t2 + lag, mt.t2 + lag + 6.21];
+  var ev = [];
+  for (var i = 0; i < base.length; i++) {
+    ev.push({ type: (i % 2 === 0) ? 'high' : 'low', t: ((base[i] % 24) + 24) % 24 });
+  }
+  return ev;
+}
+function astroNowHours() {
+  var n = TimeSrc.nowDate();
+  return n.getHours() + n.getMinutes() / 60 + n.getSeconds() / 3600;
+}
+function astroHM(h) {
+  var hh = Math.floor(h);
+  var mm = Math.round((h - hh) * 60);
+  if (mm >= 60) { mm -= 60; hh++; }
+  hh = ((hh % 24) + 24) % 24;
+  return (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+}
+function astroNextSun(y, m, d, nowH, type) {
+  var best = null, i, off;
+  for (off = 0; off < 2; off++) {
+    var t = astroSunTimes(y, m, d + off);
+    if (!t) continue;
+    var cand = [{ type: 'rise', t: t.rise + off * 24 }, { type: 'set', t: t.set + off * 24 }];
+    for (i = 0; i < cand.length; i++) {
+      if (cand[i].type !== type) continue;
+      if (cand[i].t > nowH + 0.001 && (best === null || cand[i].t < best)) best = cand[i].t;
+    }
+  }
+  return best;
+}
+function astroNextMoon(y, m, d, nowH, type) {
+  var best = null, i, off;
+  for (off = 0; off < 2; off++) {
+    var evs = astroMoonEvents(y, m, d + off);
+    for (i = 0; i < evs.length; i++) {
+      if (evs[i].type !== type) continue;
+      var cand = evs[i].t + off * 24;
+      if (cand > nowH + 0.001 && (best === null || cand < best)) best = cand;
+    }
+  }
+  return best;
+}
+function astroNextTide(y, m, d, nowH, type) {
+  var best = null, i, off;
+  for (off = 0; off < 2; off++) {
+    var evs = astroTideEvents(y, m, d + off);
+    for (i = 0; i < evs.length; i++) {
+      if (evs[i].type !== type) continue;
+      var cand = evs[i].t + off * 24;
+      if (cand > nowH + 0.001 && (best === null || cand < best)) best = cand;
+    }
+  }
+  return best;
+}
+function isSpringTide(lDay) {
+  return lDay <= 4 || (lDay >= 14 && lDay <= 18);
+}
 function renderLunarDetail(info) {
   var lunar = info.lunar;
   var lunarTxt = lunar.outOfRange ? '1899 年 · 数据表边界'
@@ -905,6 +1069,29 @@ function renderLunarDetail(info) {
     (s.showDetailLuckHour
       ? '<div class="lg-item"><span class="lg-label">今日吉时</span><span class="lg-val wrap" data-luck-hour>' + luckHourHtml(nextLuckHour(sel.y, sel.m, sel.d, TimeSrc.nowDate())) + '</span></div>'
       : '');
+  var nowH = astroNowHours();
+  if (s.showDetailSun) {
+    var nst = astroNextSun(sel.y, sel.m, sel.d, nowH, 'rise');
+    var nss = astroNextSun(sel.y, sel.m, sel.d, nowH, 'set');
+    if (nst !== null && nss !== null) {
+      var ns = nst < nss ? { type: 'rise', t: nst } : { type: 'set', t: nss };
+      left += '<div class="lg-item"><span class="lg-label">日出日落</span><span class="lg-val wrap" data-sun>' + (ns.type === 'rise' ? '日出' : '日落') + ' ' + astroHM(ns.t) + '</span></div>';
+    }
+  }
+  if (s.showDetailMoonRise) {
+    var nmr = astroNextMoon(sel.y, sel.m, sel.d, nowH, 'rise');
+    var nms = astroNextMoon(sel.y, sel.m, sel.d, nowH, 'set');
+    if (nmr !== null && nms !== null) {
+      var nm = nmr < nms ? { type: 'rise', t: nmr } : { type: 'set', t: nms };
+      left += '<div class="lg-item"><span class="lg-label">月升月落</span><span class="lg-val wrap" data-moon>' + (nm.type === 'rise' ? '月升' : '月落') + ' ' + astroHM(nm.t) + '</span></div>';
+    }
+  }
+  if (s.showTide) {
+    var th = astroNextTide(sel.y, sel.m, sel.d, nowH, 'high');
+    var tl = astroNextTide(sel.y, sel.m, sel.d, nowH, 'low');
+    if (th !== null) right += '<div class="lg-item"><span class="lg-label">下次最高潮</span><span class="lg-val" data-tide-h>' + astroHM(th) + '</span></div>';
+    if (tl !== null) right += '<div class="lg-item"><span class="lg-label">下次最低潮</span><span class="lg-val" data-tide-l>' + astroHM(tl) + '</span></div>';
+  }
   $('lunarDetail').innerHTML = '<div class="lg-col">' + left + '</div><div class="lg-col">' + right + '</div>';
   $('lunarDetail').style.display = settings.showLunarDetail ? '' : 'none';
 }
@@ -956,10 +1143,12 @@ function renderFriendBirth(info) {
     '<h4 class="sub-title friend">亲友</h4>' +
     '<ul class="info-list friend-list">' +
     solar.map(function (f) {
-      return '<li><span class="w">' + f.role + '（' + f.cls + '）</span><span class="fb-solar">' + f.name + ' 的新历生日</span></li>';
+      var fw = f.cls ? f.role + '（' + f.cls + '）' : (f.role ? f.role : '');
+      return '<li>' + (fw ? '<span class="w">' + fw + '</span>' : '') + '<span class="fb-solar">' + f.name + ' 的新历生日</span></li>';
     }).join('') +
     lunar.map(function (f) {
-      return '<li><span class="w">' + f.role + '（' + f.cls + '）</span><span class="fb-lunar">' + f.name + ' 的农历生日</span></li>';
+      var fw2 = f.cls ? f.role + '（' + f.cls + '）' : (f.role ? f.role : '');
+      return '<li>' + (fw2 ? '<span class="w">' + fw2 + '</span>' : '') + '<span class="fb-lunar">' + f.name + ' 的农历生日</span></li>';
     }).join('') +
     '</ul>';
 }
@@ -1594,6 +1783,10 @@ function syncSettingsUI() {
   $('setShen').checked = settings.showShen;
   $('setDetailLuckHour').checked = settings.showDetailLuckHour;
   $('setPengZu').checked = settings.showPengZu;
+  $('setDetailSun').checked = settings.showDetailSun;
+  $('setDetailMoonRise').checked = settings.showDetailMoonRise;
+  $('setTide').checked = settings.showTide;
+  $('setTideBig').checked = settings.showTideBig;
   $('setTaoLi').checked = settings.showTaoLi;
   $('setFoLi').checked = settings.showFoLi;
   $('setYiJi').checked = settings.showYiJi;
@@ -1649,7 +1842,8 @@ var SET_KEY = {
   setHourGz: 'showHourGz', setDetailTerm: 'showDetailTerm',
   setDetailFest: 'showDetailFest', setDetailMoon: 'showDetailMoon',
   setDetailMansion: 'showDetailMansion', setLiuYao: 'showLiuYao',
-  setShen: 'showShen', setDetailLuckHour: 'showDetailLuckHour', setPengZu: 'showPengZu', setTaoLi: 'showTaoLi', setFoLi: 'showFoLi'
+  setShen: 'showShen', setDetailLuckHour: 'showDetailLuckHour', setPengZu: 'showPengZu', setTaoLi: 'showTaoLi', setFoLi: 'showFoLi',
+  setDetailSun: 'showDetailSun', setDetailMoonRise: 'showDetailMoonRise', setTide: 'showTide', setTideBig: 'showTideBig'
 };
 for (var sk in SET_KEY) {
   (function (id, key) {
@@ -1765,6 +1959,13 @@ function extSplitLine(line) {
     week: m[6] ? parseInt(m[6], 10) : null, rest: (m[7] || '').trim()
   };
 }
+function extStripMark(rest) {
+  var s = String(rest || '');
+  var noFriend = false;
+  var m = s.match(/\s*不显示为亲友\s*$/);
+  if (m) { noFriend = true; s = s.replace(/\s*不显示为亲友\s*$/, '').replace(/\s+$/, ''); }
+  return { rest: s, noFriend: noFriend };
+}
 /* 名称部分：姓名 + 身份（班级） 或 节日名（顿号分隔多个） */
 function extParsePerson(rest) {
   var name, role = '', cls = '';
@@ -1810,10 +2011,11 @@ function extParse(t) {
     for (i = 0; i < lines.length; i++) {
       var sb = extSplitLine(lines[i]);
       if (!sb || sb.float || !sb.rest) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
-      var pb = extParsePerson(sb.rest);
+      var sm = extStripMark(sb.rest);
+      var pb = extParsePerson(sm.rest);
       if (!pb.name) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
-      if (sb.lunar || sb.leap) bRows.push({ kind: 'lunar', lm: sb.month, ld: sb.day, isLeap: !!sb.leap, name: pb.name, role: pb.role, cls: pb.cls });
-      else bRows.push({ kind: 'solar', m: sb.month, d: sb.day, name: pb.name, role: pb.role, cls: pb.cls });
+      if (sb.lunar || sb.leap) bRows.push({ kind: 'lunar', lm: sb.month, ld: sb.day, isLeap: !!sb.leap, name: pb.name, role: pb.role, cls: pb.cls, noFriend: sm.noFriend });
+      else bRows.push({ kind: 'solar', m: sb.month, d: sb.day, name: pb.name, role: pb.role, cls: pb.cls, noFriend: sm.noFriend });
     }
     return { rows: bRows, errs: errs, count: lines.length };
   }
@@ -1822,9 +2024,10 @@ function extParse(t) {
     for (i = 0; i < lines.length; i++) {
       var s = extSplitLine(lines[i]);
       if (!s || s.lunar || s.float || !s.rest) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
-      var p = extParsePerson(s.rest);
+      var sm2 = extStripMark(s.rest);
+      var p = extParsePerson(sm2.rest);
       if (!p.name) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
-      rows.push({ kind: 'solar', m: s.month, d: s.day, name: p.name, role: p.role, cls: p.cls });
+      rows.push({ kind: 'solar', m: s.month, d: s.day, name: p.name, role: p.role, cls: p.cls, noFriend: sm2.noFriend });
     }
     return { rows: rows, errs: errs, count: lines.length };
   }
@@ -1833,9 +2036,10 @@ function extParse(t) {
     for (i = 0; i < lines.length; i++) {
       var s2 = extSplitLine(lines[i]);
       if (!s2 || (!s2.lunar && !s2.leap) || s2.float || !s2.rest) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
-      var p2 = extParsePerson(s2.rest);
+      var sm3 = extStripMark(s2.rest);
+      var p2 = extParsePerson(sm3.rest);
       if (!p2.name) { errs.push('第' + (i + 1) + '行：' + lines[i]); continue; }
-      lrows.push({ kind: 'lunar', lm: s2.month, ld: s2.day, name: p2.name, role: p2.role, cls: p2.cls, isLeap: s2.leap });
+      lrows.push({ kind: 'lunar', lm: s2.month, ld: s2.day, name: p2.name, role: p2.role, cls: p2.cls, isLeap: s2.leap, noFriend: sm3.noFriend });
     }
     return { rows: lrows, errs: errs, count: lines.length };
   }
@@ -2003,18 +2207,18 @@ function extFestRows(t) {
 }
 function extEmptyRow(t) {
   if (t.type === 'festival') return { kind: 'solar', date: '', name: '' };
-  if (t.type === 'birthday') return { kind: 'solar', date: '', name: '', tag: '', leap: false };
-  return { date: '', name: '', tag: '', leap: false };
+  if (t.type === 'birthday') return { kind: 'solar', date: '', name: '', tag: '', leap: false, noFriend: false };
+  return { date: '', name: '', tag: '', leap: false, noFriend: false };
 }
 function extRowInitial(t, r) {
   if (t.type === 'festival') return { kind: r.kind, date: r.date, name: r.name };
   var tag = r.cls ? (r.role || '') + '（' + r.cls + '）' : (r.role || '');
   if (t.type === 'birthday') {
-    if (r.kind === 'lunar' || r.lm) return { kind: 'lunar', leap: !!r.isLeap, date: r.lm + '-' + r.ld, name: r.name, tag: tag };
-    return { kind: 'solar', date: r.m + '-' + r.d, name: r.name, tag: tag };
+    if (r.kind === 'lunar' || r.lm) return { kind: 'lunar', leap: !!r.isLeap, date: r.lm + '-' + r.ld, name: r.name, tag: tag, noFriend: !!r.noFriend };
+    return { kind: 'solar', date: r.m + '-' + r.d, name: r.name, tag: tag, noFriend: !!r.noFriend };
   }
-  if (t.type === 'lunar') return { leap: !!r.isLeap, date: r.lm + '-' + r.ld, name: r.name, tag: tag };
-  return { date: r.m + '-' + r.d, name: r.name, tag: tag };
+  if (t.type === 'lunar') return { leap: !!r.isLeap, date: r.lm + '-' + r.ld, name: r.name, tag: tag, noFriend: !!r.noFriend };
+  return { date: r.m + '-' + r.d, name: r.name, tag: tag, noFriend: !!r.noFriend };
 }
 /* 月日文本：solar→"10月17日"；lunar→"闰四月廿四" */
 function extDateTxt(kindLunar, date, leap) {
@@ -2074,6 +2278,7 @@ function extRowHtml(t, r) {
     h += extDateCellHtml(kind === 'lunar', r.date, !!r.leap);
     h += '<input class="de-f de-f-name" value="' + escapeHtml(r.name) + '" placeholder="姓名">';
     h += '<input class="de-f de-f-tag" value="' + escapeHtml(r.tag) + '" placeholder="身份（班级）">';
+    h += '<label class="de-f-nf"><input type="checkbox" class="de-f-nofriend"' + (r.noFriend ? ' checked' : '') + '>不显示为亲友</label>';
   } else {
     if (t.type === 'lunar') {
       h += '<label class="de-f-leap-wrap"><input type="checkbox" class="de-f-leap"' + (r.leap ? ' checked' : '') + '> 闰</label>';
@@ -2081,6 +2286,7 @@ function extRowHtml(t, r) {
     h += extDateCellHtml(t.type === 'lunar', r.date, !!r.leap);
     h += '<input class="de-f de-f-name" value="' + escapeHtml(r.name) + '" placeholder="姓名">';
     h += '<input class="de-f de-f-tag" value="' + escapeHtml(r.tag) + '" placeholder="身份（班级）">';
+    h += '<label class="de-f-nf"><input type="checkbox" class="de-f-nofriend"' + (r.noFriend ? ' checked' : '') + '>不显示为亲友</label>';
   }
   h += '<button class="de-btn small danger de-f-del" data-ext-act="del-row" title="删除此行">×</button></div>';
   return h;
@@ -2092,14 +2298,14 @@ function extEditHtml(t) {
   if (!rows.length) rows = [extEmptyRow(t), extEmptyRow(t), extEmptyRow(t)];
   var head = t.type === 'festival'
     ? '<div class="de-thead"><span class="de-f-kind">类型</span><span class="de-f-date">日期</span><span class="de-f-name">节日名</span><span style="width:30px;flex-shrink:0"></span></div>'
-    : '<div class="de-thead">' + (t.type === 'birthday' ? '<span class="de-kind-toggle">历法</span><span class="de-f-leap-wrap">闰</span>' : (t.type === 'lunar' ? '<span class="de-f-leap-wrap">闰</span>' : '')) + '<span class="de-f-date">日期</span><span class="de-f-name">姓名</span><span class="de-f-tag">身份（班级）</span><span style="width:30px;flex-shrink:0"></span></div>';
+    : '<div class="de-thead">' + (t.type === 'birthday' ? '<span class="de-kind-toggle">历法</span><span class="de-f-leap-wrap">闰</span>' : (t.type === 'lunar' ? '<span class="de-f-leap-wrap">闰</span>' : '')) + '<span class="de-f-date">日期</span><span class="de-f-name">姓名</span><span class="de-f-tag">身份（班级）</span><span class="de-f-nf">不显示为亲友</span><span style="width:30px;flex-shrink:0"></span></div>';
   var body = rows.map(function (r) { return extRowHtml(t, r); }).join('');
   var errHtml = '';
   if (t.parsed && t.parsed.errs && t.parsed.errs.length) {
     errHtml = '<div class="de-status err">' + t.parsed.errs.length + ' 行有格式问题：' + escapeHtml(t.parsed.errs.slice(0, 5).join('；')) + (t.parsed.errs.length > 5 ? '…' : '') + '</div>';
   }
   return '<div class="de-toolbar">' +
-    '<span class="de-title">' + escapeHtml(t.name) + ' <span class="de-tag' + (t.type === 'lunar' ? ' lunar' : (t.type === 'festival' ? ' festival' : '')) + '">' + EXT_TYPE_LABEL[t.type] + '</span></span>' +
+    '<span class="de-title" title="' + escapeHtml(t.name) + '">' + escapeHtml(t.name) + ' <span class="de-tag' + (t.type === 'lunar' ? ' lunar' : (t.type === 'festival' ? ' festival' : '')) + '">' + EXT_TYPE_LABEL[t.type] + '</span></span>' +
     '<button class="de-btn small primary" data-ext-act="export" title="导出表文件">导出</button>' +
     '<button class="de-btn small" data-ext-act="import" title="导入表文件">导入</button>' +
     '<button class="de-btn small" data-ext-act="new" title="新建表">新建</button>' +
@@ -2159,15 +2365,17 @@ function extCollectTableRows(t) {
       var nm2 = r.querySelector('.de-f-name').value.trim();
       if (!d2 && !nm2) continue;
       var tag2 = r.querySelector('.de-f-tag').value.trim();
-      if (isLunar) out.push({ kind: 'lunar', leap: r.querySelector('.de-f-leap').checked, date: d2, name: nm2, tag: tag2 });
-      else out.push({ kind: 'solar', date: d2, name: nm2, tag: tag2 });
+      var nf2 = r.querySelector('.de-f-nofriend');
+      if (isLunar) out.push({ kind: 'lunar', leap: r.querySelector('.de-f-leap').checked, date: d2, name: nm2, tag: tag2, noFriend: nf2 ? nf2.checked : false });
+      else out.push({ kind: 'solar', date: d2, name: nm2, tag: tag2, noFriend: nf2 ? nf2.checked : false });
     } else {
       var d = r.querySelector('.de-f-date-val').value.trim();
       var nm = r.querySelector('.de-f-name').value.trim();
       if (!d && !nm) continue;
       var tag = r.querySelector('.de-f-tag').value.trim();
-      if (t.type === 'lunar') out.push({ leap: r.querySelector('.de-f-leap').checked, date: d, name: nm, tag: tag });
-      else out.push({ date: d, name: nm, tag: tag });
+      var nf = r.querySelector('.de-f-nofriend');
+      if (t.type === 'lunar') out.push({ leap: r.querySelector('.de-f-leap').checked, date: d, name: nm, tag: tag, noFriend: nf ? nf.checked : false });
+      else out.push({ date: d, name: nm, tag: tag, noFriend: nf ? nf.checked : false });
     }
   }
   return out;
@@ -2185,18 +2393,18 @@ function extRowsToText(t, rows) {
     return rows.map(function (r) {
       if (!r.date && !r.name) return '';
       var pre = r.kind === 'lunar' ? (r.leap ? '闰' : 'L') : '';
-      return pre + r.date + ' ' + r.name + (r.tag ? ' ' + r.tag : '');
+      return pre + r.date + ' ' + r.name + (r.tag ? ' ' + r.tag : '') + (r.noFriend ? ' 不显示为亲友' : '');
     }).filter(keep).join('\n');
   }
   if (t.type === 'lunar') {
     return rows.map(function (r) {
       if (!r.date && !r.name) return '';
-      return (r.leap ? '闰' : '') + r.date + ' ' + r.name + (r.tag ? ' ' + r.tag : '');
+      return (r.leap ? '闰' : '') + r.date + ' ' + r.name + (r.tag ? ' ' + r.tag : '') + (r.noFriend ? ' 不显示为亲友' : '');
     }).filter(keep).join('\n');
   }
   return rows.map(function (r) {
     if (!r.date && !r.name) return '';
-    return r.date + ' ' + r.name + (r.tag ? ' ' + r.tag : '');
+    return r.date + ' ' + r.name + (r.tag ? ' ' + r.tag : '') + (r.noFriend ? ' 不显示为亲友' : '');
   }).filter(keep).join('\n');
 }
 var extAutoSaveTimer = null;
@@ -2306,19 +2514,35 @@ $('dataEditBody').addEventListener('click', function (e) {
   } else if (act === 'unload') {
     for (var k = 0; k < extState.tables.length; k++) {
       if (extState.tables[k].id === id) {
-        if (confirm('取消加载外置表「' + extState.tables[k].name + '」？数据将从本设备移除（可先「导出」备份）。')) {
-          extState.tables.splice(k, 1); extSave(); extEditingId = null; extRender(); extBind(); renderAll();
-          toast('已取消加载');
-        }
+        var un = extState.tables[k].name;
+        var unObj = extState.tables[k];
+        var unIdx = k;
+        extState.tables.splice(k, 1); extSave(); extEditingId = null; extRender(); extBind(); renderAll();
+        deSnackShow('「' + un + '」已删除', function () {
+          var exists = false;
+          for (var e3 = 0; e3 < extState.tables.length; e3++) if (extState.tables[e3].id === unObj.id) { exists = true; break; }
+          if (exists) return;
+          extState.tables.splice(Math.min(unIdx, extState.tables.length), 0, unObj);
+          extSave(); extRender(); extBind(); renderAll();
+        }, 8000);
         break;
       }
     }
   } else if (act === 'unload-current') {
     var cur = extCurrentTable();
-    if (cur && confirm('取消加载外置表「' + cur.name + '」？数据将从本设备移除（可先「导出」备份）。')) {
+    if (cur) {
+      var un2 = cur.name;
+      var unObj2 = cur;
+      var unIdx2 = extState.tables.indexOf(cur);
       extState.tables = extState.tables.filter(function (t) { return t.id !== cur.id; });
       extSave(); extEditingId = null; extRender(); extBind(); renderAll();
-      toast('已取消加载');
+      deSnackShow('「' + un2 + '」已删除', function () {
+        var exists2 = false;
+        for (var e4 = 0; e4 < extState.tables.length; e4++) if (extState.tables[e4].id === unObj2.id) { exists2 = true; break; }
+        if (exists2) return;
+        extState.tables.splice(Math.min(unIdx2, extState.tables.length), 0, unObj2);
+        extSave(); extRender(); extBind(); renderAll();
+      }, 8000);
     }
   } else if (act === 'back') {
     if (extEditingId && $('extTable')) extSaveFromTable();
@@ -2332,7 +2556,27 @@ $('dataEditBody').addEventListener('click', function (e) {
     $('extTable').lastElementChild.scrollIntoView({ block: 'nearest' });
   } else if (act === 'del-row') {
     var tr = btn.closest('.de-trow');
-    if (tr && $('extTable')) { tr.parentNode.removeChild(tr); extSaveFromTable(); }
+    if (tr && $('extTable')) {
+      var curT = extCurrentTable();
+      var rIdx = Array.prototype.indexOf.call($('extTable').querySelectorAll('.de-trow'), tr);
+      var rData = extRowFromDom(tr, curT);
+      var hasData = rData.name || rData.date;
+      tr.parentNode.removeChild(tr);
+      extSaveFromTable();
+      if (hasData) {
+        deSnackShow(extDateTxt(rData.kind === 'lunar', rData.date, rData.leap) + ' ' + rData.name + ' 的信息已删除', function () {
+          var cur2 = extCurrentTable();
+          if (!cur2 || !$('extTable')) return;
+          var rows = $('extTable').querySelectorAll('.de-trow');
+          var el2 = document.createElement('div');
+          el2.innerHTML = extRowHtml(cur2, rData);
+          var node = el2.firstChild;
+          if (rIdx < rows.length) rows[rIdx].parentNode.insertBefore(node, rows[rIdx]);
+          else $('extTable').appendChild(node);
+          extSaveFromTable();
+        });
+      }
+    }
   } else if (act === 'import-confirm') {
     for (var m = 0; m < extPendingImports.length; m++) {
       var f = extPendingImports[m];
@@ -2428,6 +2672,69 @@ function extKindToggle(kb) {
   tr.parentNode.replaceChild(div.firstChild, tr);
   extScheduleSave();
 }
+/* 从行 DOM 提取记录数据（用于删除撤销） */
+function extRowFromDom(tr, t) {
+  var date = tr.querySelector('.de-f-date-val') ? tr.querySelector('.de-f-date-val').value.trim() : '';
+  var name = tr.querySelector('.de-f-name') ? tr.querySelector('.de-f-name').value.trim() : '';
+  var tag = tr.querySelector('.de-f-tag') ? tr.querySelector('.de-f-tag').value.trim() : '';
+  var leap = tr.querySelector('.de-f-leap') ? tr.querySelector('.de-f-leap').checked : false;
+  var kind = 'solar';
+  if (t.type === 'festival') kind = tr.querySelector('.de-f-kind') ? tr.querySelector('.de-f-kind').value : 'solar';
+  else if (t.type === 'birthday') {
+    var kb = tr.querySelector('.de-kind-btn.active');
+    kind = kb && kb.dataset.extKind === 'lunar' ? 'lunar' : 'solar';
+  } else if (t.type === 'lunar') kind = 'lunar';
+  return { kind: kind, date: date, name: name, tag: tag, leap: leap };
+}
+/* 删除撤销 SnackBar：多实例堆叠，每条独立倒计时光晕，显示时长结束自动消失 */
+function deSnackShow(msg, undo, dur) {
+  var stack = $('deSnackStack');
+  if (!stack) return;
+  var ms = dur || 5000;
+  var el = document.createElement('div');
+  el.className = 'de-snack';
+  el.innerHTML = '<div class="de-snack-outer"><div class="de-snack-inner"><span></span>' + (undo ? '<button class="de-btn small primary" type="button">撤销</button>' : '') + '</div></div>';
+  el.querySelector('.de-snack-inner span').textContent = msg;
+  stack.appendChild(el);
+  var outer = el.querySelector('.de-snack-outer');
+  var rafId = 0, ivId = 0, finished = false;
+  function stop() {
+    if (rafId) cancelAnimationFrame(rafId);
+    if (ivId) clearInterval(ivId);
+    rafId = 0; ivId = 0;
+  }
+  function hide() {
+    if (finished) return;
+    finished = true;
+    stop();
+    el.classList.remove('show');
+    setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 300);
+  }
+  requestAnimationFrame(function () { el.classList.add('show'); });
+  if (outer) {
+    outer.style.setProperty('--prog', '5deg');
+    var st = performance.now();
+    function step() {
+      if (finished) return;
+      var p = Math.min((performance.now() - st) / ms, 1);
+      outer.style.setProperty('--prog', (5 + p * 355) + 'deg');
+      if (p >= 1) hide();
+    }
+    rafId = requestAnimationFrame(step);
+    ivId = setInterval(step, 100);
+  }
+  var tt = setTimeout(hide, ms);
+  if (undo) {
+    var bt = el.querySelector('.de-snack-inner .de-btn');
+    bt.onclick = function () {
+      clearTimeout(tt);
+      hide();
+      undo();
+    };
+  }
+}
 $('extFileInput').addEventListener('change', function () {
   var files = Array.prototype.slice.call(this.files);
   if (!files.length) return;
@@ -2508,6 +2815,33 @@ setInterval(function () {
   if (settings.showDetailLuckHour) {
     var lh = el.querySelector('.lg-val[data-luck-hour]');
     if (lh) lh.innerHTML = luckHourHtml(nextLuckHour(sel.y, sel.m, sel.d, now));
+  }
+  var nh = astroNowHours();
+  if (settings.showDetailSun) {
+    var nst = astroNextSun(sel.y, sel.m, sel.d, nh, 'rise');
+    var nss = astroNextSun(sel.y, sel.m, sel.d, nh, 'set');
+    var su = el.querySelector('.lg-val[data-sun]');
+    if (su && nst !== null && nss !== null) {
+      var ns = nst < nss ? { type: 'rise', t: nst } : { type: 'set', t: nss };
+      su.textContent = (ns.type === 'rise' ? '日出' : '日落') + ' ' + astroHM(ns.t);
+    }
+  }
+  if (settings.showDetailMoonRise) {
+    var nmr = astroNextMoon(sel.y, sel.m, sel.d, nh, 'rise');
+    var nms = astroNextMoon(sel.y, sel.m, sel.d, nh, 'set');
+    var mo = el.querySelector('.lg-val[data-moon]');
+    if (mo && nmr !== null && nms !== null) {
+      var nm = nmr < nms ? { type: 'rise', t: nmr } : { type: 'set', t: nms };
+      mo.textContent = (nm.type === 'rise' ? '月升' : '月落') + ' ' + astroHM(nm.t);
+    }
+  }
+  if (settings.showTide) {
+    var th2 = astroNextTide(sel.y, sel.m, sel.d, nh, 'high');
+    var tl2 = astroNextTide(sel.y, sel.m, sel.d, nh, 'low');
+    var eh = el.querySelector('.lg-val[data-tide-h]');
+    if (eh && th2 !== null) eh.textContent = astroHM(th2);
+    var el2 = el.querySelector('.lg-val[data-tide-l]');
+    if (el2 && tl2 !== null) el2.textContent = astroHM(tl2);
   }
 }, 30000);
 </script>
