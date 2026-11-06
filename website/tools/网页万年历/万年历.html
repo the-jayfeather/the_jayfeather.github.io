@@ -47,6 +47,19 @@
   <!-- 左侧：日期详情 -->
   <aside class="sidebar" id="sidebar">
     <section class="panel big-date" id="bigDateCard"></section>
+    <section class="panel sky-panel" id="panelSunMoon" data-key="showSunMoonCard">
+      <div class="sky-head">
+        <h3 class="panel-title">日出日落</h3>
+      </div>
+      <div class="sm-body" id="sunMoonBody"></div>
+    </section>
+    <section class="panel sky-panel" id="panelTide" data-key="showTideCard">
+      <div class="sky-head">
+        <h3 class="panel-title">潮汐时刻</h3>
+        <span class="tide-port" id="tidePort">附近港口-厦门港</span>
+      </div>
+      <div class="tide-body" id="tideBody"></div>
+    </section>
     <section class="panel" id="panelYiJi" data-key="showYiJi">
       <h3 class="panel-title">今日宜忌 <span class="tiny-tag" id="jianChuTag"></span></h3>
       <div class="yi-block" id="yiJiBox"></div>
@@ -60,7 +73,11 @@
       <div class="bagua-box" id="baguaBox"></div>
     </section>
     <section class="panel" id="panelBirthday">
-      <h3 class="panel-title">今日生日 <span class="tiny-tag">名人 · 角色</span></h3>
+      <h3 class="panel-title">今日生日 <span class="tiny-tag">名人 · 角色</span><button class="birth-export-btn" id="birthExportBtn" type="button">导出</button></h3>
+      <div class="birth-export-menu" id="birthExportMenu" hidden>
+        <button type="button" data-export="text">导出文字</button>
+        <button type="button" data-export="image">导出图片</button>
+      </div>
       <div class="birth-cols" id="birthCols">
         <div class="birth-col fame-group" id="fameGroup">
           <h4 class="sub-title fame">名人</h4>
@@ -110,213 +127,264 @@
   </div>
 </main>
 
-<!-- ================= 设置模态 ================= -->
 <div class="modal-mask" id="modalMask">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="设置">
+  <div class="modal settings-drawer" role="dialog" aria-modal="true" aria-label="设置">
     <div class="modal-head">
       <h2>设置</h2>
       <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
     </div>
 
-    <div class="set-group about-group">
-      <h2 class="about-title">the_jayfeather的网页万年历</h2>
-      <span class="about-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18" stroke="currentColor" stroke-width="1.8"/><path d="M8 3v3M16 3v3" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 12.5c-1.8.5-3 2-3 3.6 0 1.2.8 1.9 1.8 1.9s1.9-.9 1.9-2.1v-4.6l1.6-.6v2.6c-.4 1.1-1.2 1.7-2.3 2z" fill="currentColor"/></svg>
-      </span>
-      <p class="about-line">这是the_jayfeather的网页万年历，</p>
-      <p class="about-line">主要代码编写：<a href="https://www.doubao.com/" target="_blank" rel="noopener">豆包</a>&nbsp|&nbsp信息来源：网络、调研、考察</p>
-      <p class="about-line">特别感谢：博主 <a href="https://www.douyin.com/user/MS4wLjABAAAAZ_8l47YYRN5FCqpA7q39jbUXntHZ4I3JiyUnWvUFK_eJ2-sXZZv8axbBDmOoPZao?from_tab_name=main&vid=7696939134048374054" target="_blank" rel="noopener">@芊莜-今天二次元发生了啥</a>&nbsp提供的二次元角色生日信息</p>
-    </div>
+    <div class="settings-body">
 
-    <div class="set-group">
-      <h4 class="set-group-title">时间来源</h4>
-      <div class="set-row">
-        <div>
-          <div>获取日期方式</div>
-          <div class="desc" id="timeModeDesc">自动检测并优先使用在线时间，失败时回退本地时间</div>
+      <section class="set-section">
+        <h3 class="set-section-title">关于</h3>
+        <div class="set-group about-group">
+          <h2 class="about-title">the_jayfeather的网页万年历</h2>
+          <span class="about-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18" stroke="currentColor" stroke-width="1.8"/><path d="M8 3v3M16 3v3" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 12.5c-1.8.5-3 2-3 3.6 0 1.2.8 1.9 1.8 1.9s1.9-.9 1.9-2.1v-4.6l1.6-.6v2.6c-.4 1.1-1.2 1.7-2.3 2z" fill="currentColor"/></svg>
+          </span>
+          <p class="about-line">这是the_jayfeather的网页万年历，</p>
+          <p class="about-line">主要代码编写：<a href="https://www.doubao.com/" target="_blank" rel="noopener">豆包</a>&nbsp|&nbsp信息来源：网络、调研、考察</p>
+          <p class="about-line">特别感谢：博主 <a href="https://www.douyin.com/user/MS4wLjABAAAAZ_8l47YYRN5FCqpA7q39jbUXntHZ4I3JiyUnWvUFK_eJ2-sXZZv8axbBDmOoPZao?from_tab_name=main&vid=7696939134048374054" target="_blank" rel="noopener">@芊莜-今天二次元发生了啥</a>&nbsp提供的二次元角色生日信息</p>
         </div>
-        <div class="radio-group">
-          <button class="radio-pill" data-mode="auto" id="modeAuto">在线优先</button>
-          <button class="radio-pill" data-mode="local" id="modeLocal">仅本地</button>
-        </div>
-      </div>
-      <div class="set-row">
-        <div>
-          <div>当前时间源</div>
-          <div class="desc" id="timeStatusDesc">尚未检测</div>
-        </div>
-        <button class="tool-btn" id="redetectBtn" style="font-size:13px;">重新检测</button>
-      </div>
-    </div>
+      </section>
 
-    <div class="set-group">
-      <h4 class="set-group-title">日历显示</h4>
-      <div class="set-row">
-        <div>
-          <div>数字日期下方显示农历</div>
-          <div class="desc">月视图中每个日期格下方显示农历 / 节气</div>
+      <section class="set-section">
+        <h3 class="set-section-title">日历与时间</h3>
+        <div class="set-group">
+          <h4 class="set-group-title">时间来源</h4>
+          <div class="set-row">
+            <div>
+              <div>获取日期方式</div>
+              <div class="desc" id="timeModeDesc">自动检测并优先使用在线时间，失败时回退本地时间</div>
+            </div>
+            <div class="radio-group">
+              <button class="radio-pill" data-mode="auto" id="modeAuto">在线优先</button>
+              <button class="radio-pill" data-mode="local" id="modeLocal">仅本地</button>
+            </div>
+          </div>
+          <div class="set-row">
+            <div>
+              <div>当前时间源</div>
+              <div class="desc" id="timeStatusDesc">尚未检测</div>
+            </div>
+            <button class="tool-btn" id="redetectBtn" style="font-size:13px;">重新检测</button>
+          </div>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="setShowLunar">
-          <span class="slider"></span>
-        </label>
-      </div>
-    </div>
+        <div class="set-group">
+          <h4 class="set-group-title">日历显示</h4>
+          <div class="set-row">
+            <div>
+              <div>数字日期下方显示农历</div>
+              <div class="desc">月视图中每个日期格下方显示农历 / 节气</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setShowLunar">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
 
-    <div class="set-group">
-      <h4 class="set-group-title">左侧日期详情模块</h4>
-      <div class="set-row">
-        <div>农历详细年月日信息</div>
-        <label class="switch"><input type="checkbox" id="setLunarDetail"><span class="slider"></span></label>
-      </div>
-      <div class="set-hint" id="lunarDetailHint" hidden>单项内容开关需开启总体开关后调节</div>
-      <div id="lunarDetailSubs">
-      <h5 class="set-sub-title">农历详细信息 · 单项</h5>
-      <div class="set-row sub-row">
-        <div>农历</div>
-        <label class="switch"><input type="checkbox" id="setDetailLunar"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>年柱</div>
-        <label class="switch"><input type="checkbox" id="setDetailYearGz"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>月柱</div>
-        <label class="switch"><input type="checkbox" id="setDetailMonthGz"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>日柱</div>
-        <label class="switch"><input type="checkbox" id="setDetailDayGz"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>时柱</div>
-        <label class="switch"><input type="checkbox" id="setHourGz"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>节气</div>
-        <label class="switch"><input type="checkbox" id="setDetailTerm"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>节日</div>
-        <label class="switch"><input type="checkbox" id="setDetailFest"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>月相</div>
-        <label class="switch"><input type="checkbox" id="setDetailMoon"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>星宿</div>
-        <label class="switch"><input type="checkbox" id="setDetailMansion"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>六曜</div>
-        <label class="switch"><input type="checkbox" id="setLiuYao"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>十二神（黄道黑道）</div>
-        <label class="switch"><input type="checkbox" id="setShen"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>今日吉时（最近的下一个吉时）</div>
-        <label class="switch"><input type="checkbox" id="setDetailLuckHour"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>彭祖百忌</div>
-        <label class="switch"><input type="checkbox" id="setPengZu"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>日出日落（下一次）</div>
-        <label class="switch"><input type="checkbox" id="setDetailSun"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>月升月落（下一次）</div>
-        <label class="switch"><input type="checkbox" id="setDetailMoonRise"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>潮汐（下次最高潮/最低潮）</div>
-        <label class="switch"><input type="checkbox" id="setTide"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>天文大潮提示</div>
-        <label class="switch"><input type="checkbox" id="setTideBig"><span class="slider"></span></label>
-      </div>
-      </div>
-      <h5 class="set-sub-title">日期卡片附加</h5>
-      <div class="set-row sub-row">
-        <div>道历</div>
-        <label class="switch"><input type="checkbox" id="setTaoLi"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>佛历</div>
-        <label class="switch"><input type="checkbox" id="setFoLi"><span class="slider"></span></label>
-      </div>
-      <div class="set-row">
-        <div>传统当日宜忌</div>
-        <label class="switch"><input type="checkbox" id="setYiJi"><span class="slider"></span></label>
-      </div>
-      <div class="set-row">
-        <div>今日节日</div>
-        <label class="switch"><input type="checkbox" id="setFest"><span class="slider"></span></label>
-      </div>
-      <div class="set-row">
-        <div>今日角色生日</div>
-        <label class="switch"><input type="checkbox" id="setBirth"><span class="slider"></span></label>
-      </div>
-      <div class="set-row">
-        <div>今日名人生日</div>
-        <label class="switch"><input type="checkbox" id="setCeleb"><span class="slider"></span></label>
-      </div>
-      <div class="set-row">
-        <div>
-          <div>亲友生日（总开关）</div>
-          <div class="desc">亲友生日数据来自 files/friends_birthdays.js，默认关闭</div>
+      <section class="set-section">
+        <h3 class="set-section-title">顶部卡片</h3>
+        <div class="set-group">
+          <h4 class="set-group-title">日月与潮汐</h4>
+          <div class="set-row">
+            <div>
+              <div>日出日落卡片</div>
+              <div class="desc">日月在升落弧线上的位置、今日月相与升落时刻</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setSunMoonCard">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="set-row">
+            <div>
+              <div>潮汐时刻卡片</div>
+              <div class="desc">当日潮汐涨落曲线、高低潮时刻与水位高度</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setTideCard">
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
-        <label class="switch"><input type="checkbox" id="setFriendBirth"><span class="slider"></span></label>
-      </div>
-      <div class="set-hint" id="friendBirthHint" hidden>单项内容开关需开启总体开关后调节</div>
-      <div id="friendBirthSubs">
-      <h5 class="set-sub-title">亲友生日 · 单项</h5>
-      <div class="set-row sub-row">
-        <div>日期卡星座下方轻微强调</div>
-        <label class="switch"><input type="checkbox" id="setFriendBdCard"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>日历对应日期右上角标注"XXX生日"</div>
-        <label class="switch"><input type="checkbox" id="setFriendBdMark"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>今日生日区下方显示生日人员</div>
-        <label class="switch"><input type="checkbox" id="setFriendBdList"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>农历生日显示</div>
-        <label class="switch"><input type="checkbox" id="setFriendLunar"><span class="slider"></span></label>
-      </div>
-      </div>
-      <div class="set-row">
-        <div>属相 · 冲煞 · 吉神方位</div>
-        <label class="switch"><input type="checkbox" id="setChong"><span class="slider"></span></label>
-      </div>
-      <div class="set-row">
-        <div>历史上的今天</div>
-        <label class="switch"><input type="checkbox" id="setHistory"><span class="slider"></span></label>
-      </div>
-      <div class="set-row">
-        <div>今日八卦卦象</div>
-        <label class="switch"><input type="checkbox" id="setBagua"><span class="slider"></span></label>
-      </div>
-      <div class="set-row">
-        <div>塔罗牌区域（整体）</div>
-        <label class="switch"><input type="checkbox" id="setTarot"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>每日单牌</div>
-        <label class="switch"><input type="checkbox" id="setTarotDaily"><span class="slider"></span></label>
-      </div>
-      <div class="set-row sub-row">
-        <div>往今未三牌阵</div>
-        <label class="switch"><input type="checkbox" id="setTarotSpread"><span class="slider"></span></label>
-      </div>
+      </section>
+
+      <section class="set-section">
+        <h3 class="set-section-title">左侧日期面板</h3>
+        <div class="set-group">
+          <h4 class="set-group-title">日期详情</h4>
+          <div class="set-row">
+            <div>农历详细年月日信息</div>
+            <label class="switch"><input type="checkbox" id="setLunarDetail"><span class="slider"></span></label>
+          </div>
+          <div class="set-hint" id="lunarDetailHint" hidden>单项内容开关需开启总体开关后调节</div>
+          <div id="lunarDetailSubs">
+            <h5 class="set-sub-title">农历详细信息 · 单项</h5>
+            <div class="set-row sub-row">
+              <div>农历</div>
+              <label class="switch"><input type="checkbox" id="setDetailLunar"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>年柱</div>
+              <label class="switch"><input type="checkbox" id="setDetailYearGz"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>月柱</div>
+              <label class="switch"><input type="checkbox" id="setDetailMonthGz"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>日柱</div>
+              <label class="switch"><input type="checkbox" id="setDetailDayGz"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>时柱</div>
+              <label class="switch"><input type="checkbox" id="setHourGz"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>节气</div>
+              <label class="switch"><input type="checkbox" id="setDetailTerm"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>节日</div>
+              <label class="switch"><input type="checkbox" id="setDetailFest"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>月相</div>
+              <label class="switch"><input type="checkbox" id="setDetailMoon"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>星宿</div>
+              <label class="switch"><input type="checkbox" id="setDetailMansion"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>六曜</div>
+              <label class="switch"><input type="checkbox" id="setLiuYao"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>十二神（黄道黑道）</div>
+              <label class="switch"><input type="checkbox" id="setShen"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>今日吉时（最近的下一个吉时）</div>
+              <label class="switch"><input type="checkbox" id="setDetailLuckHour"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>彭祖百忌</div>
+              <label class="switch"><input type="checkbox" id="setPengZu"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>日出日落（下一次）</div>
+              <label class="switch"><input type="checkbox" id="setDetailSun"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>月升月落（下一次）</div>
+              <label class="switch"><input type="checkbox" id="setDetailMoonRise"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>潮汐（下次最高潮/最低潮）</div>
+              <label class="switch"><input type="checkbox" id="setTide"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>天文大潮提示</div>
+              <label class="switch"><input type="checkbox" id="setTideBig"><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+        <div class="set-group">
+          <h4 class="set-group-title">日期卡片</h4>
+          <h5 class="set-sub-title">附加历法</h5>
+          <div class="set-row sub-row">
+            <div>道历</div>
+            <label class="switch"><input type="checkbox" id="setTaoLi"><span class="slider"></span></label>
+          </div>
+          <div class="set-row sub-row">
+            <div>佛历</div>
+            <label class="switch"><input type="checkbox" id="setFoLi"><span class="slider"></span></label>
+          </div>
+          <div class="set-row">
+            <div>传统当日宜忌</div>
+            <label class="switch"><input type="checkbox" id="setYiJi"><span class="slider"></span></label>
+          </div>
+          <div class="set-row">
+            <div>今日节日</div>
+            <label class="switch"><input type="checkbox" id="setFest"><span class="slider"></span></label>
+          </div>
+          <div class="set-row">
+            <div>属相 · 冲煞 · 吉神方位</div>
+            <label class="switch"><input type="checkbox" id="setChong"><span class="slider"></span></label>
+          </div>
+          <div class="set-row">
+            <div>历史上的今天</div>
+            <label class="switch"><input type="checkbox" id="setHistory"><span class="slider"></span></label>
+          </div>
+          <div class="set-row">
+            <div>今日八卦卦象</div>
+            <label class="switch"><input type="checkbox" id="setBagua"><span class="slider"></span></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="set-section">
+        <h3 class="set-section-title">生日与塔罗</h3>
+        <div class="set-group">
+          <h4 class="set-group-title">生日</h4>
+          <div class="set-row">
+            <div>今日角色生日</div>
+            <label class="switch"><input type="checkbox" id="setBirth"><span class="slider"></span></label>
+          </div>
+          <div class="set-row">
+            <div>今日名人生日</div>
+            <label class="switch"><input type="checkbox" id="setCeleb"><span class="slider"></span></label>
+          </div>
+          <div class="set-row">
+            <div>
+              <div>亲友生日（总开关）</div>
+              <div class="desc">亲友生日数据来自 files/friends_birthdays.js，默认关闭</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="setFriendBirth"><span class="slider"></span></label>
+          </div>
+          <div class="set-hint" id="friendBirthHint" hidden>单项内容开关需开启总体开关后调节</div>
+          <div id="friendBirthSubs">
+            <h5 class="set-sub-title">亲友生日 · 单项</h5>
+            <div class="set-row sub-row">
+              <div>日期卡星座下方轻微强调</div>
+              <label class="switch"><input type="checkbox" id="setFriendBdCard"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>日历对应日期右上角标注"XXX生日"</div>
+              <label class="switch"><input type="checkbox" id="setFriendBdMark"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>今日生日区下方显示生日人员</div>
+              <label class="switch"><input type="checkbox" id="setFriendBdList"><span class="slider"></span></label>
+            </div>
+            <div class="set-row sub-row">
+              <div>农历生日显示</div>
+              <label class="switch"><input type="checkbox" id="setFriendLunar"><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+        <div class="set-group">
+          <h4 class="set-group-title">塔罗</h4>
+          <div class="set-row">
+            <div>塔罗牌区域（整体）</div>
+            <label class="switch"><input type="checkbox" id="setTarot"><span class="slider"></span></label>
+          </div>
+          <div class="set-row sub-row">
+            <div>每日单牌</div>
+            <label class="switch"><input type="checkbox" id="setTarotDaily"><span class="slider"></span></label>
+          </div>
+          <div class="set-row sub-row">
+            <div>往今未三牌阵</div>
+            <label class="switch"><input type="checkbox" id="setTarotSpread"><span class="slider"></span></label>
+          </div>
+        </div>
+      </section>
+
     </div>
 
     <div class="modal-foot">
@@ -338,16 +406,18 @@
 </div>
 <input type="file" id="extFileInput" accept=".txt,.csv,.js,.json,.cdata" multiple style="display:none">
 
-<!-- ================= 搜索模态 ================= -->
+<!-- ================= 搜索抽屉 ================= -->
 <div class="modal-mask" id="searchMask">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="搜索">
+  <div class="modal search-drawer" role="dialog" aria-modal="true" aria-label="搜索">
     <div class="modal-head">
       <h2>搜索</h2>
       <button class="modal-close" id="searchClose" aria-label="关闭">×</button>
     </div>
-    <div class="search-tip">键入关键词搜索角色生日 / 历史事件 / 名人生日 / 亲友生日</div>
-    <input class="search-input" id="searchInput" type="text" placeholder="输入关键词，如：桐人 / 洛天依 / 玻尔 / 真人姓名…" autocomplete="off">
-    <div class="search-results" id="searchResults"></div>
+    <div class="search-body">
+      <div class="search-tip">键入关键词搜索角色 / 名人 / 亲友（姓名或身份）/ 历史事件；用 * 连接多个词，可筛选同时包含这些词的生日</div>
+      <input class="search-input" id="searchInput" type="text" placeholder="输入关键词，如：桐人 / 洛天依 / 初二*初一" autocomplete="off">
+      <div class="search-results" id="searchResults"></div>
+    </div>
   </div>
 </div>
 
@@ -494,7 +564,9 @@ var DEFAULT_SETTINGS = {
   showDetailSun: true,
   showDetailMoonRise: true,
   showTide: true,
-  showTideBig: true
+  showTideBig: true,
+  showSunMoonCard: true,
+  showTideCard: true
 };
 var settings = loadSettings();
 function loadSettings() {
@@ -777,9 +849,35 @@ function taoLiYearOf(y) { return y + 2697; }
 function foLiYearOf(y) { return y + 543; }
 
 /* ---------- 角色生日 ---------- */
-function birthdaysOf(m, d) {
-  var out = [], i;
-  for (i = 0; i < B.length; i++) if (B[i].m === m && B[i].d === d) out.push(B[i]);
+/* 身份括号外为「二次元」的行 = 二次元角色，括号内为出处 */
+function isCharRow(r) {
+  return String((r && r.role) || '').replace(/\s+/g, '') === '二次元';
+}
+function charWorkOf(r) {
+  return r && r.cls ? r.cls : '';
+}
+function birthdaysOf(y, m, d) {
+  var out = [], seen = {}, i;
+  function add(b) {
+    var k = b.name + '|' + (b.work || '');
+    if (seen[k]) return;
+    seen[k] = 1;
+    out.push(b);
+  }
+  for (i = 0; i < B.length; i++) if (B[i].m === m && B[i].d === d) add(B[i]);
+  var ex = extSolarRows();
+  for (i = 0; i < ex.length; i++) {
+    if (isCharRow(ex[i]) && ex[i].m === m && ex[i].d === d) add({ name: ex[i].name, work: charWorkOf(ex[i]) });
+  }
+  var lu = null;
+  try { lu = L.solarToLunar(y, m, d); } catch (e) { lu = null; }
+  if (lu && !lu.outOfRange) {
+    var el = extLunarRows();
+    for (i = 0; i < el.length; i++) {
+      if (!isCharRow(el[i])) continue;
+      if (el[i].lm === lu.lMonth && el[i].ld === lu.lDay && !!el[i].isLeap === !!lu.isLeap) add({ name: el[i].name, work: charWorkOf(el[i]) });
+    }
+  }
   return out;
 }
 
@@ -807,7 +905,7 @@ function friendsOf(m, d) {
   var out = [], i;
   for (i = 0; i < FB.length; i++) if (FB[i].m === m && FB[i].d === d) out.push(FB[i]);
   var ex = extSolarRows();
-  for (i = 0; i < ex.length; i++) if (!ex[i].noFriend && ex[i].m === m && ex[i].d === d) out.push(ex[i]);
+  for (i = 0; i < ex.length; i++) if (!ex[i].noFriend && !isCharRow(ex[i]) && ex[i].m === m && ex[i].d === d) out.push(ex[i]);
   return dedupeFriends(out);
 }
 /* 亲友生日：农历匹配（按农历月日，生日落在闰月时需同时匹配闰月标志） */
@@ -815,7 +913,7 @@ function friendsLunarOf(lm, ld, isLeap) {
   var out = [], i;
   for (i = 0; i < FBL.length; i++) if (FBL[i].lm === lm && FBL[i].ld === ld && ((FBL[i].isLeap || false) === !!isLeap)) out.push(FBL[i]);
   var ex = extLunarRows();
-  for (i = 0; i < ex.length; i++) if (!ex[i].noFriend && ex[i].lm === lm && ex[i].ld === ld && ((ex[i].isLeap || false) === !!isLeap)) out.push(ex[i]);
+  for (i = 0; i < ex.length; i++) if (!ex[i].noFriend && !isCharRow(ex[i]) && ex[i].lm === lm && ex[i].ld === ld && ((ex[i].isLeap || false) === !!isLeap)) out.push(ex[i]);
   return dedupeFriends(out);
 }
 /* 亲友生日文案：'身份（详细信息） 姓名 的新历生日' / '…的农历生日' */
@@ -879,7 +977,7 @@ function renderSidebar() {
     '<div class="friend-birth-tip" id="friendBirthTip"></div>' +
     '<div class="lunar-grid" id="lunarDetail"></div>';
 
-  var panels = ['panelYiJi', 'panelChong', 'panelBagua', 'panelHistory', 'panelTarot'];
+  var panels = ['panelSunMoon', 'panelTide', 'panelYiJi', 'panelChong', 'panelBagua', 'panelHistory', 'panelTarot'];
   for (var i = 0; i < panels.length; i++) {
     var p = $(panels[i]);
     p.style.display = settings[p.dataset.key] ? '' : 'none';
@@ -890,6 +988,8 @@ function renderSidebar() {
   $('charGroup').style.display = showChar ? '' : 'none';
   $('fameGroup').style.display = showFame ? '' : 'none';
   $('birthCols').classList.toggle('one-col', showChar !== showFame);
+  renderSunMoonCard();
+  renderTideCard();
   renderLunarDetail(info);
   renderYiJi(info);
   renderChong(info);
@@ -953,18 +1053,34 @@ function astroMoonTransit(y, m, d) {
   return { t1: t1, t2: t2 };
 }
 function astroMoonEvents(y, m, d) {
-  var moon = astroMoon(y, m, d);
-  var latR = ASTRO_LAT * Math.PI / 180;
-  var cosH = (Math.cos(90.55 * Math.PI / 180) - Math.sin(latR) * Math.sin(moon.decl)) / (Math.cos(latR) * Math.cos(moon.decl));
-  var ev = [];
-  if (cosH >= -1 && cosH <= 1) {
-    var Hh = Math.acos(astroClamp(cosH)) * 180 / Math.PI / 15;
-    var mt = astroMoonTransit(y, m, d);
-    var cand = [mt.t1 - Hh, mt.t1 + Hh, mt.t2 - Hh, mt.t2 + Hh];
-    for (var i = 0; i < cand.length; i++) {
-      ev.push({ type: (i % 2 === 0) ? 'rise' : 'set', t: ((cand[i] % 24) + 24) % 24 });
-    }
+  var rad = Math.PI / 180, HOUR = 3600000;
+  var t0 = new Date(y, m - 1, d, 0, 0, 0, 0).getTime();
+  var lw = rad * -ASTRO_LON, phi = rad * ASTRO_LAT;
+  function altAt(ms) {
+    var dd = (ms - Date.UTC(2000, 0, 1, 12)) / 86400000;
+    var L = rad * (218.316 + 13.176396 * dd);
+    var M = rad * (134.963 + 13.064993 * dd);
+    var F = rad * (93.272 + 13.229350 * dd);
+    var l = L + rad * 6.289 * Math.sin(M);
+    var b = rad * 5.128 * Math.sin(F);
+    var e = rad * 23.4397;
+    var ra = Math.atan2(Math.sin(l) * Math.cos(e) - Math.tan(b) * Math.sin(e), Math.cos(l));
+    var dec = Math.asin(Math.sin(b) * Math.cos(e) + Math.cos(b) * Math.sin(e) * Math.sin(l));
+    var H = rad * (280.16 + 360.9856235 * dd) - lw - ra;
+    var h = Math.asin(Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec) * Math.cos(H));
+    var hr = h < 0 ? 0 : h;
+    return h + 0.0002967 / Math.tan(hr + 0.00312536 / (hr + 0.08901179)) - 0.133 * rad;
   }
+  var ev = [], step = 5 / 60, prev = altAt(t0), rise = null, set = null;
+  for (var hh = step; hh <= 24.0001; hh += step) {
+    var cur = altAt(t0 + hh * HOUR);
+    if (prev < 0 && cur >= 0 && rise === null) rise = hh - step + step * (-prev) / (cur - prev);
+    else if (prev >= 0 && cur < 0 && set === null) set = hh - step + step * prev / (prev - cur);
+    prev = cur;
+  }
+  if (rise !== null) ev.push({ type: 'rise', t: rise });
+  if (set !== null) ev.push({ type: 'set', t: set });
+  ev.sort(function (a, b) { return a.t - b.t; });
   return ev;
 }
 function astroTideEvents(y, m, d) {
@@ -973,7 +1089,7 @@ function astroTideEvents(y, m, d) {
   var base = [mt.t1 + lag, mt.t1 + lag + 6.21, mt.t2 + lag, mt.t2 + lag + 6.21];
   var ev = [];
   for (var i = 0; i < base.length; i++) {
-    ev.push({ type: (i % 2 === 0) ? 'high' : 'low', t: ((base[i] % 24) + 24) % 24 });
+    ev.push({ type: (i % 2 === 0) ? 'high' : 'low', t: base[i] });
   }
   return ev;
 }
@@ -1028,6 +1144,397 @@ function astroNextTide(y, m, d, nowH, type) {
 function isSpringTide(lDay) {
   return lDay <= 4 || (lDay >= 14 && lDay <= 18);
 }
+
+/* ============================================================
+ * 日出日落卡片 · 潮汐时刻卡片
+ * ============================================================ */
+var TIDE_PORTS = [
+  { id: 'xiamen', name: '厦门港', lat: 24.45, lon: 118.07 },
+  { id: 'zhangzhou', name: '漳州港', lat: 24.35, lon: 117.98 },
+  { id: 'quanzhou', name: '泉州港', lat: 24.88, lon: 118.68 },
+  { id: 'putian', name: '莆田港', lat: 25.35, lon: 119.10 },
+  { id: 'fuzhou', name: '福州港', lat: 26.05, lon: 119.75 },
+  { id: 'shantou', name: '汕头港', lat: 23.35, lon: 116.68 }
+];
+var tidePortCache = null;
+function astroNearestPort() {
+  if (tidePortCache) return tidePortCache;
+  var best = TIDE_PORTS[0], bd = 1e18;
+  for (var i = 0; i < TIDE_PORTS.length; i++) {
+    var p = TIDE_PORTS[i];
+    var dy = (p.lat - ASTRO_LAT) * 111;
+    var dx = (p.lon - ASTRO_LON) * 111 * Math.cos(ASTRO_LAT * Math.PI / 180);
+    var dd = dy * dy + dx * dx;
+    if (dd < bd) { bd = dd; best = p; }
+  }
+  tidePortCache = best;
+  return best;
+}
+
+/* 月相：以 2000-01-06 18:14 的朔为基准推算朔望月相位（0=朔，0.5=望） */
+function moonPhaseAt(y, m, d, hour) {
+  var h = (hour == null ? 12 : hour) - 8;   /* 北京时间转 UT */
+  var jd = 2451544.5 + astroDayNum(y, m, d) + h / 24;
+  var p = ((jd - 2451550.1) / 29.530588853) % 1;
+  if (p < 0) p += 1;
+  return { phase: p, illum: (1 - Math.cos(2 * Math.PI * p)) / 2 };
+}
+function moonPhaseName(p) {
+  if (p < 0.03 || p >= 0.97) return '朔';
+  if (p < 0.22) return '娥眉月';
+  if (p < 0.28) return '上弦月';
+  if (p < 0.47) return '盈凸月';
+  if (p < 0.53) return '满月';
+  if (p < 0.72) return '亏凸月';
+  if (p < 0.78) return '下弦月';
+  return '残月';
+}
+/* 月面亮区路径：right=true 亮面在右（上弦前后），否则在左（下弦前后） */
+function moonPath(cx, cy, R, phase) {
+  var a = Math.abs(Math.cos(2 * Math.PI * phase)) * R;
+  if (a < 0.02) a = 0.02;
+  var sweepOuter, sweepInner;
+  if (phase < 0.5) {
+    sweepOuter = 1;
+    sweepInner = Math.cos(2 * Math.PI * phase) > 0 ? 0 : 1;
+  } else {
+    sweepOuter = 0;
+    sweepInner = -Math.cos(2 * Math.PI * phase) > 0 ? 0 : 1;
+  }
+  return 'M ' + cx + ' ' + (cy - R) +
+    ' A ' + R + ' ' + R + ' 0 0 ' + sweepOuter + ' ' + cx + ' ' + (cy + R) +
+    ' A ' + a + ' ' + R + ' 0 0 ' + sweepInner + ' ' + cx + ' ' + (cy - R) + ' Z';
+}
+function moonDiscSvg(phase, size) {
+  var r = size / 2 - 1, c = size / 2;
+  return '<svg class="moon-disc" viewBox="0 0 ' + size + ' ' + size + '" width="' + size + '" height="' + size + '" aria-hidden="true">' +
+    '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="#1A2A3E" stroke="rgba(190,215,240,.32)" stroke-width="0.8"/>' +
+    '<path d="' + moonPath(c, c, r - 0.4, phase) + '" fill="#F2E6BF"/>' +
+    '</svg>';
+}
+function smArcPos(cx, cy, R, r) {
+  if (r < 0 || r > 1) return { x: r < 0 ? cx - R : cx + R, y: cy + 3.4, dim: true };
+  var a = Math.PI * (1 - r);
+  return { x: cx + R * Math.cos(a), y: cy - R * Math.sin(a), dim: false };
+}
+function smSunGlyph(x, y, dim) {
+  var g = '<g opacity="' + (dim ? 0.6 : 1) + '" transform="translate(' + x.toFixed(2) + ' ' + y.toFixed(2) + ')">';
+  g += '<circle r="4.6" fill="#FFD75E" opacity="0.13"/>';
+  for (var i = 0; i < 8; i++) {
+    var a = i * Math.PI / 4;
+    g += '<line x1="' + (Math.cos(a) * 3.05).toFixed(2) + '" y1="' + (Math.sin(a) * 3.05).toFixed(2) +
+      '" x2="' + (Math.cos(a) * 4.05).toFixed(2) + '" y2="' + (Math.sin(a) * 4.05).toFixed(2) +
+      '" stroke="#FFD75E" stroke-width="0.5" opacity="0.8"/>';
+  }
+  g += '<circle r="2.2" fill="#FFD75E"/></g>';
+  return g;
+}
+function smMoonGlyph(x, y, phase, dim) {
+  var R = 2.6;
+  var g = '<g opacity="' + (dim ? 0.6 : 1) + '" transform="translate(' + x.toFixed(2) + ' ' + y.toFixed(2) + ')">';
+  g += '<circle r="4" fill="#F2E6BF" opacity="0.13"/>';
+  g += '<circle r="' + R + '" fill="#22334A" stroke="rgba(230,240,255,.35)" stroke-width="0.4"/>';
+  g += '<path d="' + moonPath(0, 0, R, phase) + '" fill="#F2E6BF"/>';
+  g += '</g>';
+  return g;
+}
+function astroMoonAll(y, m, d) {
+  var evs = [];
+  for (var off = -2; off <= 2; off++) {
+    var e = astroMoonEvents(y, m, d + off);
+    for (var i = 0; i < e.length; i++) evs.push({ type: e[i].type, t: e[i].t + off * 24 });
+  }
+  return evs;
+}
+function moonDayPair(y, m, d) {
+  var evs = astroMoonAll(y, m, d);
+  var rise = null, set = null, i, e;
+  /* 当天第一次月升 */
+  for (i = 0; i < evs.length; i++) {
+    e = evs[i];
+    if (e.t >= 0 && e.t < 24 && e.type === 'rise' && (rise === null || e.t < rise)) rise = e.t;
+  }
+  if (rise === null) {
+    for (i = 0; i < evs.length; i++) {
+      e = evs[i];
+      if (e.t >= 0 && e.type === 'rise') { rise = e.t; break; }
+    }
+  }
+  /* 取该次月升之后的第一次月落（可能落在次日凌晨/下午） */
+  if (rise !== null) {
+    for (i = 0; i < evs.length; i++) {
+      e = evs[i];
+      if (e.type === 'set' && e.t > rise && (set === null || e.t < set)) set = e.t;
+    }
+  }
+  if (set === null) {
+    for (i = 0; i < evs.length; i++) {
+      e = evs[i];
+      if (e.t >= 0 && e.type === 'set') { set = e.t; break; }
+    }
+  }
+  return { rise: rise, set: set };
+}
+function moonWindowNow(evs, nowAbs) {
+  var rise = null, set = null, i, e;
+  for (i = 0; i < evs.length; i++) {
+    e = evs[i];
+    if (e.type === 'rise' && e.t <= nowAbs + 0.001 && (rise === null || e.t > rise)) rise = e.t;
+  }
+  if (rise === null) return null;
+  for (i = 0; i < evs.length; i++) {
+    e = evs[i];
+    if (e.type === 'set' && e.t > rise + 0.001 && (set === null || e.t < set)) set = e.t;
+  }
+  return set === null ? null : { rise: rise, set: set };
+}
+
+function renderSunMoonCard() {
+  var body = $('sunMoonBody');
+  if (!body) return;
+  var y = sel.y, m = sel.m, d = sel.d;
+  var isToday = (y === today.y && m === today.m && d === today.d);
+  var nowH = astroNowHours();
+  var sunT = astroSunTimes(y, m, d);
+  var phaseInfo = moonPhaseAt(y, m, d, isToday ? nowH : 12);
+  var moonEvs = astroMoonAll(y, m, d);
+  var dayPair = moonDayPair(y, m, d);
+  var nowWin = isToday ? moonWindowNow(moonEvs, nowH) : null;
+
+  var cx = 50, cy = 36, Rs = 30, Rm = 20;
+  var svg = '';
+  if (isToday) {
+    svg = '<svg class="sm-svg" viewBox="0 0 100 46" aria-hidden="true">';
+    svg += '<line x1="6" y1="36" x2="94" y2="36" stroke="rgba(198,220,240,.4)" stroke-width="0.7"/>';
+    svg += '<path d="M 20 36 A 30 30 0 0 1 80 36" fill="none" stroke="rgba(198,220,240,.32)" stroke-width="0.7" stroke-dasharray="2.2 2.6"/>';
+    svg += '<path d="M 30 36 A 20 20 0 0 1 70 36" fill="none" stroke="rgba(198,220,240,.26)" stroke-width="0.7" stroke-dasharray="2 2.4"/>';
+    if (sunT) {
+      var sr;
+      if (nowH >= sunT.rise && nowH <= sunT.set) sr = (nowH - sunT.rise) / (sunT.set - sunT.rise);
+      else sr = nowH < sunT.rise ? -0.05 : 1.05;
+      var sp = smArcPos(cx, cy, Rs, sr);
+      svg += smSunGlyph(sp.x, sp.y, sp.dim);
+    }
+    if (nowWin) {
+      var mr;
+      if (nowH >= nowWin.rise && nowH <= nowWin.set) mr = (nowH - nowWin.rise) / (nowWin.set - nowWin.rise);
+      else mr = nowH < nowWin.rise ? -0.05 : 1.05;
+      var mp = smArcPos(cx, cy, Rm, mr);
+      svg += smMoonGlyph(mp.x, mp.y, phaseInfo.phase, mp.dim);
+    }
+    svg += '</svg>';
+  }
+
+  var riseTxt = sunT ? astroHM(sunT.rise) : '—';
+  var setTxt = sunT ? astroHM(sunT.set) : '—';
+  var moonRiseTxt = dayPair.rise === null ? '—' : astroHM(dayPair.rise);
+  var moonSetTxt = dayPair.set === null ? '—' : astroHM(dayPair.set);
+  var phaseTxt = moonPhaseName(phaseInfo.phase);
+  var pct = Math.round(phaseInfo.illum * 100);
+
+  body.innerHTML = svg +
+    '<div class="sm-info">' +
+      '<div class="sm-cell left">' +
+        '<div class="sm-line"><span class="sm-k">日出</span><span class="sm-v">' + riseTxt + '</span></div>' +
+        '<div class="sm-line"><span class="sm-k">月出</span><span class="sm-v">' + moonRiseTxt + '</span></div>' +
+      '</div>' +
+      '<div class="sm-cell mid">' +
+        '<div class="sm-moon">' + moonDiscSvg(phaseInfo.phase, 44) + '</div>' +
+        '<div class="sm-phase">' + phaseTxt + '<span class="sm-illum"> ' + pct + '%</span></div>' +
+      '</div>' +
+      '<div class="sm-cell right">' +
+        '<div class="sm-line"><span class="sm-k">日落</span><span class="sm-v">' + setTxt + '</span></div>' +
+        '<div class="sm-line"><span class="sm-k">月落</span><span class="sm-v">' + moonSetTxt + '</span></div>' +
+      '</div>' +
+    '</div>';
+}
+
+/* ---------- 潮汐 ---------- */
+var tideOnline = { key: '', status: 'idle', events: null, failedAt: 0 };
+function tideDayKey(y, m, d) { return y + '-' + pad2(m) + '-' + pad2(d); }
+function tideISOToHours(iso, y, m, d) {
+  var dp = iso.slice(0, 10).split('-'), tp = iso.slice(11, 16).split(':');
+  var diff = Math.round((Date.UTC(+dp[0], +dp[1] - 1, +dp[2]) - Date.UTC(y, m - 1, d)) / 86400000);
+  return diff * 24 + (+tp[0]) + (+tp[1]) / 60;
+}
+function tideDateDiff(y, m, d) {
+  return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(today.y, today.m - 1, today.d)) / 86400000);
+}
+function tideAllEvents(y, m, d) {
+  var evs = [];
+  for (var off = -2; off <= 2; off++) {
+    var e = astroTideEvents(y, m, d + off);
+    for (var i = 0; i < e.length; i++) evs.push({ type: e[i].type, t: e[i].t + off * 24 });
+  }
+  evs.sort(function (a, b) { return a.t - b.t; });
+  return evs;
+}
+function tideOfflineModel(y, m, d) {
+  var evs = tideAllEvents(y, m, d);
+  var p = moonPhaseAt(y, m, d, 12).phase;
+  var amp = 1.35 + 0.55 * Math.cos(4 * Math.PI * p);   /* 朔望大潮振幅大，上下弦小 */
+  var out = [];
+  for (var i = 0; i < evs.length; i++) {
+    var e = evs[i];
+    if (e.t < -6 || e.t > 30) continue;
+    var h = e.type === 'high' ? amp : -amp;
+    h += (e.type === 'high' ? 0.06 : -0.06) * Math.cos(2 * Math.PI * (e.t - 6) / 24);
+    out.push({ type: e.type, t: e.t, h: h });
+  }
+  return out;
+}
+function tideHeightAt(t, evs) {
+  if (!evs || !evs.length) return null;
+  if (t <= evs[0].t) return evs[0].h;
+  if (t >= evs[evs.length - 1].t) return evs[evs.length - 1].h;
+  for (var i = 0; i < evs.length - 1; i++) {
+    var a = evs[i], b = evs[i + 1];
+    if (t >= a.t && t <= b.t) {
+      var u = (t - a.t) / (b.t - a.t);
+      return (a.h + b.h) / 2 + (a.h - b.h) / 2 * Math.cos(Math.PI * u);
+    }
+  }
+  return evs[evs.length - 1].h;
+}
+function tideExtrema(series) {
+  var out = [];
+  for (var i = 1; i < series.length - 1; i++) {
+    var a = series[i - 1].h, b = series[i].h, c = series[i + 1].h;
+    if ((b >= a && b > c) || (b <= a && b < c)) {
+      var den = a - 2 * b + c;
+      var off = Math.abs(den) > 1e-6 ? 0.5 * (a - c) / den : 0;
+      if (off > 0.5) off = 0.5;
+      if (off < -0.5) off = -0.5;
+      out.push({ type: (b >= a && b > c) ? 'high' : 'low', t: series[i].t + off, h: b - 0.25 * (a - c) * off });
+    }
+  }
+  return out;
+}
+function tideOnlineEligible(y, m, d) {
+  if (navigator.onLine === false) return false;
+  return Math.abs(tideDateDiff(y, m, d)) <= 2;
+}
+function tideFetchOnline(port, y, m, d) {
+  var key = port.id + '|' + tideDayKey(y, m, d);
+  if (tideOnline.key === key && tideOnline.status === 'loading') return;
+  tideOnline = { key: key, status: 'loading', events: null, failedAt: 0 };
+  var url = 'https://marine-api.open-meteo.com/v1/marine?latitude=' + port.lat + '&longitude=' + port.lon +
+    '&hourly=sea_level_height_msl&past_days=2&forecast_days=3&timezone=Asia%2FShanghai';
+  fetch(url, { signal: AbortSignal.timeout(8000) })
+    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (j) {
+      var hourly = j.hourly || {}, times = hourly.time || [], vals = hourly.sea_level_height_msl || [];
+      var series = [];
+      for (var i = 0; i < times.length; i++) {
+        if (vals[i] == null || !isFinite(vals[i])) continue;
+        series.push({ t: tideISOToHours(times[i], y, m, d), h: +vals[i] });
+      }
+      var evs = tideExtrema(series);
+      if (evs.length < 3) throw 0;
+      if (tideOnline.key !== key) return;
+      tideOnline = { key: key, status: 'ok', events: evs, failedAt: 0 };
+      renderTideCard();
+    })
+    .catch(function () {
+      if (tideOnline.key !== key) return;
+      tideOnline = { key: key, status: 'fail', events: null, failedAt: Date.now() };
+      renderTideCard();
+    });
+}
+function renderTideCard() {
+  var body = $('tideBody');
+  if (!body) return;
+  var port = astroNearestPort();
+  var portEl = $('tidePort');
+  if (portEl) portEl.textContent = '附近港口-' + port.name;
+  var y = sel.y, m = sel.m, d = sel.d;
+  var key = port.id + '|' + tideDayKey(y, m, d);
+  var isToday = (y === today.y && m === today.m && d === today.d);
+  var online = (tideOnline.key === key && tideOnline.status === 'ok') ? tideOnline.events : null;
+  var failedRecent = tideOnline.key === key && tideOnline.status === 'fail' && (Date.now() - tideOnline.failedAt < 600000);
+  if (!online && !failedRecent && tideOnlineEligible(y, m, d) &&
+      !(tideOnline.key === key && tideOnline.status === 'loading')) {
+    tideFetchOnline(port, y, m, d);
+  }
+  var evs = online && online.length ? online : tideOfflineModel(y, m, d);
+  var loading = !online && tideOnline.key === key && tideOnline.status === 'loading';
+  var src = online ? '在线潮位 · Open-Meteo' : (loading ? '在线潮位加载中 · 天文潮模型' : '离线推算 · 天文潮模型');
+
+  if (!evs || evs.length < 2) {
+    body.innerHTML = '<div class="tide-empty">暂无潮汐数据</div>';
+    return;
+  }
+
+  var W = 320, H = 130, x0 = 12, x1 = 308, top = 26, bot = 78;
+  var samples = [], i, t, h;
+  for (t = 0; t <= 24.0001; t += 0.1) {
+    h = tideHeightAt(t, evs);
+    if (h !== null) samples.push({ t: t, h: h });
+  }
+  var hmin = Infinity, hmax = -Infinity;
+  for (i = 0; i < samples.length; i++) {
+    if (samples[i].h < hmin) hmin = samples[i].h;
+    if (samples[i].h > hmax) hmax = samples[i].h;
+  }
+  var span = hmax - hmin;
+  var pad = span > 0.1 ? span * 0.14 : 0.5;
+  hmin -= pad; hmax += pad;
+  function yOf(v) { return bot - (v - hmin) / (hmax - hmin) * (bot - top); }
+  function xOf(v) { return x0 + v / 24 * (x1 - x0); }
+
+  var svg = '<svg class="tide-svg" viewBox="0 0 320 130" aria-hidden="true">';
+  var dstr = '';
+  for (i = 0; i < samples.length; i++) {
+    dstr += (i ? ' L ' : 'M ') + xOf(samples[i].t).toFixed(1) + ' ' + yOf(samples[i].h).toFixed(1);
+  }
+  svg += '<path d="' + dstr + '" fill="none" stroke="#E4EFFA" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round"/>';
+
+  var dayEvs = [];
+  for (i = 0; i < evs.length; i++) {
+    if (evs[i].t >= 0 && evs[i].t < 24) dayEvs.push(evs[i]);
+  }
+  dayEvs.sort(function (a, b) { return a.t - b.t; });
+  for (i = 0; i < dayEvs.length; i++) {
+    var ev = dayEvs[i];
+    var ex = xOf(ev.t), ey = yOf(ev.h);
+    svg += '<circle cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="2.3" fill="#0C1F33" stroke="#E4EFFA" stroke-width="1.1"/>';
+    var hy = ev.type === 'high' ? ey + 13 : ey - 7;
+    svg += '<text x="' + ex.toFixed(1) + '" y="' + hy.toFixed(1) + '" text-anchor="middle" font-size="10" fill="#DCEAF7">' +
+      ev.h.toFixed(1) + ' m</text>';
+    svg += '<text x="' + ex.toFixed(1) + '" y="114" text-anchor="middle" font-size="10.5" fill="rgba(214,232,246,.82)">' +
+      astroHM(((ev.t % 24) + 24) % 24) + '</text>';
+  }
+
+  if (isToday) {
+    var nowH = astroNowHours();
+    var ch = tideHeightAt(nowH, evs);
+    if (ch !== null) {
+      var nx = null;
+      for (i = 0; i < evs.length; i++) {
+        if (evs[i].t > nowH + 0.001) { nx = evs[i]; break; }
+      }
+      var state = '平潮';
+      if (nx) state = Math.abs(nx.t - nowH) < 0.16 ? '平潮' : (nx.type === 'high' ? '涨潮中' : '退潮中');
+      var cxp = xOf(nowH), cyp = yOf(ch);
+      var lw = state.length * 10.5 + 12;
+      var lx = Math.min(W - lw - 4, Math.max(4, cxp - lw / 2));
+      var above = cyp < 55;
+      var ly = above ? Math.max(3, cyp - 27) : Math.min(82, cyp + 8);
+      svg += '<rect x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" width="' + lw + '" height="17" rx="8.5" fill="rgba(96,112,134,.94)"/>';
+      svg += '<text x="' + (lx + lw / 2).toFixed(1) + '" y="' + (ly + 12).toFixed(1) + '" text-anchor="middle" font-size="10.5" font-weight="600" fill="#F4F8FC">' + state + '</text>';
+      if (above) {
+        svg += '<path d="M ' + (cxp - 3.4).toFixed(1) + ' ' + (ly + 17).toFixed(1) + ' L ' + cxp.toFixed(1) + ' ' + (ly + 25).toFixed(1) + ' L ' + (cxp + 3.4).toFixed(1) + ' ' + (ly + 17).toFixed(1) + ' Z" fill="rgba(96,112,134,.94)"/>';
+      } else {
+        svg += '<path d="M ' + (cxp - 3.4).toFixed(1) + ' ' + ly.toFixed(1) + ' L ' + cxp.toFixed(1) + ' ' + (ly - 4.5).toFixed(1) + ' L ' + (cxp + 3.4).toFixed(1) + ' ' + ly.toFixed(1) + ' Z" fill="rgba(96,112,134,.94)"/>';
+      }
+      svg += '<circle cx="' + cxp.toFixed(1) + '" cy="' + cyp.toFixed(1) + '" r="4" fill="none" stroke="#E4EFFA" stroke-width="1.3"/>';
+      svg += '<circle cx="' + cxp.toFixed(1) + '" cy="' + cyp.toFixed(1) + '" r="1.9" fill="#E4EFFA"/>';
+    }
+  }
+  svg += '</svg>';
+  body.innerHTML = svg + '<div class="tide-foot">' + src + ' · 相对平均海平面</div>';
+}
+
 function renderLunarDetail(info) {
   var lunar = info.lunar;
   var lunarTxt = lunar.outOfRange ? '1899 年 · 数据表边界'
@@ -1107,13 +1614,13 @@ function renderYiJi(info) {
 }
 
 function renderBirth() {
-  var bds = birthdaysOf(sel.m, sel.d);
+  var bds = birthdaysOf(sel.y, sel.m, sel.d);
   if (!bds.length) {
     $('birthList').innerHTML = '<li class="empty">今日没有收录的角色生日</li>';
     return;
   }
   $('birthList').innerHTML = bds.map(function (b) {
-    return '<li class="bd-row"><span class="w">' + b.work + '</span><span class="bd-name">' + b.name + ' 的生日</span></li>';
+    return '<li class="bd-row">' + (b.work ? '<span class="w">' + b.work + '</span>' : '') + '<span class="bd-name">' + b.name + ' 的生日</span></li>';
   }).join('');
 }
 
@@ -1127,6 +1634,337 @@ function renderCeleb() {
     return '<li class="bd-row"><span class="w">' + c.field + (c.y ? ' · ' + c.y : '') + '</span><span class="bd-name">' + c.name + '</span></li>';
   }).join('');
 }
+
+function birthExportData() {
+  var lu = null;
+  try { lu = L.solarToLunar(sel.y, sel.m, sel.d); } catch (e) { lu = null; }
+  var data = {
+    date: sel.y + '年' + sel.m + '月' + sel.d + '日',
+    week: '星期' + L.WEEK_CN[new Date(sel.y, sel.m - 1, sel.d).getDay()],
+    lunar: lu && !lu.outOfRange ? L.lunarMonthCN(lu.lMonth, lu.isLeap) + L.lunarDayCN(lu.lDay) : '',
+    sections: []
+  };
+  if (settings.showCelebrity) {
+    var cbs = celebritiesOf(sel.m, sel.d);
+    if (cbs.length) {
+      data.sections.push({
+        key: 'fame',
+        title: '名人',
+        tone: '#FFD98A',
+        items: cbs.map(function (c) {
+          var field = (c.field || '') + (c.y ? ' · ' + c.y : '');
+          return {
+            text: (field ? field + ' ' : '') + c.name,
+            tone: '#E0F5FF',
+            parts: [
+              { t: field, color: '#FFD98A', size: 13 },
+              { t: field ? '  ' : '', color: '#E0F5FF', size: 13 },
+              { t: c.name, color: '#E0F5FF', size: 14, bold: true }
+            ]
+          };
+        })
+      });
+    }
+  }
+  if (settings.showBirthday) {
+    var bds = birthdaysOf(sel.y, sel.m, sel.d);
+    if (bds.length) {
+      data.sections.push({
+        key: 'char',
+        title: '二次元角色',
+        tone: '#66CCFF',
+        items: bds.map(function (b) {
+          var work = b.work || '';
+          return {
+            text: (work ? work + ' ' : '') + b.name + ' 的生日',
+            tone: '#E0F5FF',
+            parts: [
+              { t: work, color: '#88DDFF', size: 13 },
+              { t: work ? '  ' : '', color: '#E0F5FF', size: 13 },
+              { t: b.name, color: '#E0F5FF', size: 14, bold: true },
+              { t: ' 的生日', color: '#E0F5FF', size: 14 }
+            ]
+          };
+        })
+      });
+    }
+  }
+  if (settings.showFriendBirth && settings.showFriendBdList) {
+    var solar = friendsOf(sel.m, sel.d);
+    var lunar = [];
+    if (settings.showFriendLunar && lu && !lu.outOfRange) {
+      lunar = friendsLunarOf(lu.lMonth, lu.lDay, !!lu.isLeap);
+    }
+    var fitems = solar.map(function (f) {
+      return friendExportItem(f, 'solar');
+    }).concat(lunar.map(function (f) {
+      return friendExportItem(f, 'lunar');
+    }));
+    if (fitems.length) {
+      data.sections.push({ key: 'friend', title: '亲友', tone: '#FFB86B', items: fitems });
+    }
+  }
+  return data;
+}
+
+function friendExportItem(f, kind) {
+  var tag = f.cls ? f.role + '（' + f.cls + '）' : (f.role || '');
+  var suffix = kind === 'lunar' ? ' 的农历生日' : ' 的新历生日';
+  var tone = kind === 'lunar' ? '#FFD700' : '#FFE3AE';
+  return {
+    text: (tag ? tag + ' ' : '') + f.name + suffix,
+    tone: tone,
+    parts: [
+      { t: tag, color: '#FFB86B', size: 13 },
+      { t: tag ? '  ' : '', color: tone, size: 13 },
+      { t: f.name, color: tone, size: 14, bold: true },
+      { t: suffix, color: tone, size: 14 }
+    ]
+  };
+}
+
+function birthExportText(data) {
+  var lines = ['今日生日', data.date + ' ' + data.week + (data.lunar ? ' · 农历' + data.lunar : ''), ''];
+  for (var i = 0; i < data.sections.length; i++) {
+    var sec = data.sections[i];
+    lines.push('【' + sec.title + '】');
+    for (var j = 0; j < sec.items.length; j++) lines.push('· ' + sec.items[j].text);
+    lines.push('');
+  }
+  return lines.join('\r\n');
+}
+
+function downloadBlob(blob, filename) {
+  var a = document.createElement('a');
+  var url = URL.createObjectURL(blob);
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () {
+    if (a.parentNode) a.parentNode.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 300);
+}
+
+function birthCanvasFont(size, bold) {
+  return (bold ? '600 ' : '') + size + 'px "LXGW WenKai", "Kaiti SC", "Microsoft YaHei", sans-serif';
+}
+
+function layoutParts(ctx, parts, maxWidth) {
+  var lines = [], line = [], x = 0;
+  function addChar(ch, part) {
+    var size = part.size || 14;
+    var color = part.color || '#E0F5FF';
+    var bold = !!part.bold;
+    var last = line[line.length - 1];
+    if (last && last.color === color && last.size === size && last.bold === bold) {
+      last.t += ch;
+    } else {
+      line.push({ t: ch, color: color, size: size, bold: bold });
+    }
+  }
+  for (var p = 0; p < parts.length; p++) {
+    var part = parts[p];
+    var txt = part.t || '';
+    var size = part.size || 14;
+    var bold = !!part.bold;
+    ctx.font = birthCanvasFont(size, bold);
+    for (var i = 0; i < txt.length; i++) {
+      var ch = txt.charAt(i);
+      var w = ctx.measureText(ch).width;
+      if (x + w > maxWidth && line.length) {
+        lines.push(line);
+        line = [];
+        x = 0;
+        if (ch === ' ') continue;
+      }
+      addChar(ch, part);
+      x += w;
+    }
+  }
+  if (line.length || !lines.length) lines.push(line);
+  return lines;
+}
+
+function drawRuns(ctx, line, x, y) {
+  for (var i = 0; i < line.length; i++) {
+    var r = line[i];
+    ctx.font = birthCanvasFont(r.size, r.bold);
+    ctx.fillStyle = r.color;
+    ctx.fillText(r.t, x, y);
+    x += ctx.measureText(r.t).width;
+  }
+}
+
+function roundRectPath(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function dashedLine(ctx, x1, y, x2, color) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(x1, y);
+  ctx.lineTo(x2, y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function birthExportImage(data, stamp) {
+  var W = 390, panelX = 8, panelW = 374, padX = 20;
+  var contentX = panelX + padX;
+  var contentW = panelW - padX * 2;
+  var measure = document.createElement('canvas').getContext('2d');
+  var sections = data.sections.map(function (sec) {
+    var maxW = contentW - (sec.key === 'friend' ? 16 : 0);
+    return {
+      key: sec.key,
+      title: sec.title,
+      tone: sec.tone,
+      items: sec.items.map(function (it) {
+        var lines = layoutParts(measure, it.parts, maxW);
+        return { lines: lines, rowH: Math.max(sec.key === 'friend' ? 31 : 34, lines.length * 21 + 10) };
+      })
+    };
+  });
+  var bodyTop = panelX + 16 + 20 + 12;
+  var y = bodyTop;
+  sections.forEach(function (sec, idx) {
+    if (sec.key === 'friend') y += 22;
+    y += 22;
+    sec.items.forEach(function (it) { y += it.rowH; });
+    if (sec.key !== 'friend' && idx < sections.length - 1) y += 14;
+  });
+  var H = Math.round(y + 16 + 8);
+  var canvas = document.createElement('canvas');
+  var scale = 2;
+  canvas.width = W * scale;
+  canvas.height = H * scale;
+  var ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+  ctx.fillStyle = '#052844';
+  ctx.fillRect(0, 0, W, H);
+  ctx.save();
+  ctx.shadowColor = 'rgba(3, 21, 38, 0.42)';
+  ctx.shadowBlur = 12;
+  ctx.shadowOffsetY = 4;
+  roundRectPath(ctx, panelX, panelX, panelW, H - 16, 16);
+  ctx.fillStyle = '#294F67';
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = '#336582';
+  ctx.lineWidth = 1;
+  roundRectPath(ctx, panelX + 0.5, panelX + 0.5, panelW - 1, H - 17, 16);
+  ctx.stroke();
+  var titleBase = panelX + 16 + 18;
+  ctx.beginPath();
+  ctx.arc(contentX + 4.5, titleBase - 7, 4.5, 0, Math.PI * 2);
+  ctx.fillStyle = '#66CCFF';
+  ctx.fill();
+  ctx.font = birthCanvasFont(17);
+  ctx.fillStyle = '#BBEEFF';
+  ctx.fillText('今日生日', contentX + 13, titleBase);
+  ctx.font = birthCanvasFont(11);
+  ctx.fillStyle = 'rgba(187, 238, 255, 0.55)';
+  ctx.textAlign = 'right';
+  ctx.fillText('名人 · 角色', panelX + panelW - padX, titleBase);
+  ctx.textAlign = 'left';
+  var cursor = bodyTop;
+  sections.forEach(function (sec, idx) {
+    if (sec.key === 'friend') {
+      cursor += 12;
+      dashedLine(ctx, contentX, cursor, contentX + contentW, 'rgba(255, 208, 128, 0.25)');
+      cursor += 10;
+    }
+    var dotColor = sec.key === 'fame' ? '#FFD98A' : (sec.key === 'char' ? '#66CCFF' : '#FFB86B');
+    var subColor = sec.key === 'char' ? '#BBEEFF' : '#FFE3AE';
+    ctx.beginPath();
+    ctx.arc(contentX + 3, cursor + 8, 3, 0, Math.PI * 2);
+    ctx.fillStyle = dotColor;
+    ctx.fill();
+    ctx.font = birthCanvasFont(13);
+    ctx.fillStyle = subColor;
+    ctx.fillText(sec.title, contentX + 15, cursor + 14);
+    cursor += 22;
+    sec.items.forEach(function (it, idx) {
+      var textX = contentX + (sec.key === 'friend' ? 16 : 0);
+      var lineY;
+      if (sec.key === 'friend') {
+        ctx.beginPath();
+        ctx.arc(contentX + 4, cursor + it.rowH / 2, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFB86B';
+        ctx.fill();
+        lineY = cursor + (it.rowH - it.lines.length * 21) / 2 + 16;
+      } else {
+        lineY = cursor + 22;
+      }
+      for (var li = 0; li < it.lines.length; li++) {
+        drawRuns(ctx, it.lines[li], textX, lineY + li * 21);
+      }
+      if (sec.key !== 'friend' && idx < sec.items.length - 1) {
+        dashedLine(ctx, contentX, cursor + it.rowH, contentX + contentW, 'rgba(102, 204, 255, 0.18)');
+      }
+      cursor += it.rowH;
+    });
+    if (sec.key !== 'friend' && idx < sections.length - 1) cursor += 14;
+  });
+  canvas.toBlob(function (blob) {
+    if (!blob) { toast('图片生成失败'); return; }
+    downloadBlob(blob, '今日生日_' + stamp + '.png');
+    toast('已导出图片');
+  }, 'image/png');
+}
+
+function birthExport(kind) {
+  var data = birthExportData();
+  if (!data.sections.length) { toast('今日没有可导出的生日信息'); return; }
+  var stamp = sel.y + '-' + pad2(sel.m) + '-' + pad2(sel.d);
+  if (kind === 'text') {
+    downloadBlob(new Blob(['\ufeff' + birthExportText(data)], { type: 'text/plain;charset=utf-8' }), '今日生日_' + stamp + '.txt');
+    toast('已导出文字');
+    return;
+  }
+  birthExportImage(data, stamp);
+}
+
+function closeBirthExportMenu() {
+  var menu = $('birthExportMenu');
+  if (menu) menu.hidden = true;
+}
+
+function initBirthExport() {
+  var btn = $('birthExportBtn'), menu = $('birthExportMenu');
+  if (!btn || !menu) return;
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    menu.hidden = !menu.hidden;
+  });
+  menu.addEventListener('click', function (e) {
+    var kind = e.target && e.target.getAttribute ? e.target.getAttribute('data-export') : null;
+    if (!kind) return;
+    closeBirthExportMenu();
+    birthExport(kind);
+  });
+  document.addEventListener('click', function (e) {
+    if (menu.hidden) return;
+    if (btn.contains(e.target) || menu.contains(e.target)) return;
+    closeBirthExportMenu();
+  });
+}
+initBirthExport();
 
 /* 今日生日区下方的亲友生日（总开关 + 子开关均开且当日有人时才显示） */
 /* 新历生日：'身份（详细信息） 姓名 的新历生日'；农历生日：淡紫色'…的农历生日' */
@@ -1627,7 +2465,7 @@ function closeSettings() { $('modalMask').classList.remove('open'); }
 $('settingsBtn').addEventListener('click', openSettings);
 $('modalClose').addEventListener('click', closeSettings);
 $('modalMask').addEventListener('click', function (e) { if (e.target === this) closeSettings(); });
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeSettings(); closeSearch(); } });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeSettings(); closeSearch(); closeBirthExportMenu(); } });
 
 /* ---------- 搜索面板 ---------- */
 function openSearch() {
@@ -1678,7 +2516,13 @@ function escHtml(s) {
 }
 function renderSearch(kw) {
   var box = $('searchResults');
-  if (!kw) { box.innerHTML = '<div class="search-empty">输入关键词开始搜索</div>'; return; }
+  var terms = String(kw || '').split('*').map(function (s) { return s.trim(); }).filter(function (s) { return s; });
+  if (!terms.length) { box.innerHTML = '<div class="search-empty">输入关键词开始搜索</div>'; return; }
+  var hit = function () {
+    var hay = Array.prototype.slice.call(arguments).filter(function (v) { return v !== null && v !== undefined && v !== ''; }).join('\n');
+    for (var t = 0; t < terms.length; t++) if (hay.indexOf(terms[t]) < 0) return false;
+    return true;
+  };
   var items = [], i, r, k, j, e;
   var push = function (it) { if (items.length < 300) items.push(it); };
   var now = TimeSrc.nowDate();
@@ -1689,33 +2533,53 @@ function renderSearch(kw) {
   }
   for (i = 0; i < B.length; i++) {
     r = B[i];
-    if (r.name.indexOf(kw) >= 0 || (r.work || '').indexOf(kw) >= 0) {
+    if (hit(r.name, r.work)) {
       push({ type: '角色', name: r.name, sub: r.work, solar: r.m + '月' + r.d + '日', lunar: '', m: r.m, d: r.d, y: nextSolar(r.m, r.d, y0, m0, d0).y });
+    }
+  }
+  /* 外置生日表中的二次元角色：按姓名或出处搜索，归入「角色」 */
+  var exChars = extSolarRows();
+  for (i = 0; i < exChars.length; i++) {
+    r = exChars[i];
+    if (!isCharRow(r)) continue;
+    if (hit(r.name, r.cls)) {
+      var tgc = nextSolar(r.m, r.d, y0, m0, d0);
+      push({ type: '角色', name: r.name, sub: r.cls || '', solar: r.m + '月' + r.d + '日', lunar: '', m: r.m, d: r.d, y: tgc.y });
+    }
+  }
+  var exLChars = extLunarRows();
+  for (i = 0; i < exLChars.length; i++) {
+    r = exLChars[i];
+    if (!isCharRow(r)) continue;
+    if (hit(r.name, r.cls)) {
+      push({ type: '角色', name: r.name, sub: r.cls || '', solar: '', lunar: L.lunarMonthCN(r.lm, !!r.isLeap) + L.lunarDayCN(r.ld), lm: r.lm, ld: r.ld });
     }
   }
   for (i = 0; i < CE.length; i++) {
     r = CE[i];
-    if (r.name.indexOf(kw) >= 0 || (r.field || '').indexOf(kw) >= 0) {
+    if (hit(r.name, r.field)) {
       var tg2 = nextSolar(r.m, r.d, y0, m0, d0);
       push({ type: '名人', name: r.name, sub: (r.field || '') + (r.y ? ' · ' + r.y : ''), solar: r.m + '月' + r.d + '日', lunar: lunarTxtOf(tg2.y, r.m, r.d), m: r.m, d: r.d, y: tg2.y });
     }
   }
-  var allFB = FB.concat(extSolarRows());
+  var allFB = FB.concat(extSolarRows().filter(function (r) { return !isCharRow(r); }));
   for (i = 0; i < allFB.length; i++) {
     r = allFB[i];
-    if (r.name.indexOf(kw) >= 0) {
+    var fTagS = r.cls ? ((r.role || '') + '（' + r.cls + '）') : (r.role || '');
+    if (hit(r.name, r.role, r.cls, fTagS)) {
       var fl = friendLunarByName[r.name];
       var tg3 = nextSolar(r.m, r.d, y0, m0, d0);
-      var tag = r.cls ? r.role + '（' + r.cls + '）' : (r.role || '');
+      var tag = fTagS;
       var tagType = i < FB.length ? '亲友' : (r.role || (r.cls ? '亲友' : '生日'));
       push({ type: tagType, name: r.name, sub: tag, solar: r.m + '月' + r.d + '日', lunar: fl ? (L.lunarMonthCN(fl.lm, false) + L.lunarDayCN(fl.ld)) : lunarTxtOf(tg3.y, r.m, r.d), m: r.m, d: r.d, y: tg3.y });
     }
   }
-  var allFBL = FBL.concat(extLunarRows());
+  var allFBL = FBL.concat(extLunarRows().filter(function (r) { return !isCharRow(r); }));
   for (i = 0; i < allFBL.length; i++) {
     r = allFBL[i];
-    if (r.name.indexOf(kw) >= 0) {
-      var tagL = r.cls ? r.role + '（' + r.cls + '）' : (r.role || '');
+    var fTagL = r.cls ? ((r.role || '') + '（' + r.cls + '）') : (r.role || '');
+    if (hit(r.name, r.role, r.cls, fTagL)) {
+      var tagL = fTagL;
       var tagTypeL = i < FBL.length ? '亲友·农历' : ((r.role ? r.role : '生日') + '·农历');
       push({ type: tagTypeL, name: r.name, sub: tagL, solar: '', lunar: L.lunarMonthCN(r.lm, !!r.isLeap) + L.lunarDayCN(r.ld), lm: r.lm, ld: r.ld });
     }
@@ -1726,7 +2590,7 @@ function renderSearch(kw) {
     var evs = H[k];
     for (j = 0; j < evs.length; j++) {
       e = evs[j];
-      if (String(e[1]).indexOf(kw) >= 0) {
+      if (hit(String(e[1]))) {
         push({ type: '事件', name: String(e[1]), sub: (e[0] < 0 ? '公元前' + (-e[0]) : e[0]) + ' 年', solar: mm + '月' + dd + '日', lunar: '', m: mm, d: dd });
       }
     }
@@ -1769,6 +2633,8 @@ function jumpToResult(it) {
 
 function syncSettingsUI() {
   $('setShowLunar').checked = settings.showLunar;
+  $('setSunMoonCard').checked = settings.showSunMoonCard;
+  $('setTideCard').checked = settings.showTideCard;
   $('setLunarDetail').checked = settings.showLunarDetail;
   $('setDetailLunar').checked = settings.showDetailLunar;
   $('setDetailYearGz').checked = settings.showDetailYearGz;
@@ -1830,6 +2696,7 @@ function updateLunarDetailSubs() {
 
 var SET_KEY = {
   setShowLunar: 'showLunar', setLunarDetail: 'showLunarDetail', setYiJi: 'showYiJi',
+  setSunMoonCard: 'showSunMoonCard', setTideCard: 'showTideCard',
   setFest: 'showFestival', setBirth: 'showBirthday', setCeleb: 'showCelebrity',
   setChong: 'showChong',
   setHistory: 'showHistory', setBagua: 'showBagua', setTarot: 'showTarot',
@@ -1900,7 +2767,7 @@ function escapeHtml(s) {
 }
 var EXT_TYPE_LABEL = { birthday: '生日表', festival: '节日表', solar: '新历生日表', lunar: '农历生日表' };
 var EXT_HINTS = {
-  birthday: '每行一条，格式：月-日 姓名 身份（班级）<br>新历：<code>3-21 陈铖骏 同学（25级初二10班）</code>　农历（L前缀）：<code>L11-1 张晨萱 同学（25级初一4班、25级初二10班）</code><br>闰月：<code>闰4-24 张梦涵 同学（25级初二10班）</code>　身份可省略：<code>3-21 陈铖骏</code>',
+  birthday: '每行一条：月-日 姓名 身份（班级）<br>新历：<code>3-21 示例姓名 示例身份</code>　农历（L前缀）：<code>L11-1 示例姓名 示例身份</code><br>闰月：<code>闰4-24 示例姓名 示例身份</code>　身份可省略：<code>3-21 示例姓名</code><br>二次元角色：身份写「二次元」，括号内写出处，如 <code>3-21 角色名 二次元（作品名）</code>；只显示在「二次元角色」区，不会进入亲友生日。',
   festival: '每行一条：月-日 节日名<br>公历：<code>10-1 国庆节</code>　农历（L前缀）：<code>L8-15 中秋节</code><br>浮动（F月-第几周-星期几，0=周日）：<code>F5-2-0 母亲节</code>'
 };
 var extState = { tables: [] };
@@ -2804,6 +3671,8 @@ setInterval(function () {
 
 /* 时柱 + 今日吉时自动刷新（随当前时辰/时刻更新） */
 setInterval(function () {
+  if (settings.showSunMoonCard) renderSunMoonCard();
+  if (settings.showTideCard) renderTideCard();
   if (!settings.showLunarDetail) return;
   var el = $('lunarDetail');
   if (!el) return;
