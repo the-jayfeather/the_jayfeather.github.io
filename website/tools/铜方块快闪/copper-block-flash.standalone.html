@@ -1,0 +1,6217 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c1718">
+  <meta name="description" content="我的世界铜方块快闪：浏览 1.21.9 铜器时代的全部铜方块、氧化变种、涂蜡变种与方块状态，并可用浏览器语音朗读。">
+  <title>铜方块快闪 · Copper Block Flash</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj4KICA8cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiMwYjE4MTgiLz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzI1NDMzZCIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPHBvbHlnb24gcG9pbnRzPSIzMiw3IDU5LDIxIDMyLDM1IDUsMjEiIGZpbGw9IiNlOGE0NWYiLz4KICA8cG9seWdvbiBwb2ludHM9IjUsMjEgMzIsMzUgMzIsNTkgNSw0NSIgZmlsbD0iIzhmNGYyNiIvPgogIDxwb2x5Z29uIHBvaW50cz0iNTksMjEgMzIsMzUgMzIsNTkgNTksNDUiIGZpbGw9IiNjNzdhM2YiLz4KICA8cG9seWdvbiBwb2ludHM9IjMyLDcgNTksMjEgMzIsMzUgNSwyMSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWIzMjE4IiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxwYXRoIGQ9Ik01IDIxIDMyIDM1IDMyIDU5IDUgNDVaIE01OSAyMSAzMiAzNSAzMiA1OSA1OSA0NVoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzViMzIxOCIgc3Ryb2tlLXdpZHRoPSIxLjMiLz4KICA8ZyBmaWxsPSIjZmZkMzlhIiBvcGFjaXR5PSIuNTUiPgogICAgPHJlY3QgeD0iMjQiIHk9IjE1IiB3aWR0aD0iMyIgaGVpZ2h0PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iMjAiIHdpZHRoPSI0IiBoZWlnaHQ9IjMiLz4KICAgIDxyZWN0IHg9IjQ0IiB5PSIyNCIgd2lkdGg9IjIiIGhlaWdodD0iMiIvPgogICAgPHJlY3QgeD0iMTUiIHk9IjI0IiB3aWR0aD0iMyIgaGVpZ2h0PSIzIi8+CiAgPC9nPgogIDxnIGZpbGw9IiNmMGJmODMiIG9wYWNpdHk9Ii4zNSI+CiAgICA8cmVjdCB4PSIxMiIgeT0iMzUiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiLz4KICAgIDxyZWN0IHg9IjIyIiB5PSI0NCIgd2lkdGg9IjMiIGhlaWdodD0iNCIvPgogICAgPHJlY3QgeD0iNDQiIHk9IjM4IiB3aWR0aD0iNCIgaGVpZ2h0PSI0Ii8+CiAgICA8cmVjdCB4PSI1MCIgeT0iMzAiIHdpZHRoPSIzIiBoZWlnaHQ9IjMiLz4KICA8L2c+CiAgPGcgZmlsbD0iIzVkOWQ4NiIgb3BhY2l0eT0iLjY1Ij4KICAgIDxyZWN0IHg9IjM4IiB5PSI0MyIgd2lkdGg9IjMiIGhlaWdodD0iMyIvPgogICAgPHJlY3QgeD0iMTgiIHk9IjQwIiB3aWR0aD0iMiIgaGVpZ2h0PSIyIi8+CiAgICA8cmVjdCB4PSI0OSIgeT0iNDciIHdpZHRoPSIyIiBoZWlnaHQ9IjIiLz4KICA8L2c+CiAgPHBhdGggZD0iTTUgMjEgMzIgNyA1OSAyMSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZkOGEyIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9Ii40NSIvPgo8L3N2Zz4K" type="image/svg+xml">
+  <style>
+/* ==========================================================================
+   铜方块快闪 / Copper Block Flash
+   原创 SVG 图形 + Minecraft 铜系列配色
+   ========================================================================== */
+
+:root {
+  --bg-0: #071011;
+  --bg-1: #0a1718;
+  --bg-2: #0f2020;
+  --panel: #102220;
+  --panel-hi: #162d2a;
+  --panel-lo: #0a1817;
+  --ink: #f4e6d2;
+  --ink-soft: #cbbea8;
+  --muted: #8fa69d;
+  --muted-2: #657e76;
+  --line: rgba(229, 165, 103, 0.17);
+  --line-strong: rgba(229, 165, 103, 0.38);
+  --copper: #d8874a;
+  --copper-hi: #f2b56e;
+  --copper-lo: #8a4e28;
+  --verd: #4fa9a0;
+  --verd-hi: #86ddd2;
+  --danger: #e2765d;
+  --ox: #d87f33;
+  --ox-hi: #f0b36e;
+  --ox-deep: #8a4b20;
+  --ox-soft: rgba(216, 127, 51, 0.12);
+  --ox-glow: rgba(216, 127, 51, 0.32);
+  --ox-rgb: 216, 127, 51;
+  --font-ui: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", Consolas, "SFMono-Regular", "Courier New", monospace;
+  --font-pixel: "Lucida Console", "Cascadia Mono", Consolas, monospace;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-pixel: 6px 6px 0 rgba(0, 0, 0, 0.3);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  background: var(--bg-0);
+  scrollbar-color: var(--copper-lo) transparent;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% -10%, rgba(80, 168, 151, 0.09), transparent 65%),
+    linear-gradient(180deg, #081313 0%, #071010 55%, #050c0c 100%);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--copper-hi);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  transform: none !important;
+  filter: none !important;
+}
+
+svg {
+  display: block;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+::selection {
+  color: #1b0e06;
+  background: var(--copper-hi);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  background: #4f3423;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #71482d;
+}
+
+/* --------------------------------------------------------------------------
+   背景
+   -------------------------------------------------------------------------- */
+
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(102, 154, 143, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(102, 154, 143, 0.055) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse 82% 75% at 50% 45%, #000 10%, transparent 78%);
+}
+
+.bg-glow {
+  z-index: -2;
+  background:
+    radial-gradient(circle at 38% 38%, var(--ox-glow), transparent 38%),
+    radial-gradient(circle at 84% 8%, rgba(67, 155, 144, 0.14), transparent 34%),
+    radial-gradient(circle at 8% 92%, rgba(126, 69, 35, 0.14), transparent 34%);
+  opacity: 0.72;
+  transition: background 0.7s var(--ease-out);
+}
+
+.bg-scan {
+  z-index: -1;
+  opacity: 0.16;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgba(0, 0, 0, 0.34) 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+.particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: var(--s, 3px);
+  height: var(--s, 3px);
+  top: var(--t, 50%);
+  left: var(--l, 50%);
+  background: var(--c, var(--copper));
+  opacity: 0;
+  box-shadow: 0 0 10px rgba(var(--ox-rgb), 0.3);
+  animation: drift var(--d, 14s) linear var(--delay, 0s) infinite;
+}
+
+@keyframes drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.7);
+  }
+  12% {
+    opacity: 0.45;
+  }
+  75% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--dx, 24px), -120px, 0) scale(1.1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   应用骨架 / 顶栏
+   -------------------------------------------------------------------------- */
+
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 68px;
+  padding: 12px clamp(16px, 3.2vw, 46px);
+  border-bottom: 1px solid rgba(229, 165, 103, 0.1);
+  background: linear-gradient(180deg, rgba(8, 19, 19, 0.8), rgba(8, 19, 19, 0.2));
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  color: inherit;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.brand-cube {
+  position: relative;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 40px;
+  filter: drop-shadow(3px 4px 0 rgba(0, 0, 0, 0.35));
+  transition: transform 0.22s var(--ease-out);
+}
+
+.brand:hover .brand-cube {
+  transform: translateY(-2px) rotate(-2deg);
+}
+
+.brand-cube__top,
+.brand-cube__left,
+.brand-cube__right {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0, 100% 25%, 50% 50%, 0 25%);
+}
+
+.brand-cube__top {
+  background: linear-gradient(135deg, #f4bd7e, #cf8145);
+}
+
+.brand-cube__left {
+  clip-path: polygon(0 25%, 50% 50%, 50% 100%, 0 75%);
+  background: linear-gradient(135deg, #a05a2d, #67371b);
+}
+
+.brand-cube__right {
+  clip-path: polygon(100% 25%, 50% 50%, 50% 100%, 100% 75%);
+  background: linear-gradient(135deg, #ce7b3f, #8a4a24);
+}
+
+.brand-cube__top::after,
+.brand-cube__right::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(90deg, transparent 46%, rgba(255, 255, 255, 0.22) 47% 52%, transparent 53%),
+    linear-gradient(transparent 46%, rgba(0, 0, 0, 0.2) 47% 52%, transparent 53%);
+  background-size: 10px 10px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.brand-text strong {
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.brand-text small {
+  color: var(--muted);
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  white-space: nowrap;
+}
+
+.topbar-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+.version-pill,
+.count-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  background: rgba(8, 20, 19, 0.56);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  white-space: nowrap;
+}
+
+.version-pill i {
+  width: 7px;
+  height: 7px;
+  background: var(--verd);
+  box-shadow: 0 0 9px rgba(79, 169, 160, 0.8);
+  animation: status-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.count-pill {
+  border-color: rgba(216, 127, 51, 0.22);
+  color: var(--copper-hi);
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  color: var(--ink-soft);
+  transition: 0.16s ease;
+}
+
+.icon-btn:hover {
+  border-color: var(--line);
+  background: rgba(229, 165, 103, 0.08);
+  color: var(--copper-hi);
+}
+
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+/* --------------------------------------------------------------------------
+   主工作区
+   -------------------------------------------------------------------------- */
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 382px);
+  gap: 16px;
+  width: 100%;
+  max-width: 1680px;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 16px clamp(16px, 3.2vw, 46px) 12px;
+  flex: 1 1 auto;
+}
+
+/* --------------------------------------------------------------------------
+   舞台
+   -------------------------------------------------------------------------- */
+
+.stage {
+  --stage-pad: clamp(18px, 2.5vw, 36px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 620px;
+  height: calc(100dvh - 138px);
+  padding: var(--stage-pad);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(17, 39, 36, 0.88), rgba(8, 19, 19, 0.96) 63%),
+    var(--panel);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 235, 211, 0.08),
+    inset 0 -32px 70px rgba(0, 0, 0, 0.22),
+    var(--shadow-pixel);
+  isolation: isolate;
+}
+
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.5;
+  background:
+    radial-gradient(circle at 50% 33%, var(--ox-glow), transparent 47%),
+    linear-gradient(115deg, transparent 0 46%, rgba(var(--ox-rgb), 0.035) 46.2% 46.6%, transparent 46.8%),
+    repeating-linear-gradient(0deg, transparent 0 34px, rgba(255, 255, 255, 0.022) 35px);
+  pointer-events: none;
+  transition: background 0.6s var(--ease-out);
+}
+
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  z-index: -1;
+  border: 1px solid rgba(229, 165, 103, 0.075);
+  pointer-events: none;
+}
+
+.stage-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 28px;
+}
+
+.stage-kicker,
+.stage-tools {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.category-badge,
+.seq-no,
+.mode-hint,
+.speaking-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  border: 1px solid var(--line);
+  background: rgba(6, 17, 16, 0.62);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  white-space: nowrap;
+}
+
+.category-badge {
+  padding: 0 9px;
+  border-color: rgba(var(--ox-rgb), 0.32);
+  color: var(--ox-hi);
+  text-transform: uppercase;
+}
+
+.seq-no {
+  padding: 0 8px;
+  color: var(--muted);
+}
+
+.mode-hint {
+  padding: 0 9px;
+  color: var(--muted);
+}
+
+.speaking-pill {
+  gap: 7px;
+  padding: 0 10px;
+  border-color: rgba(79, 169, 160, 0.4);
+  color: var(--verd-hi);
+}
+
+.equalizer {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 11px;
+}
+
+.equalizer i {
+  width: 2px;
+  height: 4px;
+  background: currentColor;
+  animation: eq 0.7s ease-in-out infinite alternate;
+}
+
+.equalizer i:nth-child(2) { animation-delay: 0.12s; }
+.equalizer i:nth-child(3) { animation-delay: 0.24s; }
+.equalizer i:nth-child(4) { animation-delay: 0.36s; }
+
+@keyframes eq {
+  from { height: 3px; }
+  to { height: 11px; }
+}
+
+/* 方块画框 */
+
+.art-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 1 1 auto;
+  min-height: 300px;
+  margin: 4px 0 0;
+}
+
+.art-frame::before,
+.art-frame::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: rgba(var(--ox-rgb), 0.42);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.art-frame::before {
+  top: 5%;
+  left: 1%;
+  border-width: 1px 0 0 1px;
+}
+
+.art-frame::after {
+  right: 1%;
+  bottom: 8%;
+  border-width: 0 1px 1px 0;
+}
+
+.art-halo {
+  position: absolute;
+  width: min(72%, 470px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ox-glow), transparent 67%);
+  filter: blur(12px);
+  opacity: 0.8;
+  transition: background 0.6s var(--ease-out);
+}
+
+.art-grid {
+  position: absolute;
+  width: min(58%, 360px);
+  aspect-ratio: 1.75;
+  bottom: 12%;
+  background-image:
+    linear-gradient(rgba(var(--ox-rgb), 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--ox-rgb), 0.2) 1px, transparent 1px);
+  background-size: 28px 20px;
+  mask-image: radial-gradient(ellipse at center, #000 0%, transparent 72%);
+  opacity: 0.5;
+  transform: perspective(300px) rotateX(64deg) rotateZ(-45deg) scale(1.18);
+}
+
+.block-art {
+  position: relative;
+  z-index: 2;
+  width: clamp(250px, 39vh, 390px);
+  max-width: 78%;
+  aspect-ratio: 1;
+  filter: drop-shadow(0 28px 20px rgba(0, 0, 0, 0.4));
+  animation: art-float 5.2s ease-in-out infinite;
+  will-change: transform;
+}
+
+.block-art svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.block-art.is-flashing {
+  animation: art-flash 0.46s var(--ease-out), art-float 5.2s ease-in-out 0.46s infinite;
+}
+
+@keyframes art-float {
+  0%, 100% { transform: translateY(0) rotate(-0.4deg); }
+  50% { transform: translateY(-10px) rotate(0.5deg); }
+}
+
+@keyframes art-flash {
+  0% { opacity: 0.2; transform: scale(0.82) translateY(12px) rotate(-3deg); filter: brightness(2.2) drop-shadow(0 28px 20px rgba(0, 0, 0, 0.4)); }
+  58% { opacity: 1; transform: scale(1.045) translateY(-3px) rotate(0.6deg); filter: brightness(1.12) drop-shadow(0 28px 20px rgba(0, 0, 0, 0.4)); }
+  100% { opacity: 1; transform: scale(1) translateY(0) rotate(0); filter: brightness(1) drop-shadow(0 28px 20px rgba(0, 0, 0, 0.4)); }
+}
+
+.facing-badge,
+.water-badge {
+  position: absolute;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(var(--ox-rgb), 0.38);
+  background: rgba(5, 15, 14, 0.82);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(6px);
+}
+
+.facing-badge {
+  right: 3%;
+  bottom: 10%;
+}
+
+.facing-badge svg,
+.water-badge svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.facing-needle {
+  display: block;
+  width: 0;
+  height: 0;
+  margin-left: 1px;
+  border-right: 4px solid transparent;
+  border-bottom: 8px solid var(--copper-hi);
+  border-left: 4px solid transparent;
+  transform-origin: 50% 70%;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.water-badge {
+  left: 3%;
+  bottom: 10%;
+  border-color: rgba(90, 195, 210, 0.4);
+  color: #8adee9;
+}
+
+.wax-stamp {
+  position: absolute;
+  top: 9%;
+  right: 4%;
+  z-index: 4;
+  padding: 3px 7px;
+  border: 1px solid rgba(250, 210, 127, 0.52);
+  color: #f6d58b;
+  background: rgba(75, 47, 16, 0.54);
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  transform: rotate(6deg);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* 名称与状态 */
+
+.name-lockup {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.core-badges {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.ox-badge,
+.wax-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 25px;
+  padding: 2px 9px;
+  border: 1px solid rgba(var(--ox-rgb), 0.34);
+  color: var(--ox-hi);
+  background: rgba(var(--ox-rgb), 0.09);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.ox-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  box-shadow: 0 0 9px currentColor;
+}
+
+.wax-badge {
+  border-color: var(--line);
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.wax-badge.is-waxed {
+  border-color: rgba(246, 213, 139, 0.35);
+  color: #f6d58b;
+  background: rgba(246, 213, 139, 0.08);
+}
+
+.block-name {
+  margin: 0;
+  color: #fff5e7;
+  font-size: clamp(34px, 4.2vw, 62px);
+  font-weight: 900;
+  line-height: 1.06;
+  letter-spacing: 0.015em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  text-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.65),
+    0 0 28px rgba(var(--ox-rgb), 0.25);
+}
+
+.block-name.is-long {
+  font-size: clamp(29px, 3.45vw, 52px);
+}
+
+.block-name.is-very-long {
+  font-size: clamp(24px, 2.8vw, 42px);
+  line-height: 1.1;
+}
+
+.block-name.is-ultra-long {
+  font-size: clamp(19px, 2.2vw, 34px);
+  line-height: 1.15;
+}
+
+.state-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 29px;
+  margin-top: 13px;
+}
+
+.state-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 27px;
+  padding: 2px 8px 2px 7px;
+  border: 1px solid rgba(218, 205, 183, 0.14);
+  background: rgba(8, 18, 17, 0.58);
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.state-chip::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  background: rgba(var(--ox-rgb), 0.8);
+}
+
+.state-chip--water {
+  border-color: rgba(90, 195, 210, 0.24);
+  color: #a7e5eb;
+  background: rgba(32, 109, 118, 0.13);
+}
+
+.state-chip--water::before {
+  background: #69cfda;
+}
+
+.state-chip--facing {
+  border-color: rgba(241, 180, 111, 0.2);
+  color: #ecc799;
+}
+
+.state-chip--power {
+  border-color: rgba(221, 109, 87, 0.26);
+  color: #eaa08e;
+}
+
+.state-chip--power::before {
+  background: #e2765d;
+  box-shadow: 0 0 8px #e2765d;
+}
+
+.state-chip--custom {
+  border-style: dashed;
+  border-color: rgba(138, 222, 211, 0.32);
+  color: #9ce0d7;
+}
+
+.state-chip--none {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+.state-chip--none::before {
+  background: var(--muted-2);
+}
+
+.block-id {
+  width: 100%;
+  margin: 11px 0 0;
+  overflow: hidden;
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.025em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.block-id:hover {
+  color: var(--muted);
+  white-space: normal;
+  word-break: break-all;
+}
+
+/* 下一项 / 进度 */
+
+.next-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 920px;
+  margin: 16px auto 0;
+  padding-top: 11px;
+  border-top: 1px solid rgba(229, 165, 103, 0.1);
+  min-height: 32px;
+}
+
+.next-label {
+  flex: 0 0 auto;
+  color: var(--muted-2);
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+}
+
+.next-name {
+  min-width: 0;
+  max-width: 62%;
+  overflow: hidden;
+  padding: 2px 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.next-name:hover {
+  color: var(--copper-hi);
+}
+
+.type-progress {
+  margin-left: auto;
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.progress-wrap {
+  width: 100%;
+  max-width: 920px;
+  margin: 10px auto 0;
+}
+
+.progress-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.045em;
+}
+
+.play-hint {
+  overflow: hidden;
+  color: var(--muted-2);
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.play-hint.is-playing {
+  color: var(--copper-hi);
+}
+
+.progress-track {
+  position: relative;
+  width: 100%;
+  height: 7px;
+  overflow: hidden;
+  border: 1px solid rgba(229, 165, 103, 0.16);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 15px, rgba(0, 0, 0, 0.2) 15px 16px),
+    rgba(0, 0, 0, 0.3);
+}
+
+.progress-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--ox-deep), var(--ox), var(--ox-hi));
+  box-shadow: 0 0 12px var(--ox-glow);
+  transition: width 0.28s var(--ease-out);
+}
+
+.progress-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0 18%, rgba(255, 255, 255, 0.15) 22%, transparent 28%);
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.is-playing .progress-shine {
+  opacity: 1;
+  animation: shine 2.4s linear infinite;
+}
+
+@keyframes shine {
+  to { transform: translateX(110%); }
+}
+
+/* 播放控件 */
+
+.player-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+  max-width: 920px;
+  margin: 16px auto 0;
+}
+
+.control-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+}
+
+.control-row--speech .speed-control {
+  margin-left: auto;
+}
+
+.round-btn {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  background: rgba(8, 20, 19, 0.62);
+  color: var(--ink-soft);
+  transition: 0.16s ease;
+}
+
+.round-btn:hover {
+  border-color: var(--line-strong);
+  background: rgba(229, 165, 103, 0.09);
+  color: var(--copper-hi);
+  transform: translateY(-1px);
+}
+
+.round-btn:active {
+  transform: translateY(1px);
+}
+
+.round-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 148px;
+  height: 44px;
+  padding: 0 18px;
+  border: 1px solid #f0b36e;
+  color: #211007;
+  background: linear-gradient(180deg, #f2b56e, #d8874a 46%, #bd6b34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 221, 0.52),
+    3px 3px 0 rgba(0, 0, 0, 0.36);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  transition: 0.15s ease;
+}
+
+.play-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 221, 0.52),
+    4px 5px 0 rgba(0, 0, 0, 0.32);
+}
+
+.play-btn:active {
+  transform: translate(1px, 2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 221, 0.4),
+    1px 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.play-btn__icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1;
+}
+
+.control-divider {
+  width: 1px;
+  height: 26px;
+  margin: 0 3px;
+  background: var(--line);
+}
+
+.control-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 9px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  transition: 0.15s;
+}
+
+.control-toggle:hover {
+  color: var(--ink);
+}
+
+.control-toggle .toggle-icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.55;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.control-toggle.is-on {
+  color: var(--copper-hi);
+}
+
+.control-toggle .switch {
+  position: relative;
+  display: block;
+  width: 25px;
+  height: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.3);
+  transition: 0.18s;
+}
+
+.control-toggle .switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 7px;
+  height: 7px;
+  background: var(--muted-2);
+  transition: 0.18s var(--ease-out);
+}
+
+.control-toggle.is-on .switch {
+  border-color: rgba(216, 127, 51, 0.42);
+  background: rgba(216, 127, 51, 0.13);
+}
+
+.control-toggle.is-on .switch::after {
+  left: 14px;
+  background: var(--copper-hi);
+  box-shadow: 0 0 7px rgba(216, 127, 51, 0.7);
+}
+
+.control-toggle.is-unavailable {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.speed-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.voice-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 36px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.voice-control select {
+  width: 168px;
+  min-width: 0;
+  height: 28px;
+  padding: 0 24px 0 7px;
+  overflow: hidden;
+  border: 1px solid rgba(229, 165, 103, 0.18);
+  border-radius: 0;
+  outline: none;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--ink-soft);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.voice-control .rate-select {
+  width: 78px;
+  padding-right: 15px;
+}
+
+.voice-control select:hover {
+  border-color: rgba(229, 165, 103, 0.34);
+  color: var(--ink);
+}
+
+.voice-control select:focus {
+  border-color: rgba(229, 165, 103, 0.52);
+  outline: none;
+}
+
+.voice-control select:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.voice-control option,
+.voice-control optgroup {
+  color: var(--ink);
+  background: #102220;
+}
+
+.speed-control input[type="range"] {
+  width: 82px;
+  height: 18px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.speed-control input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border: 1px solid rgba(229, 165, 103, 0.16);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.speed-control input[type="range"]::-webkit-slider-thumb {
+  width: 10px;
+  height: 16px;
+  margin-top: -7px;
+  appearance: none;
+  border: 1px solid #f0b36e;
+  background: var(--copper);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.speed-control input[type="range"]::-moz-range-track {
+  height: 4px;
+  border: 1px solid rgba(229, 165, 103, 0.16);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.speed-control input[type="range"]::-moz-range-thumb {
+  width: 10px;
+  height: 16px;
+  border: 1px solid #f0b36e;
+  border-radius: 0;
+  background: var(--copper);
+}
+
+.speed-control output {
+  min-width: 36px;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   侧栏
+   -------------------------------------------------------------------------- */
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: calc(100dvh - 138px);
+  min-height: 620px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(16, 34, 32, 0.94), rgba(8, 19, 18, 0.97)),
+    var(--panel);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 235, 211, 0.06),
+    var(--shadow-pixel);
+}
+
+.panel-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.panel-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 47px;
+  border-right: 1px solid rgba(229, 165, 103, 0.08);
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  transition: 0.15s;
+}
+
+.panel-tab:last-child {
+  border-right: 0;
+}
+
+.panel-tab:hover {
+  color: var(--ink-soft);
+  background: rgba(229, 165, 103, 0.04);
+}
+
+.panel-tab.is-active {
+  color: var(--copper-hi);
+  background: rgba(229, 165, 103, 0.07);
+}
+
+.panel-tab.is-active::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  bottom: -1px;
+  left: 12px;
+  height: 2px;
+  background: var(--copper);
+  box-shadow: 0 0 10px var(--ox-glow);
+}
+
+.tab-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  background: rgba(229, 165, 103, 0.14);
+  color: var(--copper-hi);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1;
+}
+
+.panel-pane {
+  display: none;
+  flex-direction: column;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+}
+
+.panel-pane.is-active {
+  display: flex;
+}
+
+.search-row {
+  flex: 0 0 auto;
+}
+
+.search-box {
+  position: relative;
+  display: block;
+}
+
+.search-box svg {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.6;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search-box input {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px 0 33px;
+  border: 1px solid rgba(229, 165, 103, 0.13);
+  border-radius: 0;
+  outline: none;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--ink);
+  font-size: 12px;
+  transition: 0.16s;
+}
+
+.search-box input::placeholder {
+  color: var(--muted-2);
+}
+
+.search-box input:focus {
+  border-color: rgba(229, 165, 103, 0.4);
+  background: rgba(0, 0, 0, 0.3);
+  outline: none;
+}
+
+.bulk-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.mini-btn {
+  height: 25px;
+  padding: 0 8px;
+  border: 1px solid rgba(229, 165, 103, 0.13);
+  color: var(--muted);
+  font-size: 10px;
+  transition: 0.15s;
+}
+
+.mini-btn:hover {
+  border-color: var(--line-strong);
+  color: var(--copper-hi);
+}
+
+.selected-summary {
+  margin-left: auto;
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.mode-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 11px;
+  padding: 9px 10px;
+  border: 1px solid rgba(229, 165, 103, 0.1);
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.mode-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mode-copy strong {
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mode-copy small {
+  overflow: hidden;
+  color: var(--muted-2);
+  font-size: 9px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.segmented {
+  display: inline-flex;
+  flex: 0 0 auto;
+  border: 1px solid rgba(229, 165, 103, 0.16);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.segment {
+  height: 25px;
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 10px;
+  transition: 0.15s;
+}
+
+.segment + .segment {
+  border-left: 1px solid rgba(229, 165, 103, 0.12);
+}
+
+.segment:hover {
+  color: var(--ink-soft);
+}
+
+.segment.is-active {
+  background: rgba(216, 127, 51, 0.17);
+  color: var(--copper-hi);
+}
+
+.library-list {
+  flex: 1 1 auto;
+  margin-top: 12px;
+  padding-bottom: 6px;
+}
+
+.lib-group {
+  margin-bottom: 12px;
+}
+
+.lib-group-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 5px;
+  padding: 0 2px;
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lib-group-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(229, 165, 103, 0.08);
+}
+
+.lib-item {
+  display: grid;
+  grid-template-columns: 20px 30px minmax(0, 1fr) auto 24px;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 5px 5px 5px 6px;
+  border: 1px solid transparent;
+  transition: 0.14s;
+}
+
+.lib-item + .lib-item {
+  margin-top: 1px;
+}
+
+.lib-item:hover {
+  border-color: rgba(229, 165, 103, 0.1);
+  background: rgba(229, 165, 103, 0.035);
+}
+
+.lib-item.is-selected {
+  border-color: rgba(229, 165, 103, 0.09);
+  background: rgba(229, 165, 103, 0.05);
+}
+
+.lib-item.is-dimmed {
+  opacity: 0.38;
+}
+
+.lib-check {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(229, 165, 103, 0.22);
+  background: rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.lib-check input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lib-check:focus-within {
+  outline: 2px solid var(--copper-hi);
+  outline-offset: 2px;
+}
+
+.lib-check svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: #241207;
+  stroke-width: 2.6;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: 0.15s var(--ease-out);
+}
+
+.lib-item.is-selected .lib-check {
+  border-color: #e6a25e;
+  background: linear-gradient(180deg, #f0b36e, #c97a3e);
+}
+
+.lib-item.is-selected .lib-check svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lib-glyph {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--glyph, #d8874a) 86%, white) 0 28%, transparent 28%),
+    linear-gradient(215deg, var(--glyph, #d8874a) 0 44%, color-mix(in srgb, var(--glyph, #d8874a) 58%, black) 45% 100%);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.22));
+}
+
+.lib-name {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.lib-name strong {
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lib-name small {
+  overflow: hidden;
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lib-count {
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.lib-jump {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: var(--muted-2);
+  opacity: 0.4;
+  transition: 0.14s;
+}
+
+.lib-jump svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+}
+
+.lib-item:hover .lib-jump,
+.lib-jump:focus-visible {
+  opacity: 1;
+}
+
+.lib-jump:hover {
+  color: var(--copper-hi);
+}
+
+.lib-empty {
+  padding: 22px 10px;
+  color: var(--muted-2);
+  font-size: 12px;
+  text-align: center;
+}
+
+.panel-note {
+  flex: 0 0 auto;
+  margin: 10px 1px 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(229, 165, 103, 0.08);
+  color: var(--muted-2);
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+.inline-key {
+  color: var(--copper);
+  font-family: var(--font-mono);
+}
+
+/* 自定义 */
+
+.custom-hero {
+  display: flex;
+  gap: 11px;
+  padding: 12px;
+  border: 1px dashed rgba(229, 165, 103, 0.18);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.custom-hero__mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(229, 165, 103, 0.26);
+  color: var(--copper-hi);
+  font-family: var(--font-pixel);
+  font-size: 18px;
+}
+
+.custom-hero strong {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.custom-hero p {
+  margin: 3px 0 0;
+  color: var(--muted-2);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 15px;
+  border: 1px solid #e7a25e;
+  color: #211007;
+  background: linear-gradient(180deg, #edb071, #d08448 52%, #b96731);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  transition: 0.15s;
+}
+
+.primary-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.primary-btn:hover {
+  filter: brightness(1.07);
+  transform: translateY(-1px);
+}
+
+.primary-btn:active {
+  transform: translate(1px, 1px);
+}
+
+.primary-btn--wide {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.custom-list {
+  flex: 1 1 auto;
+  margin-top: 12px;
+}
+
+.custom-empty {
+  padding: 28px 10px;
+  border: 1px dashed rgba(229, 165, 103, 0.12);
+  color: var(--muted-2);
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.custom-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid rgba(229, 165, 103, 0.12);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.custom-card + .custom-card {
+  margin-top: 6px;
+}
+
+.custom-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.custom-card-title {
+  min-width: 0;
+  flex: 1;
+}
+
+.custom-card-title strong {
+  display: block;
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-card-title small {
+  display: block;
+  overflow: hidden;
+  margin-top: 1px;
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-card-actions {
+  display: flex;
+  gap: 3px;
+}
+
+.custom-card-actions button {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid transparent;
+  color: var(--muted-2);
+  transition: 0.14s;
+}
+
+.custom-card-actions button:hover {
+  border-color: var(--line);
+  color: var(--copper-hi);
+}
+
+.custom-card-actions button[data-action="delete"]:hover {
+  border-color: rgba(226, 118, 93, 0.3);
+  color: var(--danger);
+}
+
+.custom-card-actions svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.custom-card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.custom-card-chips span {
+  padding: 1px 5px;
+  background: rgba(229, 165, 103, 0.08);
+  color: var(--muted);
+  font-size: 9px;
+}
+
+/* 顺序说明 */
+
+.order-head {
+  margin-bottom: 14px;
+}
+
+.order-eyebrow,
+.modal-eyebrow {
+  color: var(--copper);
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+}
+
+.order-head h2 {
+  margin: 4px 0 5px;
+  font-size: 23px;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+}
+
+.order-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.order-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order-list li {
+  display: grid;
+  grid-template-columns: 27px 1fr;
+  gap: 9px;
+  padding: 9px 0;
+  border-top: 1px solid rgba(229, 165, 103, 0.08);
+}
+
+.order-list li b {
+  color: var(--copper);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.order-list li span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.order-list li strong {
+  display: block;
+  margin-bottom: 1px;
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.order-example {
+  margin-top: 12px;
+  padding: 11px;
+  border-left: 2px solid var(--copper);
+  background: rgba(229, 165, 103, 0.055);
+}
+
+.order-example__label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--copper-hi);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.order-example p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.85;
+}
+
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.shortcut-grid span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted-2);
+  font-size: 9px;
+}
+
+kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 4px;
+  border: 1px solid rgba(229, 165, 103, 0.16);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 8px;
+}
+
+.danger-link {
+  margin-top: 18px;
+  padding: 6px 0;
+  color: rgba(226, 118, 93, 0.72);
+  font-size: 10px;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.danger-link:hover {
+  color: var(--danger);
+}
+
+/* --------------------------------------------------------------------------
+   页脚
+   -------------------------------------------------------------------------- */
+
+.site-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  min-height: 34px;
+  padding: 4px 18px 8px;
+  color: rgba(143, 166, 157, 0.46);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.foot-dot {
+  width: 3px;
+  height: 3px;
+  background: currentColor;
+}
+
+/* --------------------------------------------------------------------------
+   弹窗 / Toast
+   -------------------------------------------------------------------------- */
+
+.modal {
+  width: min(560px, calc(100vw - 28px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid rgba(229, 165, 103, 0.32);
+  background:
+    linear-gradient(180deg, rgba(20, 40, 37, 0.99), rgba(8, 19, 18, 0.99)),
+    var(--panel);
+  color: var(--ink);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.7),
+    16px 16px 0 rgba(0, 0, 0, 0.28);
+}
+
+.modal::backdrop {
+  background: rgba(2, 8, 8, 0.76);
+  backdrop-filter: blur(5px);
+}
+
+.modal[open] {
+  animation: modal-in 0.24s var(--ease-out);
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 18px 13px;
+  border-bottom: 1px solid rgba(229, 165, 103, 0.12);
+}
+
+.modal-head h2 {
+  margin: 4px 0 0;
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.modal-close {
+  flex: 0 0 auto;
+  margin-top: -2px;
+}
+
+.modal-body {
+  padding: 16px 18px 19px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 13px;
+}
+
+.field > span {
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.field > span em {
+  color: var(--copper);
+  font-style: normal;
+}
+
+.field > span small {
+  margin-left: 4px;
+  color: var(--muted-2);
+  font-size: 9px;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 40px;
+  padding: 0 11px;
+  border: 1px solid rgba(229, 165, 103, 0.18);
+  border-radius: 0;
+  outline: none;
+  background: rgba(0, 0, 0, 0.26);
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: rgba(229, 165, 103, 0.52);
+  background: rgba(0, 0, 0, 0.36);
+  outline: none;
+}
+
+.field input::placeholder {
+  color: var(--muted-2);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+}
+
+.check-field {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  margin-top: 20px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.check-field input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.fake-check {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(229, 165, 103, 0.25);
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.fake-check svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: #241207;
+  stroke-width: 2.6;
+  opacity: 0;
+  transition: 0.14s;
+}
+
+.check-field input:checked + .fake-check {
+  border-color: #e6a25e;
+  background: linear-gradient(180deg, #f0b36e, #c97a3e);
+}
+
+.check-field input:checked + .fake-check svg {
+  opacity: 1;
+}
+
+.form-hint {
+  margin: 3px 0 0;
+  padding: 9px 10px;
+  border-left: 2px solid rgba(229, 165, 103, 0.35);
+  background: rgba(229, 165, 103, 0.045);
+  color: var(--muted-2);
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 13px 18px 17px;
+  border-top: 1px solid rgba(229, 165, 103, 0.1);
+}
+
+.ghost-btn {
+  min-height: 38px;
+  padding: 0 15px;
+  border: 1px solid rgba(229, 165, 103, 0.18);
+  color: var(--muted);
+  font-size: 12px;
+  transition: 0.15s;
+}
+
+.ghost-btn:hover {
+  border-color: var(--line-strong);
+  color: var(--ink-soft);
+}
+
+/* 说明弹窗 */
+
+.modal--help {
+  width: min(600px, calc(100vw - 28px));
+}
+
+.help-body > p {
+  margin: 0 0 13px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.75;
+}
+
+.help-list {
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.help-list li {
+  padding: 8px 0;
+  border-top: 1px solid rgba(229, 165, 103, 0.08);
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.help-list b {
+  margin-right: 5px;
+  color: var(--copper-hi);
+  font-size: 11px;
+}
+
+.help-callout {
+  padding: 11px 12px;
+  border: 1px solid rgba(79, 169, 160, 0.2);
+  background: rgba(79, 169, 160, 0.055);
+}
+
+.help-callout strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--verd-hi);
+  font-size: 11px;
+}
+
+.help-callout p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.help-callout .help-voice-note {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(79, 169, 160, 0.16);
+}
+
+.help-callout b {
+  color: var(--copper-hi);
+  font-weight: 600;
+}
+
+.help-callout code {
+  color: var(--copper-hi);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.help-source {
+  margin-top: 14px !important;
+  padding-top: 10px;
+  border-top: 1px solid rgba(229, 165, 103, 0.08);
+  color: var(--muted-2) !important;
+  font-size: 9px !important;
+}
+
+.toast {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  z-index: 90;
+  max-width: min(440px, calc(100vw - 28px));
+  padding: 9px 13px;
+  border: 1px solid rgba(229, 165, 103, 0.3);
+  background: rgba(8, 20, 19, 0.96);
+  color: var(--ink-soft);
+  font-size: 11px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translate(-50%, 11px);
+  transition: 0.22s var(--ease-out);
+  pointer-events: none;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* --------------------------------------------------------------------------
+   全屏
+   -------------------------------------------------------------------------- */
+
+:fullscreen .topbar,
+:fullscreen .site-foot,
+:fullscreen .side-panel {
+  display: none;
+}
+
+:fullscreen .workspace {
+  grid-template-columns: 1fr;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  padding: 0;
+}
+
+:fullscreen .stage {
+  height: 100dvh;
+  min-height: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   自适应
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1420px) and (min-width: 901px) {
+  .voice-control .voice-label {
+    display: none;
+  }
+
+  .voice-control select {
+    width: 158px;
+  }
+
+  .player-controls {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 1120px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .block-name {
+    font-size: clamp(32px, 5vw, 52px);
+  }
+
+  .art-frame {
+    min-height: 270px;
+  }
+
+  .block-art {
+    width: clamp(230px, 34vh, 330px);
+  }
+
+  .control-divider {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    padding-bottom: 20px;
+  }
+
+  .stage,
+  .side-panel {
+    height: auto;
+    min-height: 0;
+  }
+
+  .stage {
+    min-height: 680px;
+  }
+
+  .side-panel {
+    max-height: 640px;
+  }
+
+  .panel-pane {
+    max-height: 560px;
+  }
+
+  .version-pill {
+    display: none;
+  }
+
+  .block-name {
+    font-size: clamp(34px, 7vw, 58px);
+  }
+
+  .block-art {
+    width: clamp(250px, 46vh, 370px);
+  }
+}
+
+@media (max-width: 620px) {
+  .topbar {
+    min-height: 60px;
+    padding: 9px 13px;
+  }
+
+  .brand {
+    gap: 9px;
+  }
+
+  .brand-cube {
+    width: 31px;
+    height: 33px;
+  }
+
+  .brand-text strong {
+    font-size: 16px;
+  }
+
+  .brand-text small {
+    font-size: 7px;
+  }
+
+  .count-pill {
+    display: none;
+  }
+
+  .workspace {
+    gap: 10px;
+    padding: 10px 10px 0;
+  }
+
+  .stage {
+    min-height: 650px;
+    padding: 14px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.24);
+  }
+
+  .side-panel {
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.24);
+  }
+
+  .stage-topline {
+    align-items: flex-start;
+  }
+
+  .mode-hint {
+    display: none;
+  }
+
+  .art-frame {
+    min-height: 250px;
+  }
+
+  .block-art {
+    width: min(70vw, 300px);
+  }
+
+  .facing-badge {
+    right: 0;
+    bottom: 4%;
+  }
+
+  .water-badge {
+    left: 0;
+    bottom: 4%;
+  }
+
+  .wax-stamp {
+    top: 4%;
+    right: 0;
+  }
+
+  .block-name {
+    font-size: clamp(29px, 8.4vw, 44px);
+  }
+
+  .state-chips {
+    gap: 4px;
+    margin-top: 10px;
+  }
+
+  .state-chip {
+    min-height: 25px;
+    padding: 1px 6px 1px 5px;
+    font-size: 10px;
+  }
+
+  .next-line {
+    margin-top: 12px;
+  }
+
+  .next-name {
+    max-width: 55%;
+  }
+
+  .type-progress {
+    font-size: 9px;
+  }
+
+  .player-controls {
+    gap: 7px;
+    margin-top: 12px;
+  }
+
+  .control-row {
+    gap: 7px;
+  }
+
+  .round-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .play-btn {
+    min-width: 126px;
+    height: 40px;
+    padding: 0 13px;
+    font-size: 12px;
+  }
+
+  .control-toggle {
+    height: 32px;
+    padding: 0 6px;
+    font-size: 10px;
+  }
+
+  .speed-control {
+    flex: 0 0 100%;
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+    height: 28px;
+  }
+
+  .voice-control {
+    flex: 0 1 auto;
+    justify-content: flex-start;
+    height: 28px;
+  }
+
+  .voice-control .voice-label {
+    display: none;
+  }
+
+  .voice-control select {
+    width: 145px;
+  }
+
+  .voice-control .rate-select {
+    width: 72px;
+  }
+
+  .speed-control input[type="range"] {
+    width: 95px;
+  }
+
+  .modal-head,
+  .modal-body,
+  .modal-foot {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .check-field {
+    margin-top: 0;
+  }
+
+  .shortcut-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-foot {
+    padding-bottom: 12px;
+  }
+}
+
+@media (max-height: 820px) and (min-width: 901px) {
+  .stage,
+  .side-panel {
+    min-height: 600px;
+    height: calc(100dvh - 130px);
+  }
+
+  .stage {
+    --stage-pad: 18px clamp(18px, 2vw, 28px);
+  }
+
+  .art-frame {
+    min-height: 200px;
+  }
+
+  .block-art {
+    width: clamp(190px, 28vh, 265px);
+  }
+
+  .block-name {
+    font-size: clamp(30px, 3.35vw, 46px);
+  }
+
+  .player-controls {
+    margin-top: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <svg class="icon-sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5.5h3v13H8zm5 0h3v13h-3z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 9.5v5h3l4 3.5v-12L7 9.5zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+    <symbol id="i-muted" viewBox="0 0 24 24"><path d="M4 9.5v5h3l4 3.5v-12L7 9.5zM16 9l5 6m0-6-5 6"/></symbol>
+    <symbol id="i-loop" viewBox="0 0 24 24"><path d="M17.5 7H8a4 4 0 0 0-4 4v1M17.5 7l-3-3m3 3-3 3M6.5 17H16a4 4 0 0 0 4-4v-1M6.5 17l3 3m-3-3 3-3"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 24 24"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><path d="M9.5 9a2.8 2.8 0 1 1 4.3 2.4c-1.1.7-1.8 1.3-1.8 2.6M12 17.5v.1"/><circle cx="12" cy="12" r="9"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></symbol>
+    <symbol id="i-jump" viewBox="0 0 24 24"><path d="M5 12h13M13 7l5 5-5 5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></symbol>
+    <symbol id="i-water" viewBox="0 0 24 24"><path d="M12 3s6 7.1 6 11a6 6 0 0 1-12 0c0-3.9 6-11 6-11z"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></symbol>
+  </svg>
+
+  <div class="bg-layer bg-grid" aria-hidden="true"></div>
+  <div class="bg-layer bg-glow" aria-hidden="true"></div>
+  <div class="bg-layer bg-scan" aria-hidden="true"></div>
+  <div id="particles" class="particles" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="铜方块快闪首页">
+        <span class="brand-cube" aria-hidden="true">
+          <span class="brand-cube__top"></span>
+          <span class="brand-cube__left"></span>
+          <span class="brand-cube__right"></span>
+        </span>
+        <span class="brand-text">
+          <strong>铜方块快闪</strong>
+          <small>COPPER BLOCK FLASH</small>
+        </span>
+      </a>
+
+      <div class="topbar-meta">
+        <span class="version-pill"><i aria-hidden="true"></i> 1.21.9 · COPPER AGE</span>
+        <span id="totalBadge" class="count-pill">2,761 个状态</span>
+        <button id="helpBtn" class="icon-btn" type="button" aria-label="查看玩法说明">
+          <svg><use href="#i-help"></use></svg>
+        </button>
+        <button id="fullscreenBtn" class="icon-btn" type="button" aria-label="进入全屏">
+          <svg><use href="#i-expand"></use></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="stage" id="stage" aria-label="当前铜方块">
+        <div class="stage-topline">
+          <div class="stage-kicker">
+            <span id="categoryBadge" class="category-badge">基础方块</span>
+            <span id="seqNo" class="seq-no">#0001</span>
+          </div>
+          <div class="stage-tools">
+            <span id="speakingPill" class="speaking-pill" hidden>
+              <span class="equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              正在朗读
+            </span>
+            <span id="modeHint" class="mode-hint">完整状态</span>
+          </div>
+        </div>
+
+        <div class="art-frame">
+          <div class="art-halo" aria-hidden="true"></div>
+          <div class="art-grid" aria-hidden="true"></div>
+          <div id="blockArt" class="block-art" aria-hidden="true"></div>
+          <div id="facingBadge" class="facing-badge" hidden>
+            <svg><use href="#i-compass"></use></svg>
+            <span id="facingText">朝北</span>
+            <i id="facingNeedle" class="facing-needle" aria-hidden="true"></i>
+          </div>
+          <div id="waterBadge" class="water-badge" hidden>
+            <svg><use href="#i-water"></use></svg>
+            含水
+          </div>
+          <div id="waxStamp" class="wax-stamp" hidden>WAXED</div>
+        </div>
+
+        <div class="name-lockup">
+          <div id="coreBadges" class="core-badges">
+            <span id="oxBadge" class="ox-badge">未氧化</span>
+            <span id="waxBadge" class="wax-badge">未涂蜡</span>
+          </div>
+          <h1 id="blockName" class="block-name">铜块</h1>
+          <div id="stateChips" class="state-chips" aria-label="方块状态"></div>
+          <p id="blockId" class="block-id">minecraft:copper_block</p>
+        </div>
+
+        <div class="next-line">
+          <span class="next-label">NEXT</span>
+          <button id="nextNameBtn" class="next-name" type="button" title="跳到下一项">铜块</button>
+          <span id="typeProgress" class="type-progress">本类 1 / 8</span>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span id="progressLabel">0001 / 2761</span>
+            <span id="playHint" class="play-hint">已暂停 · 按空格开始</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="progressFill" class="progress-fill"></span>
+            <span class="progress-shine" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <div class="player-controls">
+          <div class="control-row control-row--play">
+            <button id="prevBtn" class="round-btn" type="button" aria-label="上一个方块" title="上一个（←）">
+              <svg><use href="#i-prev"></use></svg>
+            </button>
+            <button id="playBtn" class="play-btn" type="button" aria-label="开始快闪">
+              <svg class="play-btn__icon" id="playIcon"><use href="#i-play"></use></svg>
+              <span id="playLabel">开始快闪</span>
+            </button>
+            <button id="nextBtn" class="round-btn" type="button" aria-label="下一个方块" title="下一个（→）">
+              <svg><use href="#i-next"></use></svg>
+            </button>
+
+            <div class="control-divider" aria-hidden="true"></div>
+
+            <button id="loopBtn" class="control-toggle is-on" type="button" role="switch" aria-checked="true" title="循环播放（L）">
+              <svg class="toggle-icon"><use href="#i-loop"></use></svg>
+              <span>循环</span>
+              <i class="switch" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <div class="control-row control-row--speech">
+            <button id="ttsToggle" class="control-toggle" type="button" role="switch" aria-checked="false" title="朗读方块名称（T）">
+              <svg class="toggle-icon"><use href="#i-muted"></use></svg>
+              <span>朗读</span>
+              <i class="switch" aria-hidden="true"></i>
+            </button>
+
+            <div class="voice-control">
+              <span class="voice-label">音色</span>
+              <select id="voiceSelect" aria-label="选择朗读音色" title="选择朗读音色">
+                <option value="auto">自动（优先自然语音）</option>
+              </select>
+              <span class="rate-label">语速</span>
+              <select id="ttsRateSelect" class="rate-select" aria-label="选择朗读语速" title="选择朗读语速">
+                <option value="auto">自动</option>
+                <option value="0.8">0.8×</option>
+                <option value="0.9">0.9×</option>
+                <option value="1">1.0×</option>
+                <option value="1.1">1.1×</option>
+                <option value="1.2">1.2×</option>
+                <option value="1.3">1.3×</option>
+                <option value="1.5">1.5×</option>
+              </select>
+            </div>
+
+            <label class="speed-control" for="speedRange">
+              <span>停留</span>
+              <input id="speedRange" type="range" min="600" max="5000" step="100" value="1600" aria-label="每个方块停留时长">
+              <output id="speedLabel" for="speedRange">1.6s</output>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-panel" id="sidePanel" aria-label="播放列表与设置">
+        <div class="panel-tabs" role="tablist" aria-label="侧栏选项卡">
+          <button class="panel-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="pane-library" data-tab="library">方块库</button>
+          <button class="panel-tab" type="button" role="tab" aria-selected="false" aria-controls="pane-custom" data-tab="custom">自定义 <span id="customCount" class="tab-count">0</span></button>
+          <button class="panel-tab" type="button" role="tab" aria-selected="false" aria-controls="pane-order" data-tab="order">顺序</button>
+        </div>
+
+        <div id="pane-library" class="panel-pane is-active" role="tabpanel">
+          <div class="search-row">
+            <label class="search-box">
+              <svg><use href="#i-search"></use></svg>
+              <input id="searchInput" type="search" placeholder="搜索方块 / 英文 ID" autocomplete="off" spellcheck="false">
+            </label>
+          </div>
+
+          <div class="bulk-row">
+            <button id="selectAllBtn" class="mini-btn" type="button">全选</button>
+            <button id="clearAllBtn" class="mini-btn" type="button">清空</button>
+            <span id="selectedSummary" class="selected-summary">已选 16 / 16 类</span>
+          </div>
+
+          <div class="mode-card">
+            <div class="mode-copy">
+              <strong>状态组合</strong>
+              <small id="modeDescription">展开全部朝向、含水、开关与连接状态</small>
+            </div>
+            <div class="segmented" role="group" aria-label="状态组合模式">
+              <button class="segment is-active" type="button" data-mode="full" aria-pressed="true">完整</button>
+              <button class="segment" type="button" data-mode="simple" aria-pressed="false">精简</button>
+            </div>
+          </div>
+
+          <div id="libraryList" class="library-list"></div>
+
+          <p class="panel-note">
+            数据参考 Minecraft Java 版 1.21.9「铜器时代」。点击类别名称可整类开关，<span class="inline-key">→</span> 可从此类开始播放。
+          </p>
+        </div>
+
+        <div id="pane-custom" class="panel-pane" role="tabpanel" hidden>
+          <div class="custom-hero">
+            <span class="custom-hero__mark">+</span>
+            <div>
+              <strong>你的铜方块</strong>
+              <p>添加模组方块、恶搞条目，或任何想让它闪一下的铜制方块。条目会追加到播放列表末尾。</p>
+            </div>
+          </div>
+          <button id="addCustomBtn" class="primary-btn primary-btn--wide" type="button">
+            <svg><use href="#i-plus"></use></svg>
+            添加自定义方块
+          </button>
+          <div id="customList" class="custom-list"></div>
+          <p class="panel-note">自定义条目保存在本机浏览器中，不会上传。</p>
+        </div>
+
+        <div id="pane-order" class="panel-pane" role="tabpanel" hidden>
+          <div class="order-head">
+            <span class="order-eyebrow">SORT LOGIC</span>
+            <h2>播放顺序</h2>
+            <p>先同类聚合，再按“涂蜡 → 含水 → 氧化 → 其他状态”的层级展开。</p>
+          </div>
+
+          <ol class="order-list">
+            <li><b>01</b><span><strong>方块种类</strong>铜块 → 切制铜块 → 雕纹铜块 → 切制铜台阶 → 切制铜楼梯 → 铜格栅 → 铜栏杆 → 铜链 → 铜灯笼 → 铜灯 → 铜门 → 铜活板门 → 铜箱子 → 铜傀儡像 → 避雷针 → 铜火把。</span></li>
+            <li><b>02</b><span><strong>涂蜡</strong>先展示全部未涂蜡组合，再展示全部涂蜡组合。</span></li>
+            <li><b>03</b><span><strong>含水</strong>每种可含水的方块，先全部干燥状态，再重复一遍“含水”状态。</span></li>
+            <li><b>04</b><span><strong>氧化</strong>未氧化 → 斑驳 → 锈蚀 → 氧化。</span></li>
+            <li><b>05</b><span><strong>其他状态</strong>楼梯：正置/倒置 → 左外/右外/左内/右内/直形 → 朝向；门、活板门、栏杆等按各自状态优先级展开。</span></li>
+          </ol>
+
+          <div class="order-example">
+            <span class="order-example__label">楼梯排序示例</span>
+            <p>正置的向左外角的铜楼梯 → 正置的向右外角的铜楼梯 → 正置的向左内角的铜楼梯 → 正置的向右内角的铜楼梯 → 正置的直形的铜楼梯 → 斑驳…… → 倒置…… → 锈蚀…… → 氧化…… → 以上全部加上“含水”再重复一次。</p>
+          </div>
+
+          <div class="shortcut-grid">
+            <span><kbd>Space</kbd> 播放 / 暂停</span>
+            <span><kbd>←</kbd><kbd>→</kbd> 上一个 / 下一个</span>
+            <span><kbd>T</kbd> 朗读开关</span>
+            <span><kbd>L</kbd> 循环开关</span>
+            <span><kbd>R</kbd> 回到开头</span>
+            <span><kbd>Esc</kbd> 关闭弹窗</span>
+          </div>
+
+          <button id="resetDataBtn" class="danger-link" type="button">重置本机设置与自定义条目</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="site-foot">
+      <span>非官方 Minecraft 粉丝作品 · 方块数据基于 1.21.9 铜器时代</span>
+      <span class="foot-dot" aria-hidden="true"></span>
+      <span>所有方块图形均为本页原创 SVG 绘制</span>
+    </footer>
+  </div>
+
+  <dialog id="customDialog" class="modal">
+    <form id="customForm" novalidate>
+      <header class="modal-head">
+        <div>
+          <span class="modal-eyebrow">CUSTOM ENTRY</span>
+          <h2>添加自定义铜方块</h2>
+        </div>
+        <button class="icon-btn modal-close" type="button" data-close-dialog aria-label="关闭">
+          <svg><use href="#i-close"></use></svg>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        <label class="field">
+          <span>基础名称 <em>*</em></span>
+          <input id="customName" name="customName" type="text" maxlength="28" required placeholder="例如：磨制铜块 / 铜齿轮">
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span>氧化阶段</span>
+            <select id="customOx" name="customOx">
+              <option value="0">未氧化</option>
+              <option value="1">斑驳</option>
+              <option value="2">锈蚀</option>
+              <option value="3">氧化</option>
+            </select>
+          </label>
+          <label class="check-field">
+            <input id="customWaxed" name="customWaxed" type="checkbox">
+            <span class="fake-check"><svg><use href="#i-check"></use></svg></span>
+            <span>涂蜡</span>
+          </label>
+        </div>
+
+        <label class="field">
+          <span>额外状态 <small>用逗号分隔</small></span>
+          <input id="customStates" name="customStates" type="text" maxlength="80" placeholder="含水，朝北，正在发光">
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span>图标外观</span>
+            <select id="customIcon" name="customIcon">
+              <option value="cube">铜块</option>
+              <option value="cut">切制铜块</option>
+              <option value="slab">台阶</option>
+              <option value="stairs">楼梯</option>
+              <option value="grate">格栅</option>
+              <option value="bars">栏杆</option>
+              <option value="chain">铜链</option>
+              <option value="lantern">灯笼</option>
+              <option value="bulb">铜灯</option>
+              <option value="door">门</option>
+              <option value="trapdoor">活板门</option>
+              <option value="chest">箱子</option>
+              <option value="statue">傀儡像</option>
+              <option value="rod">避雷针</option>
+              <option value="torch">火把</option>
+              <option value="custom">自定义</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>英文 ID <small>可选</small></span>
+            <input id="customEn" name="customEn" type="text" maxlength="48" placeholder="custom:polished_copper" spellcheck="false">
+          </label>
+        </div>
+
+        <p class="form-hint">名称会自动组合氧化与涂蜡前缀。例如选择“斑驳 + 涂蜡”，再填入“铜齿轮”，会显示为“涂蜡的斑驳铜齿轮”。</p>
+      </div>
+
+      <footer class="modal-foot">
+        <button class="ghost-btn" type="button" data-close-dialog>取消</button>
+        <button class="primary-btn" type="submit">加入播放列表</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog id="helpDialog" class="modal modal--help">
+    <header class="modal-head">
+      <div>
+        <span class="modal-eyebrow">HOW TO PLAY</span>
+        <h2>铜方块，一块一块闪</h2>
+      </div>
+      <button class="icon-btn modal-close" type="button" data-close-dialog aria-label="关闭">
+        <svg><use href="#i-close"></use></svg>
+      </button>
+    </header>
+    <div class="modal-body help-body">
+      <p>这是一个向 Minecraft 铜系列方块致敬的小播放器。默认暂停在第一项，点“开始快闪”即可按顺序自动播放。</p>
+      <ul class="help-list">
+        <li><b>方块库</b>：选择要播放的方块种类；“完整”模式展开全部状态组合，“精简”模式每类只保留 8 个氧化/涂蜡变种。</li>
+        <li><b>状态名称</b>：所有状态会用“的”串联在方块名前面，例如“倒置的向右外角的斑驳的铜楼梯”。</li>
+        <li><b>朗读</b>：开关默认关闭。打开后会调用浏览器自带语音，并且一个方块会停留到朗读结束才切换。控制栏的“音色”下拉框可以切换自动、Edge 在线自然语音和本地语音；旁边的小下拉框可单独选择朗读语速（自动 / 0.8×–1.5×），两项选择都会保存在本机。</li>
+        <li><b>预加载</b>：当前方块开始朗读时，会把下一个方块的语音提前加入朗读队列，减少两项之间的等待与合成延迟。</li>
+        <li><b>自定义</b>：添加自己的铜方块条目；它会追加在播放列表末尾，并保存在当前浏览器。</li>
+        <li><b>顺序</b>：先未涂蜡后涂蜡；可含水方块先干燥后含水；每种内先按未氧化 → 斑驳 → 锈蚀 → 氧化，再按朝向、半砖、开关等状态排序。</li>
+      </ul>
+      <div class="help-callout">
+        <strong>关于“直到朗读完毕”</strong>
+        <p>开启朗读后，切页计时器会暂停，由语音合成的 <code>end</code> 事件推进；如果浏览器没有可用语音或朗读失败，会自动回退到“停留时长”。</p>
+        <p class="help-voice-note">在 Edge 中会优先选择 <b>Microsoft 晓晓 Online (Natural)</b> 等自然语音；若自动改用本地语音，语速会加快到约 1.24×。在线自然语音不可用时会自动回退到本地语音。</p>
+      </div>
+      <p class="help-source">方块名称与状态参考 Minecraft Java 版 1.21.9 官方中文译名与 Minecraft Wiki。本页不是 Mojang / Microsoft 官方产品。</p>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+/* ==========================================================================
+   铜方块数据层
+   - 参考 Minecraft Java 版 1.21.9「铜器时代」的方块种类、官方中文译名与方块状态
+   - 所有状态组合按需求顺序生成，不使用随机排序
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------------
+     氧化阶段与配色
+     ------------------------------------------------------------------------ */
+
+  const OXIDATION = [
+    {
+      key: "",
+      mc: "",
+      label: "未氧化",
+      adj: "",
+      en: "",
+      theme: {
+        ox: "#d87f33",
+        hi: "#f0b36e",
+        deep: "#8a4b20",
+        soft: "rgba(216, 127, 51, 0.12)",
+        glow: "rgba(216, 127, 51, 0.32)",
+        rgb: "216, 127, 51",
+      },
+    },
+    {
+      key: "exposed_",
+      mc: "exposed",
+      label: "斑驳",
+      adj: "斑驳",
+      en: "Exposed ",
+      theme: {
+        ox: "#a38676",
+        hi: "#d7b39b",
+        deep: "#5d473f",
+        soft: "rgba(163, 134, 118, 0.12)",
+        glow: "rgba(163, 134, 118, 0.31)",
+        rgb: "163, 134, 118",
+      },
+    },
+    {
+      key: "weathered_",
+      mc: "weathered",
+      label: "锈蚀",
+      adj: "锈蚀",
+      en: "Weathered ",
+      theme: {
+        ox: "#4fa59f",
+        hi: "#8adbd0",
+        deep: "#246462",
+        soft: "rgba(79, 165, 159, 0.12)",
+        glow: "rgba(79, 165, 159, 0.31)",
+        rgb: "79, 165, 159",
+      },
+    },
+    {
+      key: "oxidized_",
+      mc: "oxidized",
+      label: "氧化",
+      adj: "氧化",
+      en: "Oxidized ",
+      theme: {
+        ox: "#1d8d94",
+        hi: "#63d8d1",
+        deep: "#0b5962",
+        soft: "rgba(29, 141, 148, 0.13)",
+        glow: "rgba(29, 141, 148, 0.34)",
+        rgb: "29, 141, 148",
+      },
+    },
+  ];
+
+  const SPECIAL_THEME = {
+    ox: "#6fce8f",
+    hi: "#b8ffd1",
+    deep: "#2d7452",
+    soft: "rgba(111, 206, 143, 0.13)",
+    glow: "rgba(111, 206, 143, 0.3)",
+    rgb: "111, 206, 143",
+  };
+
+  const PALETTES = [
+    {
+      aged: false,
+      top: "#e8a45f",
+      right: "#c77a3f",
+      left: "#8f4f26",
+      edge: "#5b3218",
+      hi: "#ffd39a",
+      speck: "#f0bf83",
+      patina: "#5d9d86",
+      glow: "#ffb35c",
+      glowSoft: "#ffe0ad",
+    },
+    {
+      aged: true,
+      top: "#b79a88",
+      right: "#8c6f64",
+      left: "#5d4a42",
+      edge: "#3d302b",
+      hi: "#ddbda8",
+      speck: "#cbaa98",
+      patina: "#6e9e8f",
+      glow: "#d9a27c",
+      glowSoft: "#f0d4bb",
+    },
+    {
+      aged: true,
+      top: "#67bdb4",
+      right: "#3a908c",
+      left: "#236966",
+      edge: "#163f3e",
+      hi: "#b0e3da",
+      speck: "#8ccfc4",
+      patina: "#7dd8c6",
+      glow: "#58d7c9",
+      glowSoft: "#c6fff7",
+    },
+    {
+      aged: true,
+      top: "#38a6a4",
+      right: "#167f87",
+      left: "#0c5e67",
+      edge: "#073e46",
+      hi: "#93dcd3",
+      speck: "#53c0b7",
+      patina: "#3bb8a9",
+      glow: "#62e5d6",
+      glowSoft: "#c5fffa",
+    },
+  ];
+
+  const SPECIAL_PALETTE = {
+    aged: false,
+    top: "#9fe3b0",
+    right: "#54af7d",
+    left: "#2f7454",
+    edge: "#1d4b37",
+    hi: "#d5ffdf",
+    speck: "#b7f5c4",
+    patina: "#62d08c",
+    glow: "#96ffb0",
+    glowSoft: "#e1ffea",
+  };
+
+  const CATEGORIES = {
+    core: { label: "基础方块", order: 0 },
+    build: { label: "建筑与装饰", order: 1 },
+    light: { label: "照明", order: 2 },
+    redstone: { label: "红石与功能", order: 3 },
+    story: { label: "容器与傀儡", order: 4 },
+    extra: { label: "彩蛋", order: 5 },
+  };
+
+  /* ------------------------------------------------------------------------
+     状态值
+     ------------------------------------------------------------------------ */
+
+  const V = (id, label, extra) => Object.assign({ id, label, speak: label }, extra || {});
+
+  const FACING4 = [
+    V("north", "朝北", { default: true, rotation: 0 }),
+    V("east", "朝东", { rotation: 90 }),
+    V("south", "朝南", { rotation: 180 }),
+    V("west", "朝西", { rotation: 270 }),
+  ];
+
+  const FACING6 = [
+    V("up", "朝上", { default: true, rotation: 0, vertical: "up" }),
+    V("down", "朝下", { rotation: 180, vertical: "down" }),
+    V("north", "朝北", { rotation: 0 }),
+    V("south", "朝南", { rotation: 180 }),
+    V("east", "朝东", { rotation: 90 }),
+    V("west", "朝西", { rotation: 270 }),
+  ];
+
+  const STAIR_HALF = [
+    V("bottom", "正置", { default: true }),
+    V("top", "倒置"),
+  ];
+
+  const STAIR_SHAPE = [
+    V("outer_left", "向左外角"),
+    V("outer_right", "向右外角"),
+    V("inner_left", "向左内角"),
+    V("inner_right", "向右内角"),
+    V("straight", "直形", { default: true }),
+  ];
+
+  const SLAB_TYPE = [
+    V("bottom", "下半", { default: true }),
+    V("top", "上半"),
+    V("double", "双层"),
+  ];
+
+  const DOOR_HALF = [
+    V("lower", "下半", { default: true }),
+    V("upper", "上半"),
+  ];
+
+  const TRAPDOOR_HALF = [
+    V("bottom", "下装", { default: true }),
+    V("top", "上装"),
+  ];
+
+  const HINGE = [
+    V("left", "左铰链", { default: true }),
+    V("right", "右铰链"),
+  ];
+
+  const OPEN = [
+    V("false", "关闭", { default: true }),
+    V("true", "打开"),
+  ];
+
+  const POWERED = [
+    V("false", "未激活", { default: true }),
+    V("true", "已激活"),
+  ];
+
+  const LIT = [
+    V("false", "熄灭", { default: true }),
+    V("true", "点亮"),
+  ];
+
+  const HANGING = [
+    V("false", "放置", { default: true }),
+    V("true", "悬挂"),
+  ];
+
+  const AXIS = [
+    V("y", "竖直", { default: true }),
+    V("x", "东西向"),
+    V("z", "南北向"),
+  ];
+
+  const CHEST_TYPE = [
+    V("single", "单箱", { default: true }),
+    V("left", "左半"),
+    V("right", "右半"),
+  ];
+
+  const POSE = [
+    V("standing", "站立", { default: true }),
+    V("sitting", "坐下"),
+    V("running", "奔跑"),
+    V("star", "大字"),
+  ];
+
+  function makeConnectionValues() {
+    const dirs = [
+      { key: "east", label: "东", flag: 1 },
+      { key: "north", label: "北", flag: 2 },
+      { key: "south", label: "南", flag: 4 },
+      { key: "west", label: "西", flag: 8 },
+    ];
+    const list = [];
+    for (let mask = 0; mask < 16; mask += 1) {
+      const connections = {};
+      dirs.forEach((d) => {
+        connections[d.key] = (mask & d.flag) !== 0;
+      });
+      const active = dirs.filter((d) => connections[d.key]).map((d) => d.label);
+      list.push(
+        V(String(mask), active.length ? `连接${active.join("、")}` : "无连接", {
+          connections,
+          default: mask === 0,
+        })
+      );
+    }
+    return list;
+  }
+
+  const CONNECTIONS = makeConnectionValues();
+
+  /* ------------------------------------------------------------------------
+     方块种类
+     ------------------------------------------------------------------------ */
+
+  const BLOCK_TYPES = [
+    {
+      id: "copper_block",
+      baseName: "铜块",
+      en: "Block of Copper",
+      enStages: ["Block of Copper", "Exposed Copper", "Weathered Copper", "Oxidized Copper"],
+      aliases: ["block of copper", "铜方块", "氧化铜块"],
+      icon: "cube",
+      category: "core",
+      order: 1,
+      glyph: "#d8874a",
+      desc: "铜系列的基础方块，会随时间氧化。",
+      states: [],
+    },
+    {
+      id: "cut_copper",
+      baseName: "切制铜块",
+      en: "Cut Copper",
+      aliases: ["cut copper", "切制铜", "切制铜方块"],
+      icon: "cut",
+      category: "core",
+      order: 2,
+      glyph: "#cf8148",
+      desc: "由铜块切制而成的建筑方块。",
+      states: [],
+    },
+    {
+      id: "chiseled_copper",
+      baseName: "雕纹铜块",
+      en: "Chiseled Copper",
+      aliases: ["chiseled copper", "雕纹铜", "雕花铜块"],
+      icon: "chiseled",
+      category: "core",
+      order: 3,
+      glyph: "#c88a55",
+      desc: "带雕纹图案的铜质建筑方块。",
+      states: [],
+    },
+    {
+      id: "cut_copper_slab",
+      baseName: "切制铜台阶",
+      en: "Cut Copper Slab",
+      aliases: ["cut copper slab", "铜台阶", "半砖"],
+      icon: "slab",
+      category: "build",
+      order: 4,
+      glyph: "#d39655",
+      desc: "切制铜制成的台阶，可含水。",
+      states: [{ key: "type", label: "台阶", values: SLAB_TYPE }],
+      waterloggable: true,
+    },
+    {
+      id: "cut_copper_stairs",
+      baseName: "切制铜楼梯",
+      en: "Cut Copper Stairs",
+      aliases: ["cut copper stairs", "铜楼梯", "楼梯"],
+      icon: "stairs",
+      category: "build",
+      order: 5,
+      glyph: "#cf8b4c",
+      desc: "可含水、可朝向四个方向的切制铜楼梯。",
+      states: [
+        { key: "half", label: "摆放", values: STAIR_HALF },
+        { key: "shape", label: "形状", values: STAIR_SHAPE },
+        { key: "facing", label: "朝向", values: FACING4 },
+      ],
+      waterloggable: true,
+    },
+    {
+      id: "copper_grate",
+      baseName: "铜格栅",
+      en: "Copper Grate",
+      aliases: ["copper grate", "铜格栅方块", "格栅"],
+      icon: "grate",
+      category: "build",
+      order: 6,
+      glyph: "#b98250",
+      desc: "带孔洞的铜质装饰方块，可含水。",
+      states: [],
+      waterloggable: true,
+    },
+    {
+      id: "copper_bars",
+      baseName: "铜栏杆",
+      en: "Copper Bars",
+      aliases: ["copper bars", "铜栅栏", "栏杆", "铜栏杆方块"],
+      icon: "bars",
+      category: "build",
+      order: 7,
+      glyph: "#d09358",
+      desc: "类似铁栏杆的铜质装饰方块，玩家也常称“铜栅栏”。",
+      states: [{ key: "connections", label: "连接", values: CONNECTIONS }],
+      waterloggable: true,
+    },
+    {
+      id: "copper_chain",
+      baseName: "铜链",
+      en: "Copper Chain",
+      aliases: ["copper chain", "铜链条", "链条"],
+      icon: "chain",
+      category: "build",
+      order: 8,
+      glyph: "#c49a68",
+      desc: "可沿三个轴放置的铜质链条，可含水。",
+      states: [{ key: "axis", label: "轴向", values: AXIS }],
+      waterloggable: true,
+    },
+    {
+      id: "copper_lantern",
+      baseName: "铜灯笼",
+      en: "Copper Lantern",
+      aliases: ["copper lantern", "铜灯灯笼", "绿灯"],
+      icon: "lantern",
+      category: "light",
+      order: 9,
+      glyph: "#ddb25e",
+      desc: "发出绿色火焰、亮度为 15 的铜质灯笼。",
+      states: [{ key: "hanging", label: "悬挂", values: HANGING }],
+      waterloggable: true,
+    },
+    {
+      id: "copper_bulb",
+      baseName: "铜灯",
+      en: "Copper Bulb",
+      aliases: ["copper bulb", "铜灯泡", "灯泡"],
+      icon: "bulb",
+      category: "light",
+      order: 10,
+      glyph: "#e4a84f",
+      desc: "由红石脉冲切换亮灭；氧化程度会影响亮度。",
+      states: [
+        { key: "lit", label: "亮灭", values: LIT },
+        { key: "powered", label: "红石", values: POWERED },
+      ],
+    },
+    {
+      id: "copper_door",
+      baseName: "铜门",
+      en: "Copper Door",
+      aliases: ["copper door", "铜制门"],
+      icon: "door",
+      category: "redstone",
+      order: 11,
+      glyph: "#c87850",
+      desc: "可用手或红石开启的铜质双格门。",
+      states: [
+        { key: "half", label: "门格", values: DOOR_HALF },
+        { key: "hinge", label: "铰链", values: HINGE },
+        { key: "facing", label: "朝向", values: FACING4 },
+        { key: "open", label: "开合", values: OPEN },
+        { key: "powered", label: "红石", values: POWERED },
+      ],
+    },
+    {
+      id: "copper_trapdoor",
+      baseName: "铜活板门",
+      en: "Copper Trapdoor",
+      aliases: ["copper trapdoor", "铜活板", "活板门"],
+      icon: "trapdoor",
+      category: "redstone",
+      order: 12,
+      glyph: "#c28b60",
+      desc: "可上装或下装、可用红石激活的铜活板门，可含水。",
+      states: [
+        { key: "half", label: "安装", values: TRAPDOOR_HALF },
+        { key: "facing", label: "朝向", values: FACING4 },
+        { key: "open", label: "开合", values: OPEN },
+        { key: "powered", label: "红石", values: POWERED },
+      ],
+      waterloggable: true,
+    },
+    {
+      id: "copper_chest",
+      baseName: "铜箱子",
+      en: "Copper Chest",
+      aliases: ["copper chest", "铜箱", "铜容器"],
+      icon: "chest",
+      category: "story",
+      order: 13,
+      glyph: "#b9895d",
+      desc: "铜傀儡会从中取物的容器方块，可氧化和涂蜡。",
+      states: [
+        { key: "type", label: "箱体", values: CHEST_TYPE },
+        { key: "facing", label: "朝向", values: FACING4 },
+      ],
+      waterloggable: true,
+    },
+    {
+      id: "copper_golem_statue",
+      baseName: "铜傀儡像",
+      en: "Copper Golem Statue",
+      aliases: ["copper golem statue", "铜傀儡", "铜傀儡雕像", "傀儡像"],
+      icon: "statue",
+      category: "story",
+      order: 14,
+      glyph: "#b69d7b",
+      desc: "铜傀儡完全氧化后形成的方块，有四种姿势。",
+      states: [
+        { key: "pose", label: "姿势", values: POSE },
+        { key: "facing", label: "朝向", values: FACING4 },
+      ],
+      waterloggable: true,
+    },
+    {
+      id: "lightning_rod",
+      baseName: "避雷针",
+      en: "Lightning Rod",
+      aliases: ["lightning rod", "铜避雷针", "避雷针方块"],
+      icon: "rod",
+      category: "redstone",
+      order: 15,
+      glyph: "#b69468",
+      desc: "1.21.9 起可氧化、可涂蜡的铜质避雷针。",
+      states: [
+        { key: "facing", label: "朝向", values: FACING6 },
+        { key: "powered", label: "红石", values: POWERED },
+      ],
+      waterloggable: true,
+    },
+    {
+      id: "copper_torch",
+      baseName: "铜火把",
+      en: "Copper Torch",
+      aliases: ["copper torch", "铜火把方块", "绿色火把"],
+      icon: "torch",
+      category: "extra",
+      order: 16,
+      glyph: "#76c696",
+      desc: "铜器时代加入的绿色火焰火把；不氧化，也不可涂蜡。",
+      special: true,
+      noOxidation: true,
+      states: [],
+    },
+  ];
+
+  /* ------------------------------------------------------------------------
+     命名与生成
+     ------------------------------------------------------------------------ */
+
+  /**
+   * 把状态串联成自然短语，放在方块名前面。
+   * 例：含水的涂蜡的倒置的向右外角的朝北的斑驳的铜楼梯
+   */
+  function buildPhrase(baseName, oxidation, waxed, waterlogged, stateLabels) {
+    const parts = [];
+    if (waterlogged) parts.push("含水");
+    if (waxed) parts.push("涂蜡");
+    (stateLabels || []).forEach((label) => {
+      if (label) parts.push(label);
+    });
+    if (oxidation > 0) parts.push(OXIDATION[oxidation].adj);
+    return parts.length ? `${parts.join("的")}的${baseName}` : baseName;
+  }
+
+  function buildEn(type, oxidation, waxed) {
+    let base = type.en;
+    if (type.enStages) {
+      base = type.enStages[oxidation] || type.en;
+      return `${waxed ? "Waxed " : ""}${base}`;
+    }
+    return `${waxed ? "Waxed " : ""}${OXIDATION[oxidation].en}${base}`;
+  }
+
+  function nameToMcBase(type, oxidation) {
+    const stems = ["copper_block", "exposed_copper", "weathered_copper", "oxidized_copper"];
+    if (type.id === "copper_block") return stems[oxidation];
+    return `${OXIDATION[oxidation].key}${type.id}`;
+  }
+
+  function stateChipKind(key) {
+    if (key === "facing" || key === "axis" || key === "connections" || key === "half" || key === "type" || key === "pose") {
+      return "facing";
+    }
+    if (key === "open" || key === "powered" || key === "lit") return "power";
+    return "";
+  }
+
+  function cartesian(states) {
+    let result = [{}];
+    for (const state of states) {
+      const next = [];
+      for (const base of result) {
+        for (const value of state.values) {
+          next.push(Object.assign({}, base, { [state.key]: value }));
+        }
+      }
+      result = next;
+    }
+    return result;
+  }
+
+  function defaultCombo(type) {
+    const result = {};
+    for (const state of type.states) {
+      result[state.key] = state.values.find((value) => value.default) || state.values[0];
+    }
+    return result;
+  }
+
+  function makeItem(type, options) {
+    const { oxidation, waxed, waterlogged, combo } = options;
+    const enFull = buildEn(type, oxidation, waxed);
+    const mcBase = nameToMcBase(type, oxidation);
+    const idParts = [];
+    const chips = [];
+    const spoken = [];
+    const stateLabels = [];
+    const comboKeyParts = [];
+
+    for (const state of type.states) {
+      const value = combo[state.key];
+      if (!value) continue;
+
+      if (state.key === "connections" && value.connections) {
+        ["east", "north", "south", "west"].forEach((dir) => {
+          idParts.push(`${dir}=${value.connections[dir] ? "true" : "false"}`);
+        });
+      } else {
+        idParts.push(`${state.key}=${value.id}`);
+      }
+
+      chips.push({
+        label: value.label,
+        kind: stateChipKind(state.key),
+        key: state.key,
+      });
+      if (value.speak) spoken.push(value.speak);
+      stateLabels.push(value.label);
+      comboKeyParts.push(`${state.key}:${value.id}`);
+    }
+
+    if (waterlogged) {
+      idParts.push("waterlogged=true");
+      chips.push({ label: "含水", kind: "water", key: "waterlogged" });
+      spoken.push("含水");
+    } else if (type.waterloggable) {
+      idParts.push("waterlogged=false");
+    }
+
+    if (!chips.length) {
+      chips.push({ label: "无额外方块状态", kind: "none", key: "none" });
+    }
+
+    const stateId = idParts.length ? `[${idParts.join(",")}]` : "";
+    const mcId = `minecraft:${waxed ? "waxed_" : ""}${mcBase}${stateId}`;
+    const uid = [
+      type.id,
+      waxed ? "w" : "u",
+      type.waterloggable ? (waterlogged ? "water" : "dry") : "nowater",
+      oxidation,
+      comboKeyParts.join("|"),
+    ].join(":");
+    const stateText = chips.map((chip) => chip.label).join(" ");
+    const category = CATEGORIES[type.category] || { label: type.category };
+    const displayName = buildPhrase(type.baseName, oxidation, waxed, waterlogged, stateLabels);
+
+    return {
+      uid,
+      typeId: type.id,
+      typeKey: type.id,
+      typeName: type.baseName,
+      baseName: type.baseName,
+      typeEn: type.en,
+      typeDesc: type.desc,
+      category: type.category,
+      categoryLabel: category.label,
+      icon: type.icon,
+      aliases: type.aliases || [],
+      oxidation,
+      waxed,
+      waterlogged: Boolean(waterlogged),
+      special: false,
+      isCustom: false,
+      name: displayName,
+      en: enFull,
+      mcId,
+      stateValues: combo,
+      stateChips: chips,
+      spokenStates: spoken,
+      speech: displayName,
+      searchText: [
+        displayName,
+        enFull,
+        type.baseName,
+        type.en,
+        mcId,
+        stateText,
+        ...(type.aliases || []),
+      ]
+        .join(" ")
+        .toLowerCase(),
+      theme: OXIDATION[oxidation].theme,
+      palette: PALETTES[oxidation],
+    };
+  }
+
+  function makeSpecialItem(type) {
+    const chips = [
+      { label: "不氧化", kind: "none", key: "special" },
+      { label: "不可涂蜡", kind: "none", key: "special" },
+    ];
+    return {
+      uid: `special:${type.id}`,
+      typeId: type.id,
+      typeKey: type.id,
+      typeName: type.baseName,
+      typeEn: type.en,
+      typeDesc: type.desc,
+      category: type.category,
+      categoryLabel: (CATEGORIES[type.category] || {}).label || "彩蛋",
+      icon: type.icon,
+      aliases: type.aliases || [],
+      oxidation: null,
+      waxed: false,
+      waterlogged: false,
+      special: true,
+      isCustom: false,
+      name: type.baseName,
+      en: type.en,
+      mcId: `minecraft:${type.id}`,
+      stateValues: {},
+      stateChips: chips,
+      spokenStates: ["不氧化", "不可涂蜡"],
+      speech: `${type.baseName}。不氧化，不可涂蜡`,
+      searchText: [type.baseName, type.en, ...(type.aliases || []), "不氧化 不可涂蜡"].join(" ").toLowerCase(),
+      theme: SPECIAL_THEME,
+      palette: SPECIAL_PALETTE,
+    };
+  }
+
+  function countType(type, mode) {
+    if (type.special) return 1;
+    if (mode === "simple") return 8;
+    const stateCombos = type.states.reduce((total, state) => total * state.values.length, 1);
+    const waterCombos = type.waterloggable ? 2 : 1;
+    return 8 * stateCombos * waterCombos;
+  }
+
+  function generateTypeItems(type, mode) {
+    if (type.special) {
+      return [makeSpecialItem(type)];
+    }
+
+    const items = [];
+    const waters = mode === "full" && type.waterloggable ? [false, true] : [false];
+    const combos = mode === "full" ? cartesian(type.states) : [defaultCombo(type)];
+
+    for (const waxed of [false, true]) {
+      for (const waterlogged of waters) {
+        for (let oxidation = 0; oxidation < OXIDATION.length; oxidation += 1) {
+          for (const combo of combos) {
+            items.push(makeItem(type, { oxidation, waxed, waterlogged, combo }));
+          }
+        }
+      }
+    }
+    return items;
+  }
+
+  function buildAllItems(selectedIds, customEntries, mode) {
+    const selected = new Set(selectedIds);
+    const items = [];
+
+    for (const type of BLOCK_TYPES) {
+      if (!selected.has(type.id)) continue;
+      items.push(...generateTypeItems(type, mode));
+    }
+
+    for (const entry of customEntries || []) {
+      items.push(makeCustomItem(entry));
+    }
+
+    const totals = new Map();
+    items.forEach((item) => {
+      totals.set(item.typeKey, (totals.get(item.typeKey) || 0) + 1);
+    });
+    const seen = new Map();
+    let customOrdinal = 0;
+    const customTotal = items.filter((item) => item.isCustom).length;
+    items.forEach((item, index) => {
+      const ordinal = (seen.get(item.typeKey) || 0) + 1;
+      seen.set(item.typeKey, ordinal);
+      item.typeOrdinal = ordinal;
+      item.typeTotal = totals.get(item.typeKey) || 1;
+      item.index = index;
+      if (item.isCustom) {
+        customOrdinal += 1;
+        item.customOrdinal = customOrdinal;
+        item.customTotal = customTotal;
+      }
+    });
+
+    return items;
+  }
+
+  /* ------------------------------------------------------------------------
+     自定义方块
+     ------------------------------------------------------------------------ */
+
+  function asciiSlug(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9_\-]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+      .slice(0, 36);
+  }
+
+  function customChipKind(label) {
+    if (/含水|水/.test(label)) return "water";
+    if (/朝|向|面|角|连接/.test(label)) return "facing";
+    if (/激活|点亮|打开|通电|燃烧|发光/.test(label)) return "power";
+    return "custom";
+  }
+
+  function normalizeStateWord(label) {
+    return String(label || "").trim().replace(/的$/, "");
+  }
+
+  function makeCustomItem(entry) {
+    const oxidation = Math.max(0, Math.min(3, Number(entry.oxidation) || 0));
+    const waxed = Boolean(entry.waxed);
+    const baseName = String(entry.baseName || "自定义铜方块").trim() || "自定义铜方块";
+    const extraStates = (entry.extraStates || []).filter(Boolean);
+    const chips = extraStates.map((state) => ({
+      label: state,
+      kind: customChipKind(state),
+      key: "custom",
+    }));
+    if (!chips.length) {
+      chips.push({ label: "自定义条目", kind: "custom", key: "custom" });
+    }
+    const stateValues = {};
+    const facingLabel = extraStates.find((state) => /^朝[北东南西上下]的?$/.test(normalizeStateWord(state)));
+    const facingWord = facingLabel ? normalizeStateWord(facingLabel) : "";
+    if (facingWord) {
+      const facingId = { 北: "north", 东: "east", 南: "south", 西: "west", 上: "up", 下: "down" }[
+        facingWord.slice(1)
+      ];
+      const rotation = { north: 0, east: 90, south: 180, west: 270, up: 0, down: 180 }[facingId] || 0;
+      stateValues.facing = { id: facingId, label: facingWord, rotation };
+    }
+    const waterlogged = extraStates.some((state) => /含水/.test(state));
+    const extraPhraseLabels = extraStates
+      .map(normalizeStateWord)
+      .filter((state) => state && !/含水/.test(state) && state !== facingWord && state !== "涂蜡");
+    const phraseLabels = [];
+    if (facingWord) phraseLabels.push(facingWord);
+    phraseLabels.push(...extraPhraseLabels);
+    const displayName = buildPhrase(baseName, oxidation, waxed, waterlogged, phraseLabels);
+    const en = String(entry.en || "").trim();
+    let mcId;
+    if (en) {
+      mcId = /^[a-z0-9_.-]+:[a-z0-9_./-]+$/i.test(en)
+        ? en
+        : `custom:${asciiSlug(en) || "entry"}`;
+    } else {
+      mcId = `custom:entry_${String(entry.id || "").replace(/[^a-z0-9]/gi, "").slice(0, 8) || "custom"}`;
+    }
+    const theme = OXIDATION[oxidation].theme;
+
+    return {
+      uid: `custom:${entry.id}`,
+      customId: entry.id,
+      typeId: "custom",
+      typeKey: `custom:${entry.id}`,
+      typeName: baseName,
+      baseName,
+      typeEn: entry.en || "Custom Entry",
+      typeDesc: "自定义条目",
+      category: "custom",
+      categoryLabel: "自定义",
+      icon: entry.icon || "custom",
+      aliases: ["自定义", baseName, en],
+      oxidation,
+      waxed,
+      waterlogged,
+      special: false,
+      isCustom: true,
+      name: displayName,
+      en: en || "Custom Entry",
+      mcId,
+      stateValues,
+      stateChips: chips,
+      spokenStates: extraStates.slice(),
+      speech: displayName,
+      searchText: [displayName, en, baseName, ...extraStates, "自定义"].join(" ").toLowerCase(),
+      theme,
+      palette: PALETTES[oxidation],
+      typeOrdinal: 1,
+      typeTotal: 1,
+    };
+  }
+
+  window.CopperData = {
+    OXIDATION,
+    SPECIAL_THEME,
+    PALETTES,
+    SPECIAL_PALETTE,
+    CATEGORIES,
+    BLOCK_TYPES,
+    countType,
+    buildAllItems,
+    makeCustomItem,
+    getTypeById(id) {
+      return BLOCK_TYPES.find((type) => type.id === id) || null;
+    },
+  };
+})();
+
+  </script>
+  <script>
+/* ==========================================================================
+   铜方块 SVG 绘制
+   - 每个方块种类有自己的等距/风格化图形
+   - 会根据氧化阶段、含水、亮灭、开合、姿势、避雷针朝向等状态改变画面
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  const { PALETTES, SPECIAL_PALETTE } = window.CopperData;
+
+  function esc(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+    });
+  }
+
+  function paletteFor(item) {
+    return item.oxidation === null || item.oxidation === undefined
+      ? SPECIAL_PALETTE
+      : PALETTES[item.oxidation] || PALETTES[0];
+  }
+
+  function stateVal(item, key) {
+    const value = item.stateValues && item.stateValues[key];
+    return value ? value.id : null;
+  }
+
+  function facePoints(cx, y, hw, hh, sh) {
+    return {
+      top: `${cx},${y} ${cx + hw},${y + hh} ${cx},${y + hh * 2} ${cx - hw},${y + hh}`,
+      left: `${cx - hw},${y + hh} ${cx},${y + hh * 2} ${cx},${y + hh * 2 + sh} ${cx - hw},${y + hh + sh}`,
+      right: `${cx + hw},${y + hh} ${cx},${y + hh * 2} ${cx},${y + hh * 2 + sh} ${cx + hw},${y + hh + sh}`,
+    };
+  }
+
+  function bottomPoint(cx, y, hh, sh) {
+    return y + hh * 2 + sh;
+  }
+
+  function defs(p) {
+    return `<defs>
+      <pattern id="cfTex" width="8" height="8" patternUnits="userSpaceOnUse">
+        <rect x="0" y="0" width="2" height="2" fill="${p.hi}" opacity=".2"/>
+        <rect x="4" y="2" width="1" height="2" fill="${p.edge}" opacity=".22"/>
+        <rect x="2" y="5" width="2" height="1" fill="${p.speck}" opacity=".2"/>
+        <rect x="6" y="6" width="1" height="1" fill="${p.patina}" opacity=".28"/>
+      </pattern>
+      <pattern id="cfHoles" width="14" height="14" patternUnits="userSpaceOnUse">
+        <rect x="4" y="4" width="6" height="6" fill="#04100f" opacity=".78"/>
+        <rect x="4" y="4" width="6" height="1" fill="${p.hi}" opacity=".18"/>
+      </pattern>
+      <radialGradient id="cfGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="${p.glowSoft}" stop-opacity=".95"/>
+        <stop offset="45%" stop-color="${p.glow}" stop-opacity=".52"/>
+        <stop offset="100%" stop-color="${p.glow}" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="cfWax" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#ffe9ad" stop-opacity="0"/>
+        <stop offset="45%" stop-color="#ffe9ad" stop-opacity=".72"/>
+        <stop offset="100%" stop-color="#ffe9ad" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="cfSoftGlow" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="6"/>
+      </filter>
+      <filter id="cfTinyGlow" x="-80%" y="-80%" width="260%" height="260%">
+        <feGaussianBlur stdDeviation="2.4"/>
+      </filter>
+    </defs>`;
+  }
+
+  function isoBox(options) {
+    const {
+      cx = 130,
+      y = 38,
+      hw = 82,
+      hh = 42,
+      sh = 86,
+      p,
+      cls = "",
+      shadow = false,
+      detail = "",
+    } = options;
+    const f = facePoints(cx, y, hw, hh, sh);
+    const shadowMarkup = shadow
+      ? `<ellipse cx="${cx}" cy="${bottomPoint(cx, y, hh, sh) + 8}" rx="${hw * 0.9}" ry="${Math.max(7, hh * 0.24)}" fill="#000" opacity=".3"/>`
+      : "";
+    return `<g class="voxel ${cls}">
+      ${shadowMarkup}
+      <polygon points="${f.left}" fill="${p.left}"/>
+      <polygon points="${f.right}" fill="${p.right}"/>
+      <polygon points="${f.top}" fill="${p.top}"/>
+      <polygon points="${f.left}" fill="url(#cfTex)" opacity=".42"/>
+      <polygon points="${f.right}" fill="url(#cfTex)" opacity=".36"/>
+      <polygon points="${f.top}" fill="url(#cfTex)" opacity=".48"/>
+      <polyline points="${f.left}" fill="none" stroke="${p.edge}" stroke-width="1.6" opacity=".85"/>
+      <polyline points="${f.right}" fill="none" stroke="${p.edge}" stroke-width="1.6" opacity=".85"/>
+      <polyline points="${f.top}" fill="none" stroke="${p.edge}" stroke-width="1.6" opacity=".9"/>
+      <polyline points="${cx - hw},${y + hh} ${cx},${y + hh * 2} ${cx + hw},${y + hh}" fill="none" stroke="${p.hi}" stroke-width="1.3" opacity=".34"/>
+      <line x1="${cx - hw + 12}" y1="${y + hh + 10}" x2="${cx - hw + 12}" y2="${y + hh + sh - 10}" stroke="${p.hi}" stroke-width="1" opacity=".16"/>
+      <line x1="${cx + hw - 7}" y1="${y + hh + 13}" x2="${cx + hw - 7}" y2="${y + hh + sh - 13}" stroke="${p.edge}" stroke-width="1" opacity=".2"/>
+      <g opacity=".72">
+        <polygon points="${cx - 26},${y + 31} ${cx - 22},${y + 33} ${cx - 26},${y + 35} ${cx - 30},${y + 33}" fill="${p.hi}" opacity=".30"/>
+        <polygon points="${cx + 18},${y + 36} ${cx + 23},${y + 38.5} ${cx + 18},${y + 41} ${cx + 13},${y + 38.5}" fill="${p.speck}" opacity=".26"/>
+        <polygon points="${cx - 3},${y + 55} ${cx + 2},${y + 57.5} ${cx - 3},${y + 60} ${cx - 8},${y + 57.5}" fill="${p.hi}" opacity=".18"/>
+        <polygon points="${cx + 42},${y + 52} ${cx + 46},${y + 54} ${cx + 42},${y + 56} ${cx + 38},${y + 54}" fill="${p.edge}" opacity=".16"/>
+        <polygon points="${cx - 47},${y + 49} ${cx - 43},${y + 51} ${cx - 47},${y + 53} ${cx - 51},${y + 51}" fill="${p.speck}" opacity=".18"/>
+      </g>
+      ${p.aged
+        ? `<g opacity=".7">
+            <polygon points="${cx - 18},${y + 47} ${cx - 12},${y + 50} ${cx - 18},${y + 53} ${cx - 24},${y + 50}" fill="${p.patina}" opacity=".56"/>
+            <polygon points="${cx + 29},${y + 25} ${cx + 34},${y + 27.5} ${cx + 29},${y + 30} ${cx + 24},${y + 27.5}" fill="${p.patina}" opacity=".42"/>
+            <polygon points="${cx + 7},${y + 64} ${cx + 11},${y + 66} ${cx + 7},${y + 68} ${cx + 3},${y + 66}" fill="${p.patina}" opacity=".36"/>
+          </g>`
+        : ""}
+      ${detail}
+    </g>`;
+  }
+
+  function waterOverlay() {
+    return `<g class="water-overlay" opacity=".95">
+      <path d="M48 205 q13 -8 26 0 t26 0 t26 0 t26 0 t26 0 t26 0" fill="none" stroke="#7ce5ee" stroke-width="2.4" opacity=".52"/>
+      <path d="M58 213 q11 -6 22 0 t22 0 t22 0 t22 0 t22 0 t22 0" fill="none" stroke="#45b8c9" stroke-width="2" opacity=".36"/>
+      <rect x="54" y="216" width="152" height="8" fill="#2a8794" opacity=".17"/>
+      <rect x="83" y="190" width="4" height="4" fill="#b8fbff" opacity=".62"/>
+      <rect x="166" y="196" width="3" height="3" fill="#b8fbff" opacity=".55"/>
+      <rect x="135" y="181" width="2" height="2" fill="#b8fbff" opacity=".48"/>
+    </g>`;
+  }
+
+  function waxShine() {
+    return `<g opacity=".24" aria-hidden="true">
+      <path d="M73 92 L188 58 L195 69 L80 104 Z" fill="url(#cfWax)"/>
+      <path d="M166 72 l8 -12 4 16 -12 -4 Z" fill="#fff0ba" opacity=".8"/>
+    </g>`;
+  }
+
+  function sparkles(item) {
+    const glow = item.waxed || item.special || stateVal(item, "lit") === "true";
+    if (!glow) return "";
+    return `<g opacity=".8" aria-hidden="true">
+      <path d="M58 82 l3 -9 3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 Z" fill="#ffe8ad" opacity=".48"/>
+      <path d="M204 130 l2 -7 2 7 7 2 -7 2 -2 7 -2 -7 -7 -2 Z" fill="#ffe8ad" opacity=".38"/>
+      <path d="M195 78 l2 -5 2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 Z" fill="#fff2c7" opacity=".34"/>
+    </g>`;
+  }
+
+  /* ------------------------------------------------------------------------
+     方块图形
+     ------------------------------------------------------------------------ */
+
+  function artCube(item, p) {
+    let detail = "";
+    if (item.icon === "cut") {
+      detail = `<g opacity=".28" stroke="${p.edge}" stroke-width="1.6">
+        <line x1="130" y1="38" x2="130" y2="122"/>
+        <line x1="56" y1="95" x2="130" y2="121"/>
+        <line x1="204" y1="95" x2="130" y2="121"/>
+        <line x1="130" y1="122" x2="130" y2="208"/>
+        <line x1="55" y1="118" x2="130" y2="155"/>
+        <line x1="205" y1="118" x2="130" y2="155"/>
+      </g>`;
+    } else if (item.icon === "chiseled") {
+      detail = `<g opacity=".42">
+        <polygon points="130,108 166,126 130,144 94,126" fill="none" stroke="${p.edge}" stroke-width="2"/>
+        <polygon points="130,118 151,126 130,134 109,126" fill="none" stroke="${p.hi}" stroke-width="1.2" opacity=".68"/>
+        <rect x="126" y="126" width="8" height="8" fill="${p.edge}" opacity=".45" transform="rotate(45 130 130)"/>
+        <line x1="78" y1="136" x2="78" y2="184" stroke="${p.edge}" stroke-width="1.4" opacity=".45"/>
+        <line x1="182" y1="136" x2="182" y2="184" stroke="${p.edge}" stroke-width="1.4" opacity=".45"/>
+      </g>`;
+    } else if (item.icon === "custom") {
+      detail = `<path d="M130 96 l8 21 22 2 -17 14 5 22 -18 -11 -18 11 5 -22 -17 -14 22 -2 Z" fill="${p.hi}" opacity=".72" stroke="${p.edge}" stroke-width="1.2"/>`;
+    }
+    return isoBox({ p, shadow: true, detail }) + (item.icon === "custom" ? "" : "");
+  }
+
+  function artSlab(item, p) {
+    const type = stateVal(item, "type");
+    if (type === "double") return isoBox({ p, shadow: true, y: 38, sh: 86 });
+    const shift = type === "top" ? -43 : 0;
+    const detail = `<g opacity=".24" stroke="${p.edge}" stroke-width="1.5">
+      <line x1="57" y1="101" x2="130" y2="145"/>
+      <line x1="203" y1="101" x2="130" y2="145"/>
+    </g>`;
+    return `<g transform="translate(0 ${shift})">
+      ${isoBox({ p, y: 88, hw: 82, hh: 42, sh: 36, shadow: true, detail })}
+    </g>
+    ${type === "top" ? `<g opacity=".25" stroke="${p.edge}" stroke-width="1.5">
+      <line x1="86" y1="181" x2="86" y2="198"/>
+      <line x1="174" y1="181" x2="174" y2="198"/>
+    </g>` : ""}`;
+  }
+
+  function artStairs(item, p) {
+    const half = stateVal(item, "half");
+    const shape = stateVal(item, "shape") || "straight";
+    const shift =
+      shape === "outer_left" ? -20 : shape === "outer_right" ? 20 : shape === "inner_left" ? -8 : shape === "inner_right" ? 8 : 0;
+    const detail = `<g opacity=".28" stroke="${p.edge}" stroke-width="1.4">
+      <line x1="${130 - 50}" y1="143" x2="${130 + 50}" y2="188"/>
+      <line x1="${130 + shift - 34}" y1="102" x2="${130 + shift + 34}" y2="138"/>
+      <line x1="${130 + shift * 1.6 - 20}" y1="67" x2="${130 + shift * 1.6 + 20}" y2="89"/>
+    </g>`;
+    const body = `
+      ${isoBox({ p, cx: 130, y: 120, hw: 82, hh: 42, sh: 24, shadow: true })}
+      ${isoBox({ p, cx: 130 + shift, y: 82, hw: 61, hh: 31, sh: 28, shadow: false, detail })}
+      ${isoBox({ p, cx: 130 + shift * 1.6, y: 48, hw: 40, hh: 20, sh: 32, shadow: false })}
+      <polyline points="${130 - 61 + shift},${113} ${130 + shift},${144} ${130 + 61 + shift},${113}" fill="none" stroke="${p.edge}" stroke-width="1.3" opacity=".55"/>
+      <polyline points="${130 - 40 + shift * 1.6},${68} ${130 + shift * 1.6},${88} ${130 + 40 + shift * 1.6},${68}" fill="none" stroke="${p.edge}" stroke-width="1.3" opacity=".55"/>
+    `;
+    if (half === "top") {
+      return `<g transform="translate(0 24) rotate(180 130 130)">${body}</g>`;
+    }
+    return body;
+  }
+
+  function artGrate(item, p) {
+    const f = facePoints(130, 38, 82, 42, 86);
+    return `<g class="voxel">
+      <ellipse cx="130" cy="216" rx="78" ry="12" fill="#000" opacity=".28"/>
+      <polygon points="${f.left}" fill="${p.left}"/>
+      <polygon points="${f.right}" fill="${p.right}"/>
+      <polygon points="${f.top}" fill="${p.top}"/>
+      <polygon points="${f.left}" fill="url(#cfHoles)" opacity=".84"/>
+      <polygon points="${f.right}" fill="url(#cfHoles)" opacity=".84"/>
+      <polygon points="${f.top}" fill="url(#cfHoles)" opacity=".84"/>
+      <polyline points="${f.left}" fill="none" stroke="${p.edge}" stroke-width="2" opacity=".9"/>
+      <polyline points="${f.right}" fill="none" stroke="${p.edge}" stroke-width="2" opacity=".9"/>
+      <polyline points="${f.top}" fill="none" stroke="${p.edge}" stroke-width="2" opacity=".9"/>
+      <polyline points="${130},${38} ${130},${122} ${130},${208}" fill="none" stroke="${p.edge}" stroke-width="1.2" opacity=".5"/>
+      <line x1="48" y1="82" x2="130" y2="122" stroke="${p.hi}" stroke-width="1.2" opacity=".3"/>
+    </g>`;
+  }
+
+  function artBars(item, p) {
+    const conn = (item.stateValues.connections && item.stateValues.connections.connections) || {};
+    const bars = [78, 121, 164];
+    const vertical = bars
+      .map(
+        (x, i) => `<g>
+          <rect x="${x}" y="63" width="10" height="139" fill="${p.left}"/>
+          <rect x="${x + 2}" y="63" width="4" height="139" fill="${p.top}"/>
+          <rect x="${x + 7}" y="63" width="2" height="139" fill="${p.edge}" opacity=".55"/>
+          <rect x="${x - 3}" y="58" width="16" height="7" fill="${p.right}" stroke="${p.edge}" stroke-width="1"/>
+          <rect x="${x - 3}" y="199" width="16" height="7" fill="${p.left}" stroke="${p.edge}" stroke-width="1"/>
+          ${i === 1 ? `<rect x="${x + 2}" y="92" width="6" height="6" fill="${p.hi}" opacity=".5"/>` : ""}
+        </g>`
+      )
+      .join("");
+    const connectionLines = [];
+    if (conn.east) {
+      connectionLines.push(`<rect x="179" y="126" width="58" height="8" fill="${p.left}"/><rect x="179" y="126" width="58" height="3" fill="${p.top}"/>`);
+    }
+    if (conn.west) {
+      connectionLines.push(`<rect x="24" y="126" width="52" height="8" fill="${p.left}"/><rect x="24" y="126" width="52" height="3" fill="${p.top}"/>`);
+    }
+    if (conn.north) {
+      connectionLines.push(`<rect x="116" y="34" width="8" height="36" fill="${p.left}"/><rect x="116" y="34" width="3" height="36" fill="${p.top}"/>`);
+    }
+    if (conn.south) {
+      connectionLines.push(`<rect x="136" y="195" width="8" height="32" fill="${p.left}"/><rect x="136" y="195" width="3" height="32" fill="${p.top}"/>`);
+    }
+    return `<g>
+      <ellipse cx="130" cy="223" rx="73" ry="11" fill="#000" opacity=".26"/>
+      ${connectionLines.join("")}
+      ${vertical}
+      <rect x="70" y="78" width="112" height="5" fill="${p.right}" stroke="${p.edge}" stroke-width="1"/>
+      <rect x="70" y="188" width="112" height="5" fill="${p.left}" stroke="${p.edge}" stroke-width="1"/>
+    </g>`;
+  }
+
+  function artChain(item, p) {
+    const axis = stateVal(item, "axis") || "y";
+    let transform = "";
+    if (axis === "x") transform = "rotate(90 130 130)";
+    if (axis === "z") transform = "rotate(45 130 130)";
+    const links = [];
+    for (let i = 0; i < 5; i += 1) {
+      const y = 54 + i * 36;
+      if (i % 2 === 0) {
+        links.push(`<rect x="${122}" y="${y}" width="16" height="32" rx="7" fill="none" stroke="${p.left}" stroke-width="7"/>
+          <rect x="${122}" y="${y}" width="16" height="32" rx="7" fill="none" stroke="${p.top}" stroke-width="3"/>
+          <rect x="${126}" y="${y + 3}" width="3" height="7" fill="${p.hi}" opacity=".4"/>`);
+      } else {
+        links.push(`<rect x="${114}" y="${y}" width="32" height="30" rx="10" fill="none" stroke="${p.left}" stroke-width="7"/>
+          <rect x="${114}" y="${y}" width="32" height="30" rx="10" fill="none" stroke="${p.top}" stroke-width="3"/>
+          <rect x="${119}" y="${y + 4}" width="7" height="3" fill="${p.hi}" opacity=".36"/>`);
+      }
+    }
+    return `<g transform="${transform}">
+      <ellipse cx="130" cy="232" rx="35" ry="8" fill="#000" opacity=".22"/>
+      <rect x="127" y="24" width="6" height="22" fill="${p.left}"/>
+      <circle cx="130" cy="23" r="7" fill="none" stroke="${p.top}" stroke-width="4"/>
+      ${links.join("")}
+    </g>`;
+  }
+
+  function artLantern(item, p) {
+    const hanging = stateVal(item, "hanging") === "true";
+    return `<g>
+      ${hanging
+        ? `<rect x="127" y="18" width="6" height="54" fill="${p.left}"/>
+           <rect x="128" y="18" width="2" height="54" fill="${p.top}" opacity=".7"/>
+           <rect x="119" y="54" width="22" height="8" fill="${p.right}" stroke="${p.edge}" stroke-width="1"/>`
+        : `<ellipse cx="130" cy="224" rx="48" ry="10" fill="#000" opacity=".3"/>`}
+      <circle cx="130" cy="118" r="47" fill="url(#cfGlow)" opacity=".66" filter="url(#cfSoftGlow)"/>
+      <path d="M99 88 h62 l-7 15 h-48 Z" fill="${p.right}" stroke="${p.edge}" stroke-width="1.6"/>
+      <path d="M108 103 h44 l9 69 h-62 Z" fill="${p.left}" stroke="${p.edge}" stroke-width="1.8"/>
+      <path d="M113 109 h34 l7 56 h-48 Z" fill="#132b29" stroke="${p.edge}" stroke-width="1"/>
+      <path d="M130 119 c-11 15 -7 32 0 40 c8 -9 11 -25 0 -40 Z" fill="#7ce69c" opacity=".95"/>
+      <path d="M130 130 c-5 8 -4 17 0 22 c5 -6 6 -14 0 -22 Z" fill="#d8ffe4"/>
+      <path d="M105 103 v68 M155 103 v68 M112 172 h36" stroke="${p.top}" stroke-width="3" opacity=".86"/>
+      <path d="M102 170 h56 l-9 14 h-38 Z" fill="${p.right}" stroke="${p.edge}" stroke-width="1.6"/>
+      <path d="M113 184 h34 l-5 9 h-24 Z" fill="${p.left}" stroke="${p.edge}" stroke-width="1.2"/>
+      <rect x="123" y="173" width="14" height="4" fill="${p.hi}" opacity=".22"/>
+    </g>`;
+  }
+
+  function artBulb(item, p) {
+    const lit = stateVal(item, "lit") === "true";
+    const powered = stateVal(item, "powered") === "true";
+    const glow = lit
+      ? `<circle cx="158" cy="142" r="40" fill="url(#cfGlow)" opacity=".9" filter="url(#cfSoftGlow)"/>
+         <g opacity=".5" stroke="${p.hi}" stroke-width="2">
+           <line x1="158" y1="92" x2="158" y2="78"/>
+           <line x1="194" y1="108" x2="206" y2="101"/>
+           <line x1="194" y1="172" x2="206" y2="179"/>
+           <line x1="158" y1="190" x2="158" y2="203"/>
+         </g>`
+      : "";
+    return `<g>
+      ${isoBox({ p, shadow: true })}
+      ${glow}
+      <polygon points="130,74 166,92 130,110 94,92" fill="none" stroke="${p.edge}" stroke-width="2.4" opacity=".88"/>
+      <polygon points="130,82 155,94 130,106 105,94" fill="${lit ? p.hi : p.left}" opacity="${lit ? ".86" : ".5"}" stroke="${p.edge}" stroke-width="1"/>
+      <g transform="translate(158 142)">
+        <circle r="26" fill="${lit ? p.hi : p.left}" opacity="${lit ? ".96" : ".72"}" stroke="${p.edge}" stroke-width="2"/>
+        <path d="M0 -17 L14 0 L0 17 L-14 0 Z" fill="${lit ? p.glowSoft : p.right}" opacity=".92"/>
+        <path d="M0 -9 L7 0 L0 9 L-7 0 Z" fill="${lit ? "#ffffff" : p.top}" opacity=".86"/>
+      </g>
+      <g opacity=".42" stroke="${p.edge}" stroke-width="1.5">
+        <line x1="83" y1="142" x2="83" y2="188"/>
+        <line x1="95" y1="148" x2="95" y2="194"/>
+        <line x1="182" y1="148" x2="182" y2="192"/>
+      </g>
+      ${powered ? `<circle cx="130" cy="124" r="5" fill="#e85f4d" stroke="#3c0c08" stroke-width="1.5"/><circle cx="130" cy="124" r="10" fill="#e85f4d" opacity=".2" filter="url(#cfTinyGlow)"/>` : ""}
+    </g>`;
+  }
+
+  function artDoor(item, p) {
+    const open = stateVal(item, "open") === "true";
+    const half = stateVal(item, "half") || "lower";
+    const hinge = stateVal(item, "hinge") || "left";
+    const powered = stateVal(item, "powered") === "true";
+    const knobX = hinge === "left" ? 160 : 100;
+    const doorTransform = open ? "translate(24 0) skewY(-3) scale(.72 1)" : "";
+    const highlight =
+      half === "upper"
+        ? `<polygon points="82,70 130,45 178,70 178,134 130,159 82,134" fill="${p.hi}" opacity=".08"/>`
+        : `<polygon points="82,134 130,159 178,134 178,200 130,225 82,200" fill="${p.hi}" opacity=".1"/>`;
+    return `<g>
+      <ellipse cx="132" cy="230" rx="72" ry="10" fill="#000" opacity=".26"/>
+      ${open ? `<polygon points="60,84 92,68 92,198 60,212" fill="${p.left}" opacity=".45" stroke="${p.edge}" stroke-width="1.2"/>` : ""}
+      <g transform="${doorTransform}">
+        <polygon points="75,76 130,47 185,76 185,204 130,233 75,204" fill="${p.edge}" opacity=".82"/>
+        <polygon points="82,70 130,45 178,70 178,200 130,225 82,200" fill="${p.left}"/>
+        <polygon points="86,74 130,51 174,74 174,195 130,218 86,195" fill="${p.right}"/>
+        ${highlight}
+        <g fill="none" stroke="${p.edge}" stroke-width="1.7" opacity=".7">
+          <polygon points="99,91 130,75 161,91 161,123 130,140 99,123"/>
+          <polygon points="99,150 130,134 161,150 161,183 130,200 99,183"/>
+        </g>
+        <g opacity=".3" stroke="${p.hi}" stroke-width="1.2">
+          <line x1="89" y1="80" x2="89" y2="189"/>
+          <line x1="171" y1="80" x2="171" y2="189"/>
+        </g>
+        <circle cx="${knobX}" cy="146" r="5" fill="${p.hi}" stroke="${p.edge}" stroke-width="1.4"/>
+        <circle cx="${knobX}" cy="146" r="2" fill="${p.edge}" opacity=".55"/>
+        ${hinge === "left"
+          ? `<rect x="88" y="106" width="7" height="18" fill="${p.top}" stroke="${p.edge}" stroke-width="1"/><rect x="88" y="168" width="7" height="18" fill="${p.top}" stroke="${p.edge}" stroke-width="1"/>`
+          : `<rect x="165" y="106" width="7" height="18" fill="${p.top}" stroke="${p.edge}" stroke-width="1"/><rect x="165" y="168" width="7" height="18" fill="${p.top}" stroke="${p.edge}" stroke-width="1"/>`}
+        ${powered ? `<circle cx="130" cy="207" r="5" fill="#e85f4d" stroke="#3c0c08" stroke-width="1.4"/><circle cx="130" cy="207" r="12" fill="#e85f4d" opacity=".18" filter="url(#cfTinyGlow)"/>` : ""}
+      </g>
+    </g>`;
+  }
+
+  function artTrapdoor(item, p) {
+    const open = stateVal(item, "open") === "true";
+    const half = stateVal(item, "half") || "bottom";
+    const powered = stateVal(item, "powered") === "true";
+    const yShift = half === "top" ? -35 : 0;
+    let panel;
+    if (open) {
+      panel = `<g>
+        <polygon points="88,82 130,60 172,82 172,198 130,220 88,198" fill="${p.left}" stroke="${p.edge}" stroke-width="1.6"/>
+        <polygon points="94,87 130,68 166,87 166,193 130,212 94,193" fill="${p.right}"/>
+        <path d="M94 112 h72 M94 142 h72 M94 172 h72" stroke="${p.edge}" stroke-width="1.6" opacity=".58"/>
+        <rect x="102" y="128" width="10" height="5" fill="${p.hi}" opacity=".5"/>
+        <rect x="148" y="128" width="10" height="5" fill="${p.hi}" opacity=".5"/>
+        <circle cx="122" cy="113" r="5" fill="${p.top}" stroke="${p.edge}" stroke-width="1.2"/>
+      </g>`;
+    } else {
+      panel = `<g>
+        <polygon points="56,139 130,103 204,139 130,175" fill="${p.top}" stroke="${p.edge}" stroke-width="1.8"/>
+        <polygon points="56,139 130,175 130,188 56,152" fill="${p.left}" stroke="${p.edge}" stroke-width="1.4"/>
+        <polygon points="204,139 130,175 130,188 204,152" fill="${p.right}" stroke="${p.edge}" stroke-width="1.4"/>
+        <path d="M76 140 L130 167 L184 140 M92 132 L146 159 M168 132 L114 159" fill="none" stroke="${p.edge}" stroke-width="1.4" opacity=".52"/>
+        <rect x="119" y="135" width="22" height="6" fill="${p.hi}" opacity=".3" transform="skewX(-26)"/>
+      </g>`;
+    }
+    return `<g transform="translate(0 ${yShift})">
+      ${open ? "" : `<ellipse cx="130" cy="201" rx="70" ry="9" fill="#000" opacity=".26"/>`}
+      ${panel}
+      ${powered ? `<circle cx="130" cy="${open ? 202 : 169}" r="5" fill="#e85f4d" stroke="#3c0c08" stroke-width="1.4"/>` : ""}
+    </g>`;
+  }
+
+  function artChest(item, p) {
+    const type = stateVal(item, "type") || "single";
+    const halfFade = type === "left" ? "0.55" : "1";
+    return `<g>
+      <ellipse cx="130" cy="221" rx="79" ry="12" fill="#000" opacity=".3"/>
+      ${isoBox({ p, cx: 130, y: 100, hw: 78, hh: 38, sh: 62, shadow: false })}
+      <g opacity="${type === "left" ? "0.55" : "1"}">
+        ${isoBox({ p, cx: 130, y: 66, hw: 78, hh: 38, sh: 26, shadow: false })}
+      </g>
+      <line x1="52" y1="138" x2="130" y2="176" stroke="${p.edge}" stroke-width="2" opacity=".75"/>
+      <line x1="208" y1="138" x2="130" y2="176" stroke="${p.edge}" stroke-width="2" opacity=".75"/>
+      <g stroke="${p.edge}" stroke-width="1.5" opacity=".55">
+        <line x1="78" y1="112" x2="78" y2="186"/>
+        <line x1="182" y1="112" x2="182" y2="186"/>
+        <line x1="104" y1="108" x2="104" y2="196"/>
+        <line x1="156" y1="108" x2="156" y2="196"/>
+      </g>
+      <g>
+        <rect x="122" y="154" width="18" height="24" fill="${p.top}" stroke="${p.edge}" stroke-width="1.6"/>
+        <rect x="126" y="159" width="10" height="7" fill="${p.edge}" opacity=".7"/>
+        <circle cx="131" cy="170" r="2.4" fill="${p.edge}"/>
+      </g>
+      ${type !== "single" ? `<g opacity=".8"><line x1="${type === "left" ? "158" : "102"}" y1="92" x2="${type === "left" ? "158" : "102"}" y2="196" stroke="${p.hi}" stroke-width="1.5" stroke-dasharray="5 5"/></g>` : ""}
+      <g opacity="${halfFade}" fill="${p.hi}">
+        <rect x="74" y="122" width="4" height="4"/>
+        <rect x="182" y="122" width="4" height="4"/>
+        <rect x="74" y="168" width="4" height="4"/>
+        <rect x="182" y="168" width="4" height="4"/>
+      </g>
+    </g>`;
+  }
+
+  function artStatue(item, p) {
+    const pose = stateVal(item, "pose") || "standing";
+    const sitting = pose === "sitting";
+    const running = pose === "running";
+    const star = pose === "star";
+    const bodyY = sitting ? 106 : 80;
+    const headY = sitting ? 58 : 34;
+    const bodySh = sitting ? 40 : 48;
+    const legY = bodyY + 58;
+    const armAngle = running ? -16 : star ? 78 : 0;
+
+    const legs = `
+      <g transform="translate(${sitting ? 0 : running ? 8 : 0} ${sitting ? 42 : 0})">
+        ${isoBox({ p, cx: 116, y: legY, hw: 17, hh: 9, sh: 38, shadow: false })}
+        ${isoBox({ p, cx: 144, y: legY, hw: 17, hh: 9, sh: 38, shadow: false })}
+      </g>`;
+    const arms = `
+      <g transform="rotate(${armAngle} 96 ${bodyY + 18})">
+        ${isoBox({ p, cx: 92, y: bodyY + 8, hw: 12, hh: 7, sh: 45, shadow: false })}
+      </g>
+      <g transform="rotate(${-armAngle} 164 ${bodyY + 18})">
+        ${isoBox({ p, cx: 168, y: bodyY + 8, hw: 12, hh: 7, sh: 45, shadow: false })}
+      </g>`;
+    return `<g>
+      <ellipse cx="130" cy="228" rx="62" ry="11" fill="#000" opacity=".28"/>
+      ${legs}
+      ${arms}
+      ${isoBox({ p, cx: 130, y: bodyY + 18, hw: 34, hh: 17, sh: bodySh, shadow: false })}
+      ${isoBox({ p, cx: 130, y: headY, hw: 25, hh: 13, sh: 30, shadow: false })}
+      <g fill="${p.edge}" opacity=".9">
+        <rect x="137" y="${headY + 33}" width="5" height="5"/>
+        <rect x="149" y="${headY + 37}" width="5" height="5"/>
+      </g>
+      <rect x="127" y="${headY + 47}" width="16" height="3" fill="${p.edge}" opacity=".55"/>
+      <g stroke="${p.edge}" stroke-width="1.3" opacity=".4">
+        <line x1="103" y1="${bodyY + 34}" x2="157" y2="${bodyY + 60}"/>
+        <line x1="103" y1="${bodyY + 58}" x2="157" y2="${bodyY + 84}"/>
+      </g>
+      ${star ? `<g opacity=".65" fill="${p.hi}"><rect x="42" y="${bodyY + 2}" width="5" height="5"/><rect x="214" y="${bodyY + 2}" width="5" height="5"/></g>` : ""}
+    </g>`;
+  }
+
+  function artRod(item, p) {
+    const facing = stateVal(item, "facing") || "up";
+    const powered = stateVal(item, "powered") === "true";
+    const angles = { up: 0, down: 180, north: -22, south: 22, east: 38, west: -38 };
+    const angle = angles[facing] || 0;
+    return `<g>
+      <ellipse cx="130" cy="218" rx="52" ry="10" fill="#000" opacity=".28"/>
+      ${isoBox({ p, cx: 130, y: 172, hw: 53, hh: 27, sh: 17, shadow: false })}
+      <g transform="rotate(${angle} 130 181)">
+        <rect x="126" y="55" width="8" height="122" fill="${p.left}"/>
+        <rect x="128" y="55" width="3" height="122" fill="${p.top}"/>
+        <circle cx="130" cy="51" r="9" fill="${p.right}" stroke="${p.edge}" stroke-width="1.5"/>
+        <circle cx="130" cy="51" r="4" fill="${powered ? "#fff4d2" : p.hi}" opacity=".78"/>
+        <path d="M146 50 l-9 16 h7 l-7 17 17 -21 h-8 l6 -12 Z" fill="${powered ? "#fff3c9" : p.hi}" opacity=".9"/>
+        ${powered ? `<circle cx="130" cy="51" r="26" fill="url(#cfGlow)" opacity=".75" filter="url(#cfSoftGlow)"/>` : ""}
+      </g>
+    </g>`;
+  }
+
+  function artTorch(item, p) {
+    return `<g>
+      <ellipse cx="130" cy="226" rx="32" ry="8" fill="#000" opacity=".28"/>
+      <rect x="123" y="104" width="14" height="112" fill="${p.left}"/>
+      <rect x="126" y="104" width="5" height="112" fill="${p.top}"/>
+      <rect x="118" y="103" width="24" height="12" fill="${p.right}" stroke="${p.edge}" stroke-width="1.2"/>
+      <circle cx="130" cy="89" r="39" fill="url(#cfGlow)" opacity=".8" filter="url(#cfSoftGlow)"/>
+      <path d="M130 47 c-18 25 -13 49 0 61 c14 -14 18 -39 0 -61 Z" fill="${p.right}" stroke="${p.edge}" stroke-width="1.2"/>
+      <path d="M130 61 c-9 16 -6 30 0 38 c7 -9 9 -23 0 -38 Z" fill="${p.hi}"/>
+      <path d="M130 75 c-3 7 -2 14 0 18 c3 -5 4 -12 0 -18 Z" fill="#f5ffe8"/>
+      <g fill="${p.hi}" opacity=".6">
+        <rect x="104" y="70" width="3" height="3"/>
+        <rect x="154" y="82" width="2" height="2"/>
+        <rect x="111" y="112" width="2" height="2"/>
+      </g>
+    </g>`;
+  }
+
+  /* ------------------------------------------------------------------------
+     入口
+     ------------------------------------------------------------------------ */
+
+  function bodyFor(item, p) {
+    if (item.icon === "slab") return artSlab(item, p);
+    if (item.icon === "stairs") return artStairs(item, p);
+    if (item.icon === "grate") return artGrate(item, p);
+    if (item.icon === "bars") return artBars(item, p);
+    if (item.icon === "chain") return artChain(item, p);
+    if (item.icon === "lantern") return artLantern(item, p);
+    if (item.icon === "bulb") return artBulb(item, p);
+    if (item.icon === "door") return artDoor(item, p);
+    if (item.icon === "trapdoor") return artTrapdoor(item, p);
+    if (item.icon === "chest") return artChest(item, p);
+    if (item.icon === "statue") return artStatue(item, p);
+    if (item.icon === "rod") return artRod(item, p);
+    if (item.icon === "torch") return artTorch(item, p);
+    return artCube(item, p);
+  }
+
+  function render(item) {
+    const p = paletteFor(item);
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" role="img" aria-label="${esc(item.name)}">
+      ${defs(p)}
+      ${bodyFor(item, p)}
+      ${item.waterlogged ? waterOverlay() : ""}
+      ${item.waxed ? waxShine() : ""}
+      ${sparkles(item)}
+    </svg>`;
+  }
+
+  window.CopperArt = { render };
+})();
+
+  </script>
+  <script>
+/* ==========================================================================
+   铜方块快闪 · 交互层
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  const D = window.CopperData;
+  const A = window.CopperArt;
+  const STORAGE_KEY = "copperBlockFlash.v1";
+  const speechSupported =
+    typeof window.speechSynthesis !== "undefined" &&
+    typeof window.SpeechSynthesisUtterance !== "undefined";
+  const synth = speechSupported ? window.speechSynthesis : null;
+
+  const $ = (selector, root) => (root || document).querySelector(selector);
+  const $$ = (selector, root) => Array.from((root || document).querySelectorAll(selector));
+  const formatNumber = (value) => Number(value).toLocaleString("zh-CN");
+
+  const els = {
+    stage: $("#stage"),
+    blockArt: $("#blockArt"),
+    categoryBadge: $("#categoryBadge"),
+    seqNo: $("#seqNo"),
+    modeHint: $("#modeHint"),
+    speakingPill: $("#speakingPill"),
+    facingBadge: $("#facingBadge"),
+    facingText: $("#facingText"),
+    facingNeedle: $("#facingNeedle"),
+    waterBadge: $("#waterBadge"),
+    waxStamp: $("#waxStamp"),
+    oxBadge: $("#oxBadge"),
+    waxBadge: $("#waxBadge"),
+    blockName: $("#blockName"),
+    stateChips: $("#stateChips"),
+    blockId: $("#blockId"),
+    nextNameBtn: $("#nextNameBtn"),
+    typeProgress: $("#typeProgress"),
+    progressLabel: $("#progressLabel"),
+    playHint: $("#playHint"),
+    progressTrack: $(".progress-track"),
+    progressFill: $("#progressFill"),
+    playBtn: $("#playBtn"),
+    playIcon: $("#playIcon"),
+    playLabel: $("#playLabel"),
+    prevBtn: $("#prevBtn"),
+    nextBtn: $("#nextBtn"),
+    ttsToggle: $("#ttsToggle"),
+    voiceSelect: $("#voiceSelect"),
+    ttsRateSelect: $("#ttsRateSelect"),
+    loopBtn: $("#loopBtn"),
+    speedRange: $("#speedRange"),
+    speedLabel: $("#speedLabel"),
+    totalBadge: $("#totalBadge"),
+    selectedSummary: $("#selectedSummary"),
+    customCount: $("#customCount"),
+    libraryList: $("#libraryList"),
+    customList: $("#customList"),
+    searchInput: $("#searchInput"),
+    selectAllBtn: $("#selectAllBtn"),
+    clearAllBtn: $("#clearAllBtn"),
+    modeDescription: $("#modeDescription"),
+    segments: $$(".segment"),
+    panelTabs: $$(".panel-tab"),
+    panelPanes: $$(".panel-pane"),
+    addCustomBtn: $("#addCustomBtn"),
+    customDialog: $("#customDialog"),
+    customForm: $("#customForm"),
+    customName: $("#customName"),
+    customOx: $("#customOx"),
+    customWaxed: $("#customWaxed"),
+    customStates: $("#customStates"),
+    customIcon: $("#customIcon"),
+    customEn: $("#customEn"),
+    helpDialog: $("#helpDialog"),
+    helpBtn: $("#helpBtn"),
+    fullscreenBtn: $("#fullscreenBtn"),
+    resetDataBtn: $("#resetDataBtn"),
+    toast: $("#toast"),
+  };
+
+  const app = {
+    selected: new Set(D.BLOCK_TYPES.map((type) => type.id)),
+    custom: [],
+    items: [],
+    index: 0,
+    mode: "full",
+    duration: 1600,
+    loop: true,
+    tts: false,
+    playing: false,
+    finished: false,
+    speaking: false,
+    timer: null,
+    speechToken: 0,
+    speechStartTimer: null,
+    speechWatchdog: null,
+    speechNextTimer: null,
+    ttsActive: null,
+    ttsQueued: null,
+    voices: [],
+    voice: null,
+    voicePreference: "auto",
+    ttsRateMode: "auto",
+    localFallbackLocked: false,
+    toastTimer: null,
+    libraryQuery: "",
+  };
+
+  /* ------------------------------------------------------------------------
+     持久化
+     ------------------------------------------------------------------------ */
+
+  function loadState() {
+    let saved = null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) saved = JSON.parse(raw);
+    } catch (error) {
+      saved = null;
+    }
+    if (!saved || typeof saved !== "object") return;
+
+    const validIds = new Set(D.BLOCK_TYPES.map((type) => type.id));
+    if (Array.isArray(saved.selected)) {
+      app.selected = new Set(saved.selected.filter((id) => validIds.has(id)));
+    }
+    if (saved.mode === "simple" || saved.mode === "full") app.mode = saved.mode;
+    if (Number.isFinite(Number(saved.duration))) {
+      app.duration = Math.max(600, Math.min(5000, Number(saved.duration)));
+    }
+    if (typeof saved.loop === "boolean") app.loop = saved.loop;
+    if (typeof saved.tts === "boolean") app.tts = saved.tts && speechSupported;
+    if (typeof saved.voice === "string" && saved.voice) app.voicePreference = saved.voice;
+    if (typeof saved.ttsRate === "string") {
+      if (saved.ttsRate === "auto") {
+        app.ttsRateMode = "auto";
+      } else {
+        const rate = Number(saved.ttsRate);
+        if (Number.isFinite(rate) && rate >= 0.5 && rate <= 2) {
+          app.ttsRateMode = String(rate);
+        }
+      }
+    }
+    if (Array.isArray(saved.custom)) {
+      app.custom = saved.custom
+        .filter((entry) => entry && entry.id && entry.baseName)
+        .slice(0, 100)
+        .map((entry) => ({
+          id: String(entry.id),
+          baseName: String(entry.baseName).slice(0, 28),
+          oxidation: Math.max(0, Math.min(3, Number(entry.oxidation) || 0)),
+          waxed: Boolean(entry.waxed),
+          extraStates: Array.isArray(entry.extraStates)
+            ? entry.extraStates.filter(Boolean).map(String).slice(0, 10)
+            : [],
+          icon: entry.icon || "custom",
+          en: entry.en || "",
+          createdAt: Number(entry.createdAt) || Date.now(),
+        }));
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          selected: Array.from(app.selected),
+          mode: app.mode,
+          duration: app.duration,
+          loop: app.loop,
+          tts: app.tts,
+          voice: app.voicePreference,
+          ttsRate: app.ttsRateMode,
+          custom: app.custom,
+        })
+      );
+    } catch (error) {
+      /* file:// 或隐私模式可能禁止 localStorage，页面本身仍然可用 */
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     基础工具
+     ------------------------------------------------------------------------ */
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+    });
+  }
+
+  function formatIndex(value) {
+    return String(value).padStart(4, "0");
+  }
+
+  function currentItem() {
+    return app.items[app.index] || null;
+  }
+
+  function toast(message) {
+    if (!els.toast) return;
+    els.toast.textContent = message;
+    els.toast.classList.add("is-visible");
+    clearTimeout(app.toastTimer);
+    app.toastTimer = setTimeout(() => {
+      els.toast.classList.remove("is-visible");
+    }, 2600);
+  }
+
+  function setHint(text) {
+    if (els.playHint) els.playHint.textContent = text;
+  }
+
+  function focusStageOnMobile() {
+    if (!els.stage || window.innerWidth > 900) return;
+    els.stage.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start",
+    });
+  }
+
+  function setSpeaking(on) {
+    app.speaking = Boolean(on);
+    if (els.speakingPill) els.speakingPill.hidden = !app.speaking;
+    if (els.stage) els.stage.classList.toggle("is-speaking", app.speaking);
+    if (app.speaking && app.playing) {
+      setHint(nextItem() ? "正在朗读 · 下一项已预加载" : "正在朗读 · 最后一项");
+    }
+  }
+
+  function applyTheme(theme) {
+    const root = document.documentElement;
+    root.style.setProperty("--ox", theme.ox);
+    root.style.setProperty("--ox-hi", theme.hi);
+    root.style.setProperty("--ox-deep", theme.deep);
+    root.style.setProperty("--ox-soft", theme.soft);
+    root.style.setProperty("--ox-glow", theme.glow);
+    root.style.setProperty("--ox-rgb", theme.rgb);
+  }
+
+  /* ------------------------------------------------------------------------
+     播放列表
+     ------------------------------------------------------------------------ */
+
+  function rebuildItems(options) {
+    const opts = options || {};
+    const previous = currentItem();
+    const oldUid = previous ? previous.uid : null;
+    const oldType = previous ? previous.typeKey : null;
+
+    if (app.playing) pausePlayback({ silent: true });
+
+    app.items = D.buildAllItems(Array.from(app.selected), app.custom, app.mode);
+
+    if (!app.items.length) {
+      app.index = 0;
+    } else if (opts.keepCurrent !== false && oldUid) {
+      const same = app.items.findIndex((item) => item.uid === oldUid);
+      if (same >= 0) {
+        app.index = same;
+      } else {
+        const sameType = app.items.findIndex((item) => item.typeKey === oldType);
+        app.index = sameType >= 0 ? sameType : 0;
+      }
+    } else {
+      app.index = 0;
+    }
+
+    app.finished = false;
+    updateTotals();
+    updateModeUI();
+    renderCurrent();
+    updatePlayUI();
+    if (!opts.silent && !app.items.length) {
+      toast("播放列表为空，请先在方块库中选择方块");
+    }
+  }
+
+  function updateTotals() {
+    const total = app.items.length;
+    els.totalBadge.textContent = `${formatNumber(total)} 个状态`;
+    els.selectedSummary.textContent = `已选 ${app.selected.size} / ${D.BLOCK_TYPES.length} 类`;
+    els.customCount.textContent = String(app.custom.length);
+    const disabled = total === 0;
+    els.playBtn.disabled = disabled;
+    els.prevBtn.disabled = disabled;
+    els.nextBtn.disabled = disabled;
+    els.nextNameBtn.disabled = disabled;
+    els.loopBtn.disabled = disabled;
+    els.speedRange.disabled = disabled;
+    if (disabled) {
+      els.modeHint.textContent = app.mode === "full" ? "完整状态 · 0 项" : "精简状态 · 0 项";
+    } else {
+      els.modeHint.textContent = `${app.mode === "full" ? "完整状态" : "精简状态"} · ${formatNumber(total)} 项`;
+    }
+  }
+
+  function updateModeUI() {
+    els.segments.forEach((button) => {
+      const active = button.dataset.mode === app.mode;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    els.modeDescription.textContent =
+      app.mode === "full"
+        ? "展开全部朝向、含水、开关与连接状态"
+        : "每类保留一个代表状态，通常为 8 个氧化/涂蜡变种";
+  }
+
+  function nextItem() {
+    if (!app.items.length) return null;
+    if (app.index < app.items.length - 1) return app.items[app.index + 1];
+    return app.loop ? app.items[0] : null;
+  }
+
+  /* ------------------------------------------------------------------------
+     主舞台渲染
+     ------------------------------------------------------------------------ */
+
+  function chipClass(kind) {
+    if (!kind) return "";
+    return ` state-chip--${kind}`;
+  }
+
+  function renderCurrent() {
+    if (!app.items.length) {
+      renderEmptyState();
+      return;
+    }
+
+    const item = app.items[app.index];
+    applyTheme(item.theme);
+    els.stage.dataset.ox = item.oxidation === null ? "special" : String(item.oxidation);
+
+    els.categoryBadge.textContent = item.categoryLabel;
+    els.seqNo.textContent = `#${formatIndex(app.index + 1)}`;
+
+    if (item.special) {
+      els.oxBadge.textContent = "特殊方块";
+      els.waxBadge.textContent = "不可涂蜡";
+      els.waxBadge.classList.remove("is-waxed");
+    } else {
+      const ox = D.OXIDATION[item.oxidation];
+      els.oxBadge.textContent = ox ? ox.label : "未氧化";
+      els.waxBadge.textContent = item.waxed ? "涂蜡" : "未涂蜡";
+      els.waxBadge.classList.toggle("is-waxed", item.waxed);
+    }
+
+    els.blockName.textContent = item.name;
+    els.blockName.classList.toggle("is-long", item.name.length > 13);
+    els.blockName.classList.toggle("is-very-long", item.name.length > 20);
+    els.blockName.classList.toggle("is-ultra-long", item.name.length > 32);
+    els.stateChips.innerHTML = item.stateChips
+      .map((chip) => `<span class="state-chip${chipClass(chip.kind)}">${escapeHTML(chip.label)}</span>`)
+      .join("");
+
+    els.blockId.textContent = item.mcId;
+    els.blockId.title = item.mcId;
+
+    const facingValue = item.stateValues && item.stateValues.facing;
+    if (facingValue) {
+      els.facingBadge.hidden = false;
+      els.facingText.textContent = facingValue.label;
+      const rotation = Number.isFinite(Number(facingValue.rotation)) ? Number(facingValue.rotation) : 0;
+      els.facingNeedle.style.transform = `rotate(${rotation}deg)`;
+    } else {
+      els.facingBadge.hidden = true;
+    }
+
+    els.waterBadge.hidden = !item.waterlogged;
+    els.waxStamp.hidden = !item.waxed;
+
+    els.nextNameBtn.textContent = nextItem() ? nextItem().name : "已是最后一项";
+    els.nextNameBtn.dataset.hasNext = nextItem() ? "1" : "0";
+
+    if (item.isCustom) {
+      els.typeProgress.textContent = `自定义条目 · 第 ${item.customOrdinal || 1} / ${item.customTotal || 1} 条`;
+    } else {
+      els.typeProgress.textContent = `本类 ${item.typeOrdinal} / ${item.typeTotal}`;
+    }
+
+    els.progressLabel.textContent = `${formatIndex(app.index + 1)} / ${formatNumber(app.items.length)}`;
+    const percentage = ((app.index + 1) / app.items.length) * 100;
+    els.progressFill.style.width = `${percentage}%`;
+    els.progressTrack.setAttribute("aria-valuenow", String(Math.round(percentage)));
+    els.progressTrack.setAttribute("aria-valuemax", "100");
+    els.progressTrack.setAttribute("aria-valuemin", "0");
+
+    els.blockArt.innerHTML = A.render(item);
+    els.blockArt.classList.remove("is-flashing");
+    void els.blockArt.offsetWidth;
+    els.blockArt.classList.add("is-flashing");
+
+    document.title = `${item.name} · 铜方块快闪`;
+    updatePlayUI();
+  }
+
+  function renderEmptyState() {
+    applyTheme(D.OXIDATION[0].theme);
+    els.stage.dataset.ox = "empty";
+    els.categoryBadge.textContent = "空闲";
+    els.seqNo.textContent = "—";
+    els.oxBadge.textContent = "等待选择";
+    els.waxBadge.textContent = "—";
+    els.waxBadge.classList.remove("is-waxed");
+    els.blockName.textContent = "还没有选择方块";
+    els.blockName.classList.remove("is-long", "is-very-long", "is-ultra-long");
+    els.stateChips.innerHTML = `<span class="state-chip state-chip--none">在右侧方块库选择要播放的铜方块</span>`;
+    els.blockId.textContent = "playlist is empty";
+    els.blockId.title = "playlist is empty";
+    els.facingBadge.hidden = true;
+    els.waterBadge.hidden = true;
+    els.waxStamp.hidden = true;
+    els.nextNameBtn.textContent = "—";
+    els.nextNameBtn.dataset.hasNext = "0";
+    els.typeProgress.textContent = "—";
+    els.progressLabel.textContent = `0000 / 0000`;
+    els.progressFill.style.width = "0%";
+    els.progressTrack.setAttribute("aria-valuenow", "0");
+    els.blockArt.innerHTML = emptyArtwork();
+    els.blockArt.classList.remove("is-flashing");
+    setHint("播放列表为空");
+    document.title = "铜方块快闪 · Copper Block Flash";
+    updatePlayUI();
+  }
+
+  function emptyArtwork() {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" aria-hidden="true">
+      <defs>
+        <pattern id="emptyTex" width="10" height="10" patternUnits="userSpaceOnUse">
+          <rect x="2" y="2" width="2" height="2" fill="#d8874a" opacity=".14"/>
+          <rect x="7" y="6" width="1" height="1" fill="#d8874a" opacity=".1"/>
+        </pattern>
+      </defs>
+      <ellipse cx="130" cy="225" rx="78" ry="12" fill="#000" opacity=".25"/>
+      <g opacity=".26">
+        <polygon points="130,38 212,80 130,122 48,80" fill="#d8874a"/>
+        <polygon points="48,80 130,122 130,208 48,166" fill="#8f4f26"/>
+        <polygon points="212,80 130,122 130,208 212,166" fill="#c77a3f"/>
+        <polygon points="48,80 130,122 130,208 48,166" fill="url(#emptyTex)"/>
+        <polygon points="212,80 130,122 130,208 212,166" fill="url(#emptyTex)"/>
+        <polygon points="130,38 212,80 130,122 48,80" fill="url(#emptyTex)"/>
+      </g>
+      <g fill="none" stroke="#d8874a" stroke-width="1.4" opacity=".32">
+        <polygon points="130,20 218,65 130,110 42,65"/>
+        <path d="M42 65v92M218 65v92M130 110v92"/>
+      </g>
+      <text x="130" y="246" fill="#8fa69d" font-family="monospace" font-size="10" text-anchor="middle" opacity=".7">SELECT COPPER BLOCKS</text>
+    </svg>`;
+  }
+
+  /* ------------------------------------------------------------------------
+     播放状态
+     ------------------------------------------------------------------------ */
+
+  function updatePlayUI() {
+    const hasItems = app.items.length > 0;
+    const iconHref = app.playing ? "#i-pause" : "#i-play";
+    if (els.playIcon) els.playIcon.innerHTML = `<use href="${iconHref}"></use>`;
+    if (app.playing) {
+      els.playLabel.textContent = "暂停";
+      els.playBtn.setAttribute("aria-label", "暂停快闪");
+      els.stage.classList.add("is-playing");
+    } else {
+      els.playLabel.textContent = app.finished
+        ? "重新播放"
+        : app.index > 0
+          ? "继续播放"
+          : "开始快闪";
+      els.playBtn.setAttribute("aria-label", app.finished ? "重新播放" : "开始快闪");
+      els.stage.classList.remove("is-playing");
+    }
+
+    els.playBtn.disabled = !hasItems;
+    els.prevBtn.disabled = !hasItems;
+    els.nextBtn.disabled = !hasItems;
+
+    if (!hasItems) {
+      setHint("播放列表为空");
+    } else if (app.playing) {
+      if (app.tts && speechSupported) {
+        setHint(
+          app.speaking
+            ? nextItem()
+              ? "正在朗读 · 下一项已预加载"
+              : "正在朗读 · 最后一项"
+            : "朗读模式 · 预加载下一项"
+        );
+      } else {
+        setHint(`自动播放 · ${(app.duration / 1000).toFixed(1)}s/项`);
+      }
+    } else if (app.finished) {
+      setHint("播放完毕");
+    } else if (app.index > 0) {
+      setHint("已暂停 · 空格继续");
+    } else {
+      setHint("已暂停 · 按空格开始");
+    }
+
+    if (!els.speakingPill.hidden && !app.speaking) {
+      els.speakingPill.hidden = true;
+    }
+  }
+
+  function clearAdvanceTimer() {
+    clearTimeout(app.timer);
+    app.timer = null;
+  }
+
+  function cancelSpeech() {
+    app.speechToken += 1;
+    clearTimeout(app.speechStartTimer);
+    clearTimeout(app.speechWatchdog);
+    clearTimeout(app.speechNextTimer);
+    app.speechStartTimer = null;
+    app.speechWatchdog = null;
+    app.speechNextTimer = null;
+    app.ttsActive = null;
+    app.ttsQueued = null;
+    setSpeaking(false);
+    if (synth) {
+      try {
+        synth.cancel();
+      } catch (error) {
+        /* ignore */
+      }
+    }
+  }
+
+  const VOICE_NAME_BONUSES = [
+    [/晓晓|Xiaoxiao/i, 28],
+    [/晓伊|Xiaoyi/i, 20],
+    [/云希|Yunxi/i, 14],
+    [/云健|Yunjian/i, 12],
+    [/云扬|Yunyang/i, 10],
+    [/云夏|Yunxia/i, 8],
+    [/Huihui/i, 10],
+    [/Yaoyao/i, 8],
+    [/Kangkang/i, 4],
+  ];
+
+  function scoreVoice(voice) {
+    if (!voice || !/^zh/i.test(voice.lang)) return -9999;
+    let score = 60;
+    const lang = String(voice.lang).toLowerCase();
+    if (lang === "zh-cn") score += 40;
+    else if (lang.startsWith("zh-cn-")) score += 15;
+    else if (lang === "zh-tw" || lang === "zh-hk") score -= 25;
+
+    if (/Microsoft/i.test(voice.name)) score += 15; // Edge 内置语音
+    if (/Online\s*\(Natural\)/i.test(voice.name)) score += 70;
+    else if (/Natural/i.test(voice.name)) score += 45;
+    if (/Mandarin, Simplified|Simplified, PRC|Chinese \(Mainland\)/i.test(voice.name)) score += 10;
+    for (const [pattern, bonus] of VOICE_NAME_BONUSES) {
+      if (pattern.test(voice.name)) score += bonus;
+    }
+
+    if (voice.localService) {
+      score += 3;
+      if (navigator.onLine === false) score += 120;
+    } else if (navigator.onLine === false) {
+      score -= 120;
+    }
+    if (voice.default) score += 2;
+    return score;
+  }
+
+  function pickBestVoice() {
+    if (!app.voices.length) return null;
+    const chinese = app.voices.filter((voice) => /^zh/i.test(voice.lang));
+    if (chinese.length) {
+      return chinese.slice().sort((a, b) => scoreVoice(b) - scoreVoice(a))[0] || null;
+    }
+    return app.voices.find((voice) => voice.default) || null;
+  }
+
+  function pickLocalVoice() {
+    const local = app.voices.filter((voice) => /^zh/i.test(voice.lang) && voice.localService);
+    return local.sort((a, b) => scoreVoice(b) - scoreVoice(a))[0] || null;
+  }
+
+  function shortVoiceName(voice) {
+    if (!voice) return "浏览器默认语音";
+    return voice.name
+      .replace(/^Microsoft\s+/i, "")
+      .replace(/\s+-\s+Chinese.*$/i, "")
+      .replace(/\s+-\s+.*$/i, "")
+      .trim();
+  }
+
+  function ttsRateFor(voice) {
+    if (app.ttsRateMode !== "auto") {
+      const customRate = Number(app.ttsRateMode);
+      if (Number.isFinite(customRate) && customRate >= 0.5 && customRate <= 2) {
+        return customRate;
+      }
+    }
+    if (!voice) return 1.12;
+    return voice.localService ? 1.24 : 1.1;
+  }
+
+  function voiceInfoText() {
+    const voice = app.voice;
+    const rate = ttsRateFor(voice);
+    const kind = voice ? (voice.localService ? "本地" : "自然") : "默认";
+    return `${shortVoiceName(voice)} · ${kind} · ${rate.toFixed(2)}×`;
+  }
+
+  function resolveVoice() {
+    if (app.voicePreference !== "auto") {
+      const chosen = app.voices.find((voice) => voice.name === app.voicePreference);
+      if (chosen) return chosen;
+    }
+    if (app.localFallbackLocked) {
+      return pickLocalVoice() || pickBestVoice();
+    }
+    return pickBestVoice();
+  }
+
+  function syncVoiceSelect() {
+    if (!els.voiceSelect) return;
+    if (
+      app.voicePreference !== "auto" &&
+      app.voices.some((voice) => voice.name === app.voicePreference)
+    ) {
+      els.voiceSelect.value = app.voicePreference;
+    } else {
+      els.voiceSelect.value = "auto";
+    }
+  }
+
+  function renderVoiceOptions() {
+    if (!els.voiceSelect) return;
+    if (!speechSupported) {
+      els.voiceSelect.innerHTML = `<option value="auto">当前浏览器不支持语音</option>`;
+      els.voiceSelect.disabled = true;
+      return;
+    }
+
+    const chinese = app.voices
+      .filter((voice) => /^zh/i.test(voice.lang))
+      .slice()
+      .sort((a, b) => scoreVoice(b) - scoreVoice(a));
+    const online = chinese.filter((voice) => !voice.localService && /Natural|Online/i.test(voice.name));
+    const local = chinese.filter((voice) => voice.localService);
+    const other = chinese.filter((voice) => !online.includes(voice) && !local.includes(voice));
+
+    const groups = [
+      ["在线自然语音", online],
+      ["本地语音", local],
+      ["其他中文语音", other],
+    ];
+
+    let html = `<option value="auto">自动（优先自然语音）</option>`;
+    for (const [label, voices] of groups) {
+      if (!voices.length) continue;
+      html += `<optgroup label="${escapeHTML(label)}">`;
+      for (const voice of voices) {
+        const type = voice.localService ? "本地" : "在线";
+        const optionLabel = `${shortVoiceName(voice)} · ${type}${voice.default ? " · 默认" : ""}`;
+        html += `<option value="${escapeHTML(voice.name)}">${escapeHTML(optionLabel)}</option>`;
+      }
+      html += `</optgroup>`;
+    }
+
+    els.voiceSelect.innerHTML = html;
+    els.voiceSelect.disabled = chinese.length === 0;
+    syncVoiceSelect();
+  }
+
+  function refreshVoices() {
+    if (!synth) return;
+    try {
+      app.voices = synth.getVoices() || [];
+    } catch (error) {
+      app.voices = [];
+    }
+    app.voice = resolveVoice();
+    renderVoiceOptions();
+    updateTtsUI();
+  }
+
+  function buildSpeechUtterance(item) {
+    const utterance = new SpeechSynthesisUtterance(item.speech);
+    utterance.lang = "zh-CN";
+    utterance.rate = ttsRateFor(app.voice);
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    if (app.voice) utterance.voice = app.voice;
+    return utterance;
+  }
+
+  function setDisplayIndex(index) {
+    if (!app.items[index] || app.index === index) return;
+    app.index = index;
+    app.finished = false;
+    renderCurrent();
+  }
+
+  function getNextSpeechIndex(index) {
+    if (!app.items.length) return null;
+    if (index < app.items.length - 1) return index + 1;
+    return app.loop ? 0 : null;
+  }
+
+  function applyLocalFallback(local) {
+    if (!local) return;
+    const wasManual = app.voicePreference !== "auto";
+    app.voice = local;
+    if (wasManual) {
+      app.voicePreference = local.name;
+      app.localFallbackLocked = false;
+    } else {
+      app.localFallbackLocked = true;
+    }
+    renderVoiceOptions();
+    updateTtsUI();
+    toast(`在线自然语音不可用，已改用本地语音 · ${ttsRateFor(local).toFixed(2)}×`);
+  }
+
+  function clearSpeechTimers() {
+    clearTimeout(app.speechStartTimer);
+    clearTimeout(app.speechWatchdog);
+    clearTimeout(app.speechNextTimer);
+    app.speechStartTimer = null;
+    app.speechWatchdog = null;
+    app.speechNextTimer = null;
+  }
+
+  function finishTtsPlayback() {
+    app.playing = false;
+    app.finished = true;
+    clearAdvanceTimer();
+    cancelSpeech();
+    updatePlayUI();
+    toast("播放完毕");
+  }
+
+  function advanceFromSpeech(speech) {
+    if (!app.playing || !app.tts) return;
+    if (app.ttsActive && app.ttsActive !== speech) {
+      if (app.index !== app.ttsActive.index) setDisplayIndex(app.ttsActive.index);
+      return;
+    }
+    if (app.ttsActive === speech) app.ttsActive = null;
+    const queued = app.ttsQueued;
+    if (queued && queued.token === speech.token) {
+      setDisplayIndex(queued.index);
+      setHint("朗读模式 · 下一项已预加载");
+      clearTimeout(app.speechNextTimer);
+      app.speechNextTimer = setTimeout(() => {
+        if (
+          queued.token === app.speechToken &&
+          app.ttsQueued === queued &&
+          !queued.started &&
+          app.playing
+        ) {
+          startTtsSequence(queued.index);
+        }
+      }, 5000);
+      return;
+    }
+    finishTtsPlayback();
+  }
+
+  function handleSpeechEnd(speech) {
+    if (speech.token !== app.speechToken || speech.finished) return;
+    speech.finished = true;
+    clearSpeechTimers();
+    if (!app.playing || !app.tts) return;
+    advanceFromSpeech(speech);
+  }
+
+  function handleSpeechError(speech) {
+    if (speech.token !== app.speechToken || speech.finished) return;
+    speech.finished = true;
+    clearSpeechTimers();
+    if (!app.playing || !app.tts) return;
+    if (app.voice && !app.voice.localService) {
+      const local = pickLocalVoice();
+      if (local) {
+        applyLocalFallback(local);
+        startTtsSequence(speech.index);
+        return;
+      }
+    }
+    advanceFromSpeech(speech);
+  }
+
+  function handleSpeechStart(speech) {
+    if (speech.token !== app.speechToken || !app.playing || !app.tts || speech.finished) return;
+    speech.started = true;
+    clearTimeout(app.speechStartTimer);
+    clearTimeout(app.speechNextTimer);
+    app.speechStartTimer = null;
+    app.speechNextTimer = null;
+
+    if (speech.kind === "queued") {
+      if (app.ttsQueued !== speech) return;
+      speech.kind = "active";
+      app.ttsActive = speech;
+      app.ttsQueued = null;
+    }
+    if (app.ttsActive !== speech) return;
+
+    if (app.index !== speech.index) setDisplayIndex(speech.index);
+    setSpeaking(true);
+    const next = getNextSpeechIndex(speech.index);
+    setHint(next !== null ? "正在朗读 · 下一项已预加载" : "正在朗读 · 最后一项");
+    clearTimeout(app.speechWatchdog);
+    app.speechWatchdog = setTimeout(() => handleSpeechEnd(speech), 25000);
+
+    if (next !== null && !app.ttsQueued) {
+      queueSpeech(next, speech.token, "queued");
+    }
+  }
+
+  function handleSpeechStartTimeout(speech) {
+    if (speech.token !== app.speechToken || speech.started || speech.finished || !app.playing) return;
+    if (synth.speaking || synth.pending) return;
+    clearTimeout(app.speechStartTimer);
+    app.speechStartTimer = null;
+    if (app.voice && !app.voice.localService) {
+      const local = pickLocalVoice();
+      if (local) {
+        applyLocalFallback(local);
+        startTtsSequence(speech.index);
+        return;
+      }
+    }
+    clearAdvanceTimer();
+    app.timer = setTimeout(() => {
+      if (speech.token === app.speechToken) advanceAfterCurrent();
+    }, app.duration);
+  }
+
+  function queueSpeech(index, token, kind) {
+    if (token !== app.speechToken || !app.playing || !app.tts) return null;
+    const item = app.items[index];
+    if (!item) return null;
+
+    const utterance = buildSpeechUtterance(item);
+    const speech = {
+      index,
+      token,
+      kind,
+      utterance,
+      started: false,
+      finished: false,
+    };
+    utterance.onstart = () => handleSpeechStart(speech);
+    utterance.onend = () => handleSpeechEnd(speech);
+    utterance.onerror = () => handleSpeechError(speech);
+
+    if (kind === "active") {
+      app.ttsActive = speech;
+      app.speechStartTimer = setTimeout(() => handleSpeechStartTimeout(speech), 1800);
+    } else {
+      app.ttsQueued = speech;
+    }
+
+    try {
+      synth.speak(utterance);
+      if (synth.paused) synth.resume();
+    } catch (error) {
+      handleSpeechError(speech);
+    }
+    return speech;
+  }
+
+  function startTtsSequence(startIndex) {
+    if (!app.playing) return;
+    if (!app.tts || !speechSupported || !synth) {
+      clearAdvanceTimer();
+      app.timer = setTimeout(() => advanceAfterCurrent(), app.duration);
+      return;
+    }
+    if (typeof startIndex === "number" && app.items[startIndex]) {
+      app.index = startIndex;
+      app.finished = false;
+      renderCurrent();
+    }
+    clearAdvanceTimer();
+    cancelSpeech();
+    const token = app.speechToken;
+    setHint("朗读模式 · 预加载下一项");
+    queueSpeech(app.index, token, "active");
+  }
+
+  function speakCurrent(onDone) {
+    if (!app.tts || !speechSupported || !synth) {
+      onDone();
+      return;
+    }
+
+    const token = ++app.speechToken;
+    try {
+      synth.cancel();
+    } catch (error) {
+      /* ignore */
+    }
+    app.ttsActive = null;
+    app.ttsQueued = null;
+    setSpeaking(false);
+
+    const item = currentItem();
+    if (!item) {
+      onDone();
+      return;
+    }
+
+    const utterance = buildSpeechUtterance(item);
+
+    let finished = false;
+    let started = false;
+    let retriedLocal = false;
+
+    const retryWithLocalVoice = () => {
+      if (retriedLocal || !app.tts) return false;
+      if (!app.voice || app.voice.localService) return false;
+      const local = pickLocalVoice();
+      if (!local) return false;
+      retriedLocal = true;
+      const wasManual = app.voicePreference !== "auto";
+      app.voice = local;
+      if (wasManual) {
+        app.voicePreference = local.name;
+        app.localFallbackLocked = false;
+      } else {
+        app.localFallbackLocked = true;
+      }
+      renderVoiceOptions();
+      updateTtsUI();
+      toast(`在线自然语音不可用，已改用本地语音 · ${ttsRateFor(local).toFixed(2)}×`);
+      speakCurrent(onDone);
+      return true;
+    };
+
+    const finish = (advance) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(app.speechStartTimer);
+      clearTimeout(app.speechWatchdog);
+      app.speechStartTimer = null;
+      app.speechWatchdog = null;
+      if (token !== app.speechToken) return;
+      setSpeaking(false);
+      if (advance) {
+        setTimeout(() => {
+          if (token === app.speechToken) onDone();
+        }, 190);
+      } else {
+        onDone();
+      }
+    };
+
+    utterance.onstart = () => {
+      if (token !== app.speechToken) return;
+      started = true;
+      clearTimeout(app.speechStartTimer);
+      setSpeaking(true);
+    };
+
+    utterance.onend = () => finish(true);
+    utterance.onerror = () => {
+      if (token !== app.speechToken) return;
+      if (retryWithLocalVoice()) return;
+      finish(true);
+    };
+
+    app.speechWatchdog = setTimeout(() => {
+      if (token !== app.speechToken) return;
+      finish(true);
+    }, 18000);
+
+    app.speechStartTimer = setTimeout(() => {
+      if (token !== app.speechToken) return;
+      if (started) return;
+      if (synth.speaking || synth.pending) return;
+      clearTimeout(app.speechStartTimer);
+      app.speechStartTimer = null;
+      setSpeaking(false);
+      if (retryWithLocalVoice()) return;
+      if (app.playing) {
+        clearAdvanceTimer();
+        app.timer = setTimeout(() => {
+          if (token === app.speechToken) onDone();
+        }, app.duration);
+      }
+    }, 1600);
+
+    try {
+      synth.speak(utterance);
+      if (synth.paused) synth.resume();
+    } catch (error) {
+      finish(true);
+    }
+  }
+
+  function armAdvance() {
+    clearAdvanceTimer();
+    if (!app.playing) return;
+
+    if (app.tts && speechSupported) {
+      startTtsSequence();
+    } else {
+      setHint(`自动播放 · ${(app.duration / 1000).toFixed(1)}s/项`);
+      app.timer = setTimeout(() => {
+        advanceAfterCurrent();
+      }, app.duration);
+    }
+  }
+
+  function advanceAfterCurrent() {
+    if (!app.playing) return;
+    if (!app.items.length) {
+      app.playing = false;
+      updatePlayUI();
+      return;
+    }
+    if (app.index >= app.items.length - 1) {
+      if (app.loop) {
+        showIndex(0, { arm: true });
+      } else {
+        app.playing = false;
+        app.finished = true;
+        clearAdvanceTimer();
+        cancelSpeech();
+        updatePlayUI();
+        toast("播放完毕");
+      }
+      return;
+    }
+    showIndex(app.index + 1, { arm: true });
+  }
+
+  function showIndex(index, options) {
+    const opts = options || {};
+    if (!app.items.length) {
+      app.index = 0;
+      renderEmptyState();
+      updatePlayUI();
+      return;
+    }
+
+    clearAdvanceTimer();
+    cancelSpeech();
+    app.index = Math.max(0, Math.min(app.items.length - 1, index));
+    app.finished = false;
+    renderCurrent();
+    if (opts.arm !== false && app.playing) armAdvance();
+    updatePlayUI();
+  }
+
+  function startPlayback() {
+    if (!app.items.length) {
+      toast("播放列表为空");
+      return;
+    }
+    if (app.finished) {
+      app.finished = false;
+      app.index = 0;
+      renderCurrent();
+    }
+    app.playing = true;
+    updatePlayUI();
+    armAdvance();
+  }
+
+  function pausePlayback(options) {
+    const opts = options || {};
+    if (!app.playing && !app.speaking) return;
+    app.playing = false;
+    app.finished = false;
+    clearAdvanceTimer();
+    cancelSpeech();
+    updatePlayUI();
+    if (!opts.silent && !opts.keepHint) {
+      setHint("已暂停 · 空格继续");
+    }
+  }
+
+  function togglePlayback() {
+    if (app.playing) pausePlayback();
+    else startPlayback();
+  }
+
+  function step(delta) {
+    if (!app.items.length) return;
+    let next = app.index + delta;
+    if (next < 0) next = app.loop ? app.items.length - 1 : 0;
+    if (next >= app.items.length) next = app.loop ? 0 : app.items.length - 1;
+    if (next === app.index) {
+      toast(delta > 0 ? "已经是最后一项" : "已经是第一项");
+      return;
+    }
+    showIndex(next, { arm: app.playing });
+  }
+
+  function resetToStart() {
+    if (!app.items.length) return;
+    app.finished = false;
+    showIndex(0, { arm: app.playing });
+  }
+
+  /* ------------------------------------------------------------------------
+     TTS 控件
+     ------------------------------------------------------------------------ */
+
+  function updateTtsUI() {
+    const available = speechSupported;
+    els.ttsToggle.classList.toggle("is-on", app.tts);
+    els.ttsToggle.classList.toggle("is-unavailable", !available);
+    els.ttsToggle.setAttribute("aria-checked", String(app.tts));
+    els.ttsToggle.setAttribute("aria-disabled", String(!available));
+    const icon = $("use", els.ttsToggle);
+    if (icon) icon.setAttribute("href", app.tts ? "#i-speaker" : "#i-muted");
+    const rate = ttsRateFor(app.voice);
+    els.ttsToggle.dataset.voice = app.voice ? app.voice.name : "";
+    els.ttsToggle.dataset.rate = rate.toFixed(2);
+    if (els.voiceSelect) {
+      els.voiceSelect.title = voiceInfoText();
+    }
+    if (els.ttsRateSelect) {
+      els.ttsRateSelect.value = app.ttsRateMode;
+      els.ttsRateSelect.title = `朗读语速 · ${rate.toFixed(2)}×${app.ttsRateMode === "auto" ? "（自动）" : ""}`;
+    }
+    if (!available) {
+      els.ttsToggle.title = "当前浏览器不支持语音合成";
+    } else {
+      els.ttsToggle.title = `朗读（T）· ${voiceInfoText()}`;
+    }
+  }
+
+  function toggleTts() {
+    if (!speechSupported) {
+      toast("当前浏览器不支持 Web Speech 语音合成");
+      return;
+    }
+    app.tts = !app.tts;
+    if (app.tts) {
+      app.localFallbackLocked = false;
+      refreshVoices();
+    }
+    updateTtsUI();
+    saveState();
+    if (!app.tts) {
+      clearAdvanceTimer();
+      cancelSpeech();
+    }
+    if (app.playing) {
+      clearAdvanceTimer();
+      cancelSpeech();
+      armAdvance();
+    } else if (app.tts && currentItem()) {
+      toast(`已开启朗读 · ${voiceInfoText()}`);
+      speakCurrent(() => {});
+    } else {
+      toast("已关闭朗读");
+    }
+    updatePlayUI();
+  }
+
+  function changeVoice(value) {
+    app.localFallbackLocked = false;
+    app.voicePreference = value || "auto";
+    app.voice = resolveVoice();
+    if (app.voicePreference !== "auto" && !app.voice) {
+      app.voicePreference = "auto";
+      app.voice = resolveVoice();
+      toast("该音色当前不可用，已恢复自动选择");
+    }
+    saveState();
+    syncVoiceSelect();
+    updateTtsUI();
+    if (app.tts) {
+      if (app.playing) {
+        clearAdvanceTimer();
+        cancelSpeech();
+        armAdvance();
+      } else if (currentItem()) {
+        toast(`已切换音色 · ${voiceInfoText()}`);
+        speakCurrent(() => {});
+      }
+    } else {
+      toast(`已切换音色 · ${voiceInfoText()}`);
+    }
+    updatePlayUI();
+  }
+
+  function changeTtsRate(value) {
+    app.ttsRateMode = value || "auto";
+    if (app.ttsRateMode !== "auto") {
+      const rate = Number(app.ttsRateMode);
+      if (!Number.isFinite(rate) || rate < 0.5 || rate > 2) app.ttsRateMode = "auto";
+    }
+    saveState();
+    updateTtsUI();
+    const rateText = `${ttsRateFor(app.voice).toFixed(2)}×${app.ttsRateMode === "auto" ? "（自动）" : ""}`;
+    if (app.tts) {
+      if (app.playing) {
+        clearAdvanceTimer();
+        cancelSpeech();
+        armAdvance();
+      } else if (currentItem()) {
+        toast(`朗读语速 · ${rateText}`);
+        speakCurrent(() => {});
+      }
+    } else {
+      toast(`朗读语速已设为 ${rateText}`);
+    }
+    updatePlayUI();
+  }
+
+  function updateSpeedUI() {
+    els.speedRange.value = String(app.duration);
+    els.speedLabel.value = `${(app.duration / 1000).toFixed(1)}s`;
+    els.speedLabel.textContent = `${(app.duration / 1000).toFixed(1)}s`;
+  }
+
+  function toggleLoop() {
+    app.loop = !app.loop;
+    els.loopBtn.classList.toggle("is-on", app.loop);
+    els.loopBtn.setAttribute("aria-checked", String(app.loop));
+    saveState();
+    if (app.playing) {
+      clearAdvanceTimer();
+      armAdvance();
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     侧栏：方块库
+     ------------------------------------------------------------------------ */
+
+  function typeMatchesQuery(type, query) {
+    if (!query) return true;
+    const haystack = [
+      type.baseName,
+      type.en,
+      type.desc,
+      ...(type.aliases || []),
+    ]
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(query);
+  }
+
+  function renderLibrary() {
+    const query = app.libraryQuery.trim().toLowerCase();
+    const visible = D.BLOCK_TYPES.filter((type) => typeMatchesQuery(type, query));
+    if (!visible.length) {
+      els.libraryList.innerHTML = `<div class="lib-empty">没有找到匹配的铜方块。</div>`;
+      return;
+    }
+
+    const groups = new Map();
+    visible.forEach((type) => {
+      if (!groups.has(type.category)) groups.set(type.category, []);
+      groups.get(type.category).push(type);
+    });
+
+    const html = Array.from(groups.entries())
+      .sort((a, b) => {
+        const ca = D.CATEGORIES[a[0]] || { order: 99 };
+        const cb = D.CATEGORIES[b[0]] || { order: 99 };
+        return ca.order - cb.order;
+      })
+      .map(([category, types]) => {
+        const categoryInfo = D.CATEGORIES[category] || { label: category };
+        const rows = types
+          .map((type) => {
+            const selected = app.selected.has(type.id);
+            const count = D.countType(type, app.mode);
+            const title = `${type.baseName} · ${type.en}`;
+            const alias = (type.aliases || []).find(
+              (candidate) =>
+                candidate !== type.baseName &&
+                /[\u4e00-\u9fa5]/.test(candidate) &&
+                candidate.toLowerCase() !== type.en.toLowerCase()
+            );
+            return `<div class="lib-item${selected ? " is-selected" : ""}" data-type-id="${type.id}" title="${escapeHTML(title)}">
+              <label class="lib-check" aria-label="选择 ${escapeHTML(type.baseName)}">
+                <input type="checkbox" ${selected ? "checked" : ""} tabindex="0">
+                <svg aria-hidden="true"><use href="#i-check"></use></svg>
+              </label>
+              <span class="lib-glyph" style="--glyph:${type.glyph}" aria-hidden="true"></span>
+              <span class="lib-name">
+                <strong>${escapeHTML(type.baseName)}</strong>
+                <small>${escapeHTML(type.en)}${alias ? ` · ${escapeHTML(alias)}` : ""}</small>
+              </span>
+              <span class="lib-count">${formatNumber(count)}</span>
+              <button class="lib-jump" type="button" data-jump="${type.id}" aria-label="从 ${escapeHTML(type.baseName)} 开始播放" title="从这一类开始播放">
+                <svg><use href="#i-jump"></use></svg>
+              </button>
+            </div>`;
+          })
+          .join("");
+        return `<div class="lib-group">
+          <p class="lib-group-title">${escapeHTML(categoryInfo.label)}</p>
+          ${rows}
+        </div>`;
+      })
+      .join("");
+
+    els.libraryList.innerHTML = html;
+  }
+
+  function toggleType(typeId) {
+    if (app.selected.has(typeId)) app.selected.delete(typeId);
+    else app.selected.add(typeId);
+    if (app.playing) pausePlayback({ silent: true });
+    saveState();
+    renderLibrary();
+    rebuildItems({ keepCurrent: true, silent: true });
+  }
+
+  function selectAll(select) {
+    if (app.playing) pausePlayback({ silent: true });
+    app.selected = new Set(select ? D.BLOCK_TYPES.map((type) => type.id) : []);
+    saveState();
+    renderLibrary();
+    rebuildItems({ keepCurrent: true, silent: true });
+    if (!select) toast("已清空方块库；自定义条目仍会保留");
+  }
+
+  function jumpToType(typeId) {
+    const type = D.getTypeById(typeId);
+    if (!type) return;
+    const wasSelected = app.selected.has(typeId);
+    if (!wasSelected) {
+      app.selected.add(typeId);
+      saveState();
+      renderLibrary();
+    }
+    if (app.playing) pausePlayback({ silent: true });
+    rebuildItems({ keepCurrent: false, silent: true });
+    const firstIndex = app.items.findIndex((item) => item.typeId === typeId && !item.isCustom);
+    if (firstIndex < 0) {
+      toast("这一类暂时没有可播放项");
+      return;
+    }
+    app.index = firstIndex;
+    app.finished = false;
+    app.playing = true;
+    renderCurrent();
+    updatePlayUI();
+    armAdvance();
+    focusStageOnMobile();
+    toast(`从「${type.baseName}」开始播放`);
+  }
+
+  /* ------------------------------------------------------------------------
+     侧栏：自定义
+     ------------------------------------------------------------------------ */
+
+  function renderCustomList() {
+    els.customCount.textContent = String(app.custom.length);
+    if (!app.custom.length) {
+      els.customList.innerHTML = `<div class="custom-empty">还没有自定义条目。<br>可以添加模组方块、恶搞方块，或任何想让它闪一下的铜制方块。</div>`;
+      return;
+    }
+
+    els.customList.innerHTML = app.custom
+      .slice()
+      .sort((a, b) => a.createdAt - b.createdAt)
+      .map((entry) => {
+        const item = D.makeCustomItem(entry);
+        const chips = [
+          D.OXIDATION[item.oxidation].label,
+          item.waxed ? "涂蜡" : "未涂蜡",
+          ...(entry.extraStates || []),
+        ];
+        return `<div class="custom-card" data-custom-id="${escapeHTML(entry.id)}">
+          <div class="custom-card-head">
+            <span class="lib-glyph" style="--glyph:${item.theme.ox}" aria-hidden="true"></span>
+            <div class="custom-card-title">
+              <strong title="${escapeHTML(item.name)}">${escapeHTML(item.name)}</strong>
+              <small title="${escapeHTML(item.mcId)}">${escapeHTML(item.mcId)}</small>
+            </div>
+            <div class="custom-card-actions">
+              <button type="button" data-action="jump" data-custom-id="${escapeHTML(entry.id)}" aria-label="定位到 ${escapeHTML(item.name)}" title="定位并暂停">
+                <svg><use href="#i-jump"></use></svg>
+              </button>
+              <button type="button" data-action="delete" data-custom-id="${escapeHTML(entry.id)}" aria-label="删除 ${escapeHTML(item.name)}" title="删除">
+                <svg><use href="#i-trash"></use></svg>
+              </button>
+            </div>
+          </div>
+          <div class="custom-card-chips">
+            ${chips.map((chip) => `<span>${escapeHTML(chip)}</span>`).join("")}
+          </div>
+        </div>`;
+      })
+      .join("");
+  }
+
+  function openCustomDialog() {
+    if (!els.customDialog) return;
+    els.customForm.reset();
+    els.customName.setCustomValidity("");
+    els.customOx.value = "0";
+    els.customWaxed.checked = false;
+    els.customIcon.value = "cube";
+    if (typeof els.customDialog.showModal === "function") {
+      els.customDialog.showModal();
+    } else {
+      els.customDialog.setAttribute("open", "");
+    }
+    setTimeout(() => els.customName.focus(), 60);
+  }
+
+  function closeDialog(dialog) {
+    if (!dialog) return;
+    if (typeof dialog.close === "function") dialog.close();
+    else dialog.removeAttribute("open");
+  }
+
+  function parseExtraStates(value) {
+    const seen = new Set();
+    return String(value || "")
+      .split(/[,，、;；\n]+/)
+      .map((part) => part.trim())
+      .filter((part) => {
+        if (!part || seen.has(part)) return false;
+        seen.add(part);
+        return true;
+      })
+      .slice(0, 10);
+  }
+
+  function addCustomEntry() {
+    const baseName = els.customName.value.trim();
+    if (!baseName) {
+      els.customName.setCustomValidity("请输入方块名称");
+      els.customName.reportValidity();
+      els.customName.focus();
+      return;
+    }
+    els.customName.setCustomValidity("");
+
+    const oxidation = Number(els.customOx.value) || 0;
+    const waxed = els.customWaxed.checked;
+    const extraStates = parseExtraStates(els.customStates.value);
+    const icon = els.customIcon.value || "custom";
+    const en = els.customEn.value.trim();
+    const id = typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `c${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+
+    app.custom.push({
+      id,
+      baseName: baseName.slice(0, 28),
+      oxidation,
+      waxed,
+      extraStates,
+      icon,
+      en,
+      createdAt: Date.now(),
+    });
+    const addedEntry = app.custom[app.custom.length - 1];
+    const addedName = D.makeCustomItem(addedEntry).name;
+    saveState();
+    renderCustomList();
+    closeDialog(els.customDialog);
+    showTab("custom");
+    rebuildItems({ keepCurrent: true, silent: true });
+    const newIndex = app.items.findIndex((item) => item.uid === `custom:${id}`);
+    if (newIndex >= 0) {
+      app.playing = false;
+      app.finished = false;
+      app.index = newIndex;
+      renderCurrent();
+      updatePlayUI();
+      focusStageOnMobile();
+    }
+    toast(`已添加「${addedName}」`);
+  }
+
+  function deleteCustomEntry(id) {
+    const entry = app.custom.find((item) => item.id === id);
+    if (!entry) return;
+    const removedName = D.makeCustomItem(entry).name;
+    app.custom = app.custom.filter((item) => item.id !== id);
+    saveState();
+    renderCustomList();
+    if (app.playing) pausePlayback({ silent: true });
+    rebuildItems({ keepCurrent: true, silent: true });
+    toast(`已删除「${removedName}」`);
+  }
+
+  function jumpToCustom(id) {
+    if (app.playing) pausePlayback({ silent: true });
+    const index = app.items.findIndex((item) => item.uid === `custom:${id}`);
+    if (index < 0) {
+      toast("该条目尚未加入播放列表");
+      return;
+    }
+    app.playing = false;
+    app.finished = false;
+    app.index = index;
+    renderCurrent();
+    updatePlayUI();
+    setHint("已暂停 · 空格开始");
+    focusStageOnMobile();
+    toast("已定位到自定义条目");
+  }
+
+  /* ------------------------------------------------------------------------
+     侧栏标签
+     ------------------------------------------------------------------------ */
+
+  function showTab(name) {
+    els.panelTabs.forEach((button) => {
+      const active = button.dataset.tab === name;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+    els.panelPanes.forEach((pane) => {
+      const active = pane.id === `pane-${name}`;
+      pane.classList.toggle("is-active", active);
+      pane.hidden = !active;
+    });
+  }
+
+  /* ------------------------------------------------------------------------
+     全屏 / 粒子
+     ------------------------------------------------------------------------ */
+
+  function setupParticles() {
+    const container = $("#particles");
+    if (!container) return;
+    const count = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 22;
+    const colors = ["#d8874a", "#4fa9a0", "#e8a45f", "#2d8f87", "#b87845"];
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < count; i += 1) {
+      const particle = document.createElement("i");
+      const size = 1 + Math.round(Math.random() * 3);
+      particle.className = "particle";
+      particle.style.setProperty("--s", `${size}px`);
+      particle.style.setProperty("--t", `${Math.round(Math.random() * 100)}%`);
+      particle.style.setProperty("--l", `${Math.round(Math.random() * 100)}%`);
+      particle.style.setProperty("--d", `${9 + Math.random() * 14}s`);
+      particle.style.setProperty("--delay", `${-Math.random() * 20}s`);
+      particle.style.setProperty("--dx", `${-35 + Math.random() * 70}px`);
+      particle.style.setProperty("--c", colors[i % colors.length]);
+      fragment.appendChild(particle);
+    }
+    container.appendChild(fragment);
+  }
+
+  function updateFullscreenIcon() {
+    const icon = $("use", els.fullscreenBtn);
+    if (!icon) return;
+    icon.setAttribute("href", document.fullscreenElement ? "#i-collapse" : "#i-expand");
+    els.fullscreenBtn.setAttribute(
+      "aria-label",
+      document.fullscreenElement ? "退出全屏" : "进入全屏"
+    );
+  }
+
+  function toggleFullscreen() {
+    const root = document.documentElement;
+    if (!document.fullscreenElement) {
+      if (root.requestFullscreen) {
+        root.requestFullscreen().catch(() => toast("当前环境不允许进入全屏"));
+      } else {
+        toast("当前浏览器不支持全屏");
+      }
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     事件绑定
+     ------------------------------------------------------------------------ */
+
+  function bindEvents() {
+    els.playBtn.addEventListener("click", togglePlayback);
+    els.prevBtn.addEventListener("click", () => step(-1));
+    els.nextBtn.addEventListener("click", () => step(1));
+    els.nextNameBtn.addEventListener("click", () => step(1));
+    els.ttsToggle.addEventListener("click", toggleTts);
+    els.voiceSelect.addEventListener("change", () => changeVoice(els.voiceSelect.value));
+    els.ttsRateSelect.addEventListener("change", () => changeTtsRate(els.ttsRateSelect.value));
+    els.loopBtn.addEventListener("click", toggleLoop);
+    els.speedRange.addEventListener("input", () => {
+      app.duration = Number(els.speedRange.value);
+      updateSpeedUI();
+      saveState();
+      if (app.playing && !(app.tts && speechSupported)) {
+        clearAdvanceTimer();
+        armAdvance();
+      }
+    });
+
+    els.helpBtn.addEventListener("click", () => {
+      if (typeof els.helpDialog.showModal === "function") els.helpDialog.showModal();
+      else els.helpDialog.setAttribute("open", "");
+    });
+    els.fullscreenBtn.addEventListener("click", toggleFullscreen);
+    document.addEventListener("fullscreenchange", updateFullscreenIcon);
+
+    els.panelTabs.forEach((button) => {
+      button.addEventListener("click", () => showTab(button.dataset.tab));
+    });
+
+    els.searchInput.addEventListener("input", () => {
+      app.libraryQuery = els.searchInput.value;
+      renderLibrary();
+    });
+    els.selectAllBtn.addEventListener("click", () => selectAll(true));
+    els.clearAllBtn.addEventListener("click", () => selectAll(false));
+
+    els.segments.forEach((button) => {
+      button.addEventListener("click", () => {
+        const mode = button.dataset.mode;
+        if (mode === app.mode) return;
+        app.mode = mode;
+        saveState();
+        updateModeUI();
+        if (app.playing) pausePlayback({ silent: true });
+        rebuildItems({ keepCurrent: true, silent: true });
+        renderLibrary();
+      });
+    });
+
+    els.libraryList.addEventListener("click", (event) => {
+      const jump = event.target.closest("[data-jump]");
+      if (jump) {
+        event.preventDefault();
+        jumpToType(jump.dataset.jump);
+        return;
+      }
+      if (event.target.closest(".lib-check")) return;
+      const row = event.target.closest(".lib-item");
+      if (!row) return;
+      toggleType(row.dataset.typeId);
+    });
+
+    els.libraryList.addEventListener("change", (event) => {
+      if (!event.target.matches('input[type="checkbox"]')) return;
+      const row = event.target.closest(".lib-item");
+      if (row) toggleType(row.dataset.typeId);
+    });
+
+    els.addCustomBtn.addEventListener("click", openCustomDialog);
+    els.customForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      addCustomEntry();
+    });
+    els.customName.addEventListener("input", () => els.customName.setCustomValidity(""));
+
+    els.customList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-action]");
+      if (!button) return;
+      const id = button.dataset.customId;
+      if (button.dataset.action === "delete") deleteCustomEntry(id);
+      if (button.dataset.action === "jump") jumpToCustom(id);
+    });
+
+    $$("[data-close-dialog]").forEach((button) => {
+      button.addEventListener("click", () => closeDialog(button.closest("dialog")));
+    });
+    [els.customDialog, els.helpDialog].forEach((dialog) => {
+      if (!dialog) return;
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) closeDialog(dialog);
+      });
+    });
+
+    els.resetDataBtn.addEventListener("click", () => {
+      if (!window.confirm("确定要重置本机设置和所有自定义条目吗？")) return;
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (error) {
+        /* ignore */
+      }
+      window.location.reload();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      const target = event.target;
+      const tag = target && target.tagName ? target.tagName.toLowerCase() : "";
+      if (tag === "input" || tag === "select" || tag === "textarea") return;
+      if (els.customDialog.open || els.helpDialog.open) return;
+      if (event.code === "Space" && (tag === "button" || tag === "a")) return;
+
+      if (event.code === "Space") {
+        event.preventDefault();
+        togglePlayback();
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        step(-1);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        step(1);
+      } else if (event.key === "t" || event.key === "T") {
+        event.preventDefault();
+        toggleTts();
+      } else if (event.key === "l" || event.key === "L") {
+        event.preventDefault();
+        toggleLoop();
+      } else if (event.key === "r" || event.key === "R") {
+        event.preventDefault();
+        resetToStart();
+      }
+    });
+
+    window.addEventListener("beforeunload", saveState);
+  }
+
+  /* ------------------------------------------------------------------------
+     初始化
+     ------------------------------------------------------------------------ */
+
+  function init() {
+    loadState();
+    refreshVoices();
+    if (synth) {
+      synth.onvoiceschanged = refreshVoices;
+    }
+
+    setupParticles();
+    updateSpeedUI();
+    els.loopBtn.classList.toggle("is-on", app.loop);
+    els.loopBtn.setAttribute("aria-checked", String(app.loop));
+    updateTtsUI();
+    updateModeUI();
+    renderLibrary();
+    renderCustomList();
+    bindEvents();
+    rebuildItems({ keepCurrent: false, silent: true });
+    updateFullscreenIcon();
+
+    if (!speechSupported) {
+      els.ttsToggle.title = "当前浏览器不支持语音合成";
+    }
+
+    if (!app.items.length) {
+      renderEmptyState();
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+  </script>
+</body>
+</html>

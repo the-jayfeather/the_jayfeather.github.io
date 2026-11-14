@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c1718">
+  <meta name="description" content="我的世界铜方块快闪：浏览 1.21.9 铜器时代的全部铜方块、氧化变种、涂蜡变种与方块状态，并可用浏览器语音朗读。">
+  <title>铜方块快闪 · Copper Block Flash</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="icon-sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5.5h3v13H8zm5 0h3v13h-3z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 9.5v5h3l4 3.5v-12L7 9.5zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+    <symbol id="i-muted" viewBox="0 0 24 24"><path d="M4 9.5v5h3l4 3.5v-12L7 9.5zM16 9l5 6m0-6-5 6"/></symbol>
+    <symbol id="i-loop" viewBox="0 0 24 24"><path d="M17.5 7H8a4 4 0 0 0-4 4v1M17.5 7l-3-3m3 3-3 3M6.5 17H16a4 4 0 0 0 4-4v-1M6.5 17l3 3m-3-3 3-3"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 24 24"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><path d="M9.5 9a2.8 2.8 0 1 1 4.3 2.4c-1.1.7-1.8 1.3-1.8 2.6M12 17.5v.1"/><circle cx="12" cy="12" r="9"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></symbol>
+    <symbol id="i-jump" viewBox="0 0 24 24"><path d="M5 12h13M13 7l5 5-5 5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></symbol>
+    <symbol id="i-water" viewBox="0 0 24 24"><path d="M12 3s6 7.1 6 11a6 6 0 0 1-12 0c0-3.9 6-11 6-11z"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></symbol>
+  </svg>
+
+  <div class="bg-layer bg-grid" aria-hidden="true"></div>
+  <div class="bg-layer bg-glow" aria-hidden="true"></div>
+  <div class="bg-layer bg-scan" aria-hidden="true"></div>
+  <div id="particles" class="particles" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="铜方块快闪首页">
+        <span class="brand-cube" aria-hidden="true">
+          <span class="brand-cube__top"></span>
+          <span class="brand-cube__left"></span>
+          <span class="brand-cube__right"></span>
+        </span>
+        <span class="brand-text">
+          <strong>铜方块快闪</strong>
+          <small>COPPER BLOCK FLASH</small>
+        </span>
+      </a>
+
+      <div class="topbar-meta">
+        <span class="version-pill"><i aria-hidden="true"></i> 1.21.9 · COPPER AGE</span>
+        <span id="totalBadge" class="count-pill">2,761 个状态</span>
+        <button id="helpBtn" class="icon-btn" type="button" aria-label="查看玩法说明">
+          <svg><use href="#i-help"></use></svg>
+        </button>
+        <button id="fullscreenBtn" class="icon-btn" type="button" aria-label="进入全屏">
+          <svg><use href="#i-expand"></use></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="stage" id="stage" aria-label="当前铜方块">
+        <div class="stage-topline">
+          <div class="stage-kicker">
+            <span id="categoryBadge" class="category-badge">基础方块</span>
+            <span id="seqNo" class="seq-no">#0001</span>
+          </div>
+          <div class="stage-tools">
+            <span id="speakingPill" class="speaking-pill" hidden>
+              <span class="equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              正在朗读
+            </span>
+            <span id="modeHint" class="mode-hint">完整状态</span>
+          </div>
+        </div>
+
+        <div class="art-frame">
+          <div class="art-halo" aria-hidden="true"></div>
+          <div class="art-grid" aria-hidden="true"></div>
+          <div id="blockArt" class="block-art" aria-hidden="true"></div>
+          <div id="facingBadge" class="facing-badge" hidden>
+            <svg><use href="#i-compass"></use></svg>
+            <span id="facingText">朝北</span>
+            <i id="facingNeedle" class="facing-needle" aria-hidden="true"></i>
+          </div>
+          <div id="waterBadge" class="water-badge" hidden>
+            <svg><use href="#i-water"></use></svg>
+            含水
+          </div>
+          <div id="waxStamp" class="wax-stamp" hidden>WAXED</div>
+        </div>
+
+        <div class="name-lockup">
+          <div id="coreBadges" class="core-badges">
+            <span id="oxBadge" class="ox-badge">未氧化</span>
+            <span id="waxBadge" class="wax-badge">未涂蜡</span>
+          </div>
+          <h1 id="blockName" class="block-name">铜块</h1>
+          <div id="stateChips" class="state-chips" aria-label="方块状态"></div>
+          <p id="blockId" class="block-id">minecraft:copper_block</p>
+        </div>
+
+        <div class="next-line">
+          <span class="next-label">NEXT</span>
+          <button id="nextNameBtn" class="next-name" type="button" title="跳到下一项">铜块</button>
+          <span id="typeProgress" class="type-progress">本类 1 / 8</span>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span id="progressLabel">0001 / 2761</span>
+            <span id="playHint" class="play-hint">已暂停 · 按空格开始</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="progressFill" class="progress-fill"></span>
+            <span class="progress-shine" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <div class="player-controls">
+          <div class="control-row control-row--play">
+            <button id="prevBtn" class="round-btn" type="button" aria-label="上一个方块" title="上一个（←）">
+              <svg><use href="#i-prev"></use></svg>
+            </button>
+            <button id="playBtn" class="play-btn" type="button" aria-label="开始快闪">
+              <svg class="play-btn__icon" id="playIcon"><use href="#i-play"></use></svg>
+              <span id="playLabel">开始快闪</span>
+            </button>
+            <button id="nextBtn" class="round-btn" type="button" aria-label="下一个方块" title="下一个（→）">
+              <svg><use href="#i-next"></use></svg>
+            </button>
+
+            <div class="control-divider" aria-hidden="true"></div>
+
+            <button id="loopBtn" class="control-toggle is-on" type="button" role="switch" aria-checked="true" title="循环播放（L）">
+              <svg class="toggle-icon"><use href="#i-loop"></use></svg>
+              <span>循环</span>
+              <i class="switch" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <div class="control-row control-row--speech">
+            <button id="ttsToggle" class="control-toggle" type="button" role="switch" aria-checked="false" title="朗读方块名称（T）">
+              <svg class="toggle-icon"><use href="#i-muted"></use></svg>
+              <span>朗读</span>
+              <i class="switch" aria-hidden="true"></i>
+            </button>
+
+            <div class="voice-control">
+              <span class="voice-label">音色</span>
+              <select id="voiceSelect" aria-label="选择朗读音色" title="选择朗读音色">
+                <option value="auto">自动（优先自然语音）</option>
+              </select>
+              <span class="rate-label">语速</span>
+              <select id="ttsRateSelect" class="rate-select" aria-label="选择朗读语速" title="选择朗读语速">
+                <option value="auto">自动</option>
+                <option value="0.8">0.8×</option>
+                <option value="0.9">0.9×</option>
+                <option value="1">1.0×</option>
+                <option value="1.1">1.1×</option>
+                <option value="1.2">1.2×</option>
+                <option value="1.3">1.3×</option>
+                <option value="1.5">1.5×</option>
+              </select>
+            </div>
+
+            <label class="speed-control" for="speedRange">
+              <span>停留</span>
+              <input id="speedRange" type="range" min="600" max="5000" step="100" value="1600" aria-label="每个方块停留时长">
+              <output id="speedLabel" for="speedRange">1.6s</output>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-panel" id="sidePanel" aria-label="播放列表与设置">
+        <div class="panel-tabs" role="tablist" aria-label="侧栏选项卡">
+          <button class="panel-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="pane-library" data-tab="library">方块库</button>
+          <button class="panel-tab" type="button" role="tab" aria-selected="false" aria-controls="pane-custom" data-tab="custom">自定义 <span id="customCount" class="tab-count">0</span></button>
+          <button class="panel-tab" type="button" role="tab" aria-selected="false" aria-controls="pane-order" data-tab="order">顺序</button>
+        </div>
+
+        <div id="pane-library" class="panel-pane is-active" role="tabpanel">
+          <div class="search-row">
+            <label class="search-box">
+              <svg><use href="#i-search"></use></svg>
+              <input id="searchInput" type="search" placeholder="搜索方块 / 英文 ID" autocomplete="off" spellcheck="false">
+            </label>
+          </div>
+
+          <div class="bulk-row">
+            <button id="selectAllBtn" class="mini-btn" type="button">全选</button>
+            <button id="clearAllBtn" class="mini-btn" type="button">清空</button>
+            <span id="selectedSummary" class="selected-summary">已选 16 / 16 类</span>
+          </div>
+
+          <div class="mode-card">
+            <div class="mode-copy">
+              <strong>状态组合</strong>
+              <small id="modeDescription">展开全部朝向、含水、开关与连接状态</small>
+            </div>
+            <div class="segmented" role="group" aria-label="状态组合模式">
+              <button class="segment is-active" type="button" data-mode="full" aria-pressed="true">完整</button>
+              <button class="segment" type="button" data-mode="simple" aria-pressed="false">精简</button>
+            </div>
+          </div>
+
+          <div id="libraryList" class="library-list"></div>
+
+          <p class="panel-note">
+            数据参考 Minecraft Java 版 1.21.9「铜器时代」。点击类别名称可整类开关，<span class="inline-key">→</span> 可从此类开始播放。
+          </p>
+        </div>
+
+        <div id="pane-custom" class="panel-pane" role="tabpanel" hidden>
+          <div class="custom-hero">
+            <span class="custom-hero__mark">+</span>
+            <div>
+              <strong>你的铜方块</strong>
+              <p>添加模组方块、恶搞条目，或任何想让它闪一下的铜制方块。条目会追加到播放列表末尾。</p>
+            </div>
+          </div>
+          <button id="addCustomBtn" class="primary-btn primary-btn--wide" type="button">
+            <svg><use href="#i-plus"></use></svg>
+            添加自定义方块
+          </button>
+          <div id="customList" class="custom-list"></div>
+          <p class="panel-note">自定义条目保存在本机浏览器中，不会上传。</p>
+        </div>
+
+        <div id="pane-order" class="panel-pane" role="tabpanel" hidden>
+          <div class="order-head">
+            <span class="order-eyebrow">SORT LOGIC</span>
+            <h2>播放顺序</h2>
+            <p>先同类聚合，再按“涂蜡 → 含水 → 氧化 → 其他状态”的层级展开。</p>
+          </div>
+
+          <ol class="order-list">
+            <li><b>01</b><span><strong>方块种类</strong>铜块 → 切制铜块 → 雕纹铜块 → 切制铜台阶 → 切制铜楼梯 → 铜格栅 → 铜栏杆 → 铜链 → 铜灯笼 → 铜灯 → 铜门 → 铜活板门 → 铜箱子 → 铜傀儡像 → 避雷针 → 铜火把。</span></li>
+            <li><b>02</b><span><strong>涂蜡</strong>先展示全部未涂蜡组合，再展示全部涂蜡组合。</span></li>
+            <li><b>03</b><span><strong>含水</strong>每种可含水的方块，先全部干燥状态，再重复一遍“含水”状态。</span></li>
+            <li><b>04</b><span><strong>氧化</strong>未氧化 → 斑驳 → 锈蚀 → 氧化。</span></li>
+            <li><b>05</b><span><strong>其他状态</strong>楼梯：正置/倒置 → 左外/右外/左内/右内/直形 → 朝向；门、活板门、栏杆等按各自状态优先级展开。</span></li>
+          </ol>
+
+          <div class="order-example">
+            <span class="order-example__label">楼梯排序示例</span>
+            <p>正置的向左外角的铜楼梯 → 正置的向右外角的铜楼梯 → 正置的向左内角的铜楼梯 → 正置的向右内角的铜楼梯 → 正置的直形的铜楼梯 → 斑驳…… → 倒置…… → 锈蚀…… → 氧化…… → 以上全部加上“含水”再重复一次。</p>
+          </div>
+
+          <div class="shortcut-grid">
+            <span><kbd>Space</kbd> 播放 / 暂停</span>
+            <span><kbd>←</kbd><kbd>→</kbd> 上一个 / 下一个</span>
+            <span><kbd>T</kbd> 朗读开关</span>
+            <span><kbd>L</kbd> 循环开关</span>
+            <span><kbd>R</kbd> 回到开头</span>
+            <span><kbd>Esc</kbd> 关闭弹窗</span>
+          </div>
+
+          <button id="resetDataBtn" class="danger-link" type="button">重置本机设置与自定义条目</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="site-foot">
+      <span>非官方 Minecraft 粉丝作品 · 方块数据基于 1.21.9 铜器时代</span>
+      <span class="foot-dot" aria-hidden="true"></span>
+      <span>所有方块图形均为本页原创 SVG 绘制</span>
+    </footer>
+  </div>
+
+  <dialog id="customDialog" class="modal">
+    <form id="customForm" novalidate>
+      <header class="modal-head">
+        <div>
+          <span class="modal-eyebrow">CUSTOM ENTRY</span>
+          <h2>添加自定义铜方块</h2>
+        </div>
+        <button class="icon-btn modal-close" type="button" data-close-dialog aria-label="关闭">
+          <svg><use href="#i-close"></use></svg>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        <label class="field">
+          <span>基础名称 <em>*</em></span>
+          <input id="customName" name="customName" type="text" maxlength="28" required placeholder="例如：磨制铜块 / 铜齿轮">
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span>氧化阶段</span>
+            <select id="customOx" name="customOx">
+              <option value="0">未氧化</option>
+              <option value="1">斑驳</option>
+              <option value="2">锈蚀</option>
+              <option value="3">氧化</option>
+            </select>
+          </label>
+          <label class="check-field">
+            <input id="customWaxed" name="customWaxed" type="checkbox">
+            <span class="fake-check"><svg><use href="#i-check"></use></svg></span>
+            <span>涂蜡</span>
+          </label>
+        </div>
+
+        <label class="field">
+          <span>额外状态 <small>用逗号分隔</small></span>
+          <input id="customStates" name="customStates" type="text" maxlength="80" placeholder="含水，朝北，正在发光">
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span>图标外观</span>
+            <select id="customIcon" name="customIcon">
+              <option value="cube">铜块</option>
+              <option value="cut">切制铜块</option>
+              <option value="slab">台阶</option>
+              <option value="stairs">楼梯</option>
+              <option value="grate">格栅</option>
+              <option value="bars">栏杆</option>
+              <option value="chain">铜链</option>
+              <option value="lantern">灯笼</option>
+              <option value="bulb">铜灯</option>
+              <option value="door">门</option>
+              <option value="trapdoor">活板门</option>
+              <option value="chest">箱子</option>
+              <option value="statue">傀儡像</option>
+              <option value="rod">避雷针</option>
+              <option value="torch">火把</option>
+              <option value="custom">自定义</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>英文 ID <small>可选</small></span>
+            <input id="customEn" name="customEn" type="text" maxlength="48" placeholder="custom:polished_copper" spellcheck="false">
+          </label>
+        </div>
+
+        <p class="form-hint">名称会自动组合氧化与涂蜡前缀。例如选择“斑驳 + 涂蜡”，再填入“铜齿轮”，会显示为“涂蜡的斑驳铜齿轮”。</p>
+      </div>
+
+      <footer class="modal-foot">
+        <button class="ghost-btn" type="button" data-close-dialog>取消</button>
+        <button class="primary-btn" type="submit">加入播放列表</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog id="helpDialog" class="modal modal--help">
+    <header class="modal-head">
+      <div>
+        <span class="modal-eyebrow">HOW TO PLAY</span>
+        <h2>铜方块，一块一块闪</h2>
+      </div>
+      <button class="icon-btn modal-close" type="button" data-close-dialog aria-label="关闭">
+        <svg><use href="#i-close"></use></svg>
+      </button>
+    </header>
+    <div class="modal-body help-body">
+      <p>这是一个向 Minecraft 铜系列方块致敬的小播放器。默认暂停在第一项，点“开始快闪”即可按顺序自动播放。</p>
+      <ul class="help-list">
+        <li><b>方块库</b>：选择要播放的方块种类；“完整”模式展开全部状态组合，“精简”模式每类只保留 8 个氧化/涂蜡变种。</li>
+        <li><b>状态名称</b>：所有状态会用“的”串联在方块名前面，例如“倒置的向右外角的斑驳的铜楼梯”。</li>
+        <li><b>朗读</b>：开关默认关闭。打开后会调用浏览器自带语音，并且一个方块会停留到朗读结束才切换。控制栏的“音色”下拉框可以切换自动、Edge 在线自然语音和本地语音；旁边的小下拉框可单独选择朗读语速（自动 / 0.8×–1.5×），两项选择都会保存在本机。</li>
+        <li><b>预加载</b>：当前方块开始朗读时，会把下一个方块的语音提前加入朗读队列，减少两项之间的等待与合成延迟。</li>
+        <li><b>自定义</b>：添加自己的铜方块条目；它会追加在播放列表末尾，并保存在当前浏览器。</li>
+        <li><b>顺序</b>：先未涂蜡后涂蜡；可含水方块先干燥后含水；每种内先按未氧化 → 斑驳 → 锈蚀 → 氧化，再按朝向、半砖、开关等状态排序。</li>
+      </ul>
+      <div class="help-callout">
+        <strong>关于“直到朗读完毕”</strong>
+        <p>开启朗读后，切页计时器会暂停，由语音合成的 <code>end</code> 事件推进；如果浏览器没有可用语音或朗读失败，会自动回退到“停留时长”。</p>
+        <p class="help-voice-note">在 Edge 中会优先选择 <b>Microsoft 晓晓 Online (Natural)</b> 等自然语音；若自动改用本地语音，语速会加快到约 1.24×。在线自然语音不可用时会自动回退到本地语音。</p>
+      </div>
+      <p class="help-source">方块名称与状态参考 Minecraft Java 版 1.21.9 官方中文译名与 Minecraft Wiki。本页不是 Mojang / Microsoft 官方产品。</p>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="art.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
