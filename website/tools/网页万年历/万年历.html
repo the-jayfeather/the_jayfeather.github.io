@@ -56,7 +56,6 @@
     <section class="panel sky-panel" id="panelTide" data-key="showTideCard">
       <div class="sky-head">
         <h3 class="panel-title">潮汐时刻</h3>
-        <span class="tide-port" id="tidePort">附近港口-厦门港</span>
       </div>
       <div class="tide-body" id="tideBody"></div>
     </section>
@@ -90,9 +89,17 @@
       </div>
       <div id="friendBirthBlock"></div>
     </section>
-    <section class="panel" id="panelHistory" data-key="showHistory">
-      <h3 class="panel-title">历史上的今天</h3>
-      <ul class="info-list" id="historyList"></ul>
+    <section class="panel history-panel" id="panelHistory" data-key="showHistory">
+      <div class="history-head">
+        <button class="history-size-btn" id="historySizeBtn" type="button" aria-label="切换历史卡片大小">折叠</button>
+        <h3 class="panel-title">历史上的今天</h3>
+        <span class="history-size-count" id="historySizeCount"></span>
+      </div>
+      <div class="history-body" id="historyBody" data-mode="fold">
+        <button class="history-nav prev" id="historyPrev" type="button" aria-label="上一条历史事件">‹</button>
+        <ul class="info-list history-list" id="historyList"></ul>
+        <button class="history-nav next" id="historyNext" type="button" aria-label="下一条历史事件">›</button>
+      </div>
     </section>
     <section class="panel" id="panelTarot" data-key="showTarot">
       <h3 class="panel-title">塔罗 · 每日单牌 · 往今未三牌阵</h3>
@@ -414,8 +421,25 @@
       <button class="modal-close" id="searchClose" aria-label="关闭">×</button>
     </div>
     <div class="search-body">
-      <div class="search-tip">键入关键词搜索角色 / 名人 / 亲友（姓名或身份）/ 历史事件；用 * 连接多个词，可筛选同时包含这些词的生日</div>
+      <div class="search-tip">键入关键词搜索角色 / 名人 / 亲友（姓名或身份）/ 历史事件；用 * 连接多个词，可筛选同时包含这些词的生日。历史事件默认不参与搜索。</div>
       <input class="search-input" id="searchInput" type="text" placeholder="输入关键词，如：桐人 / 洛天依 / 初二*初一" autocomplete="off">
+      <div class="search-filters">
+        <label class="search-filter-row">
+          <span>显示生日</span>
+          <span class="switch"><input type="checkbox" id="searchBirthToggle" checked><span class="slider"></span></span>
+        </label>
+        <label class="search-filter-row">
+          <span>显示事件</span>
+          <span class="switch"><input type="checkbox" id="searchEventToggle"><span class="slider"></span></span>
+        </label>
+        <div class="search-year-range disabled" id="searchYearRange">
+          <span class="search-year-label">事件年份范围</span>
+          <input class="search-year-input" id="searchYearFrom" type="number" placeholder="起始" aria-label="事件起始年份">
+          <span class="search-year-sep">—</span>
+          <input class="search-year-input" id="searchYearTo" type="number" placeholder="结束" aria-label="事件结束年份">
+          <span class="search-year-hint">留空不限</span>
+        </div>
+      </div>
       <div class="search-results" id="searchResults"></div>
     </div>
   </div>
@@ -432,6 +456,7 @@
 <script src="files/friends_birthdays_lunar.js"></script>
 <script src="files/celebrities.js"></script>
 <script src="files/history.js"></script>
+<script src="files/history_featured.js"></script>
 <script src="files/yi_ji.js"></script>
 <script src="files/bagua.js"></script>
 <script src="files/tarot.js"></script>
@@ -444,7 +469,30 @@ var L = window.LunarLib, F = window.FESTIVALS, B = window.BIRTHDAYS,
     FB = window.FRIENDS_BIRTHDAYS,
     FBL = window.FRIENDS_BIRTHDAYS_LUNAR,
     CE = window.CELEBRITIES,
-    H = window.HISTORY, YJ = window.YIJI, BG = window.BAGUA, TT = window.TAROT;
+    H = window.HISTORY, YJ = window.YIJI, BG = window.BAGUA, TT = window.TAROT,
+    HF = window.HISTORY_FEATURED || {};
+
+function ensureFeaturedHistory() {
+  Object.keys(HF).forEach(function (key) {
+    var f = HF[key];
+    if (!f || !f[1]) return;
+    var arr = H[key] || (H[key] = []);
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i][0] === f[0] && arr[i][1] === f[1]) return;
+    }
+    if (f[0] < 0) {
+      for (var j = 0; j < arr.length; j++) {
+        if (arr[j][0] === -f[0] && arr[j][1] === f[1]) {
+          arr.splice(j, 1);
+          break;
+        }
+      }
+    }
+    arr.push([f[0], f[1], 'featured', 'event']);
+    arr.sort(function (a, b) { return a[0] - b[0]; });
+  });
+}
+ensureFeaturedHistory();
 
 /* ---------- 工具 ---------- */
 function $(id) { return document.getElementById(id); }
@@ -1383,6 +1431,33 @@ function tideOfflineModel(y, m, d) {
   }
   return out;
 }
+function tideCurrentEvents(y, m, d) {
+  var port = astroNearestPort();
+  var key = port.id + '|' + tideDayKey(y, m, d);
+  var online = (tideOnline.key === key && tideOnline.status === 'ok') ? tideOnline.events : null;
+  return online && online.length ? online : tideOfflineModel(y, m, d);
+}
+function tideNextExtreme(evs, nowH, type) {
+  var best = null;
+  for (var i = 0; i < evs.length; i++) {
+    if (evs[i].type !== type) continue;
+    if (evs[i].t > nowH + 0.001 && (best === null || evs[i].t < best)) best = evs[i].t;
+  }
+  return best;
+}
+function updateTideNextLabels() {
+  if (!settings.showTide) return;
+  var el = $('lunarDetail');
+  if (!el) return;
+  var evs = tideCurrentEvents(sel.y, sel.m, sel.d);
+  var nowH = astroNowHours();
+  var th = tideNextExtreme(evs, nowH, 'high');
+  var tl = tideNextExtreme(evs, nowH, 'low');
+  var eh = el.querySelector('.lg-val[data-tide-h]');
+  if (eh && th !== null) eh.textContent = astroHM(th);
+  var el2 = el.querySelector('.lg-val[data-tide-l]');
+  if (el2 && tl !== null) el2.textContent = astroHM(tl);
+}
 function tideHeightAt(t, evs) {
   if (!evs || !evs.length) return null;
   if (t <= evs[0].t) return evs[0].h;
@@ -1533,6 +1608,7 @@ function renderTideCard() {
   }
   svg += '</svg>';
   body.innerHTML = svg + '<div class="tide-foot">' + src + ' · 相对平均海平面</div>';
+  updateTideNextLabels();
 }
 
 function renderLunarDetail(info) {
@@ -1594,8 +1670,9 @@ function renderLunarDetail(info) {
     }
   }
   if (s.showTide) {
-    var th = astroNextTide(sel.y, sel.m, sel.d, nowH, 'high');
-    var tl = astroNextTide(sel.y, sel.m, sel.d, nowH, 'low');
+    var tevs = tideCurrentEvents(sel.y, sel.m, sel.d);
+    var th = tideNextExtreme(tevs, nowH, 'high');
+    var tl = tideNextExtreme(tevs, nowH, 'low');
     if (th !== null) right += '<div class="lg-item"><span class="lg-label">下次最高潮</span><span class="lg-val" data-tide-h>' + astroHM(th) + '</span></div>';
     if (tl !== null) right += '<div class="lg-item"><span class="lg-label">下次最低潮</span><span class="lg-val" data-tide-l>' + astroHM(tl) + '</span></div>';
   }
@@ -2031,18 +2108,110 @@ function renderChong(info) {
   $('chongBox').innerHTML = html;
 }
 
+var historyMode = 'fold';
+var historyModeOrder = ['fold', 'long', 'full'];
+var historyModeLabels = { fold: '折叠', long: '长', full: '全开' };
+var historyModeLimits = { fold: 1, long: 3, full: Infinity };
+var historyOffset = 0;
+var historyDateKey = '';
+
+function syncHistoryCardHeight() {
+  var card = document.querySelector('.tarot-daily .tarot-card.daily');
+  if (!card) return;
+  var h = Math.round(card.getBoundingClientRect().height);
+  if (h >= 80) document.documentElement.style.setProperty('--history-card-h', h + 'px');
+}
+
+function historyVisibleCount(total) {
+  return Math.min(total, historyModeLimits[historyMode]);
+}
+
+function historyDefaultIndex(key, evs) {
+  var f = HF[key];
+  if (!f || !evs || !evs.length) return 0;
+  for (var i = 0; i < evs.length; i++) {
+    if (evs[i][0] === f[0] && evs[i][1] === f[1]) return i;
+  }
+  for (var j = 0; j < evs.length; j++) {
+    if (evs[j][0] === f[0]) return j;
+  }
+  return 0;
+}
+
+function historyPageOffsets(total, visible) {
+  var max = Math.max(0, total - visible);
+  var pages = [];
+  for (var o = 0; o <= max; o += visible) pages.push(o);
+  if (pages[pages.length - 1] !== max) pages.push(max);
+  return pages;
+}
+
 function renderHistory() {
-  var evs = H[sel.m + '-' + sel.d];
+  var key = sel.m + '-' + sel.d;
+  var evs = H[key];
+  var body = $('historyBody');
+  body.dataset.mode = historyMode;
+  var dateChanged = key !== historyDateKey;
+  if (dateChanged) historyDateKey = key;
   if (!evs || !evs.length) {
+    body.classList.add('no-events');
     $('historyList').innerHTML = '<li class="empty">今日暂无收录的历史事件</li>';
+    $('historySizeCount').textContent = '';
+    $('historyPrev').disabled = true;
+    $('historyNext').disabled = true;
     return;
   }
-  $('historyList').innerHTML = evs.map(function (ev) {
+  body.classList.remove('no-events');
+  var visible = historyVisibleCount(evs.length);
+  var maxOffset = Math.max(0, evs.length - visible);
+  if (dateChanged) {
+    historyOffset = historyMode === 'full' ? 0 : historyDefaultIndex(key, evs);
+    if (historyMode !== 'full') historyOffset = Math.floor(historyOffset / visible) * visible;
+  }
+  historyOffset = Math.min(Math.max(0, historyOffset), maxOffset);
+  var shown = evs.slice(historyOffset, historyOffset + visible);
+  $('historySizeBtn').textContent = historyModeLabels[historyMode];
+  $('historySizeBtn').setAttribute('aria-label', '切换历史卡片大小，当前：' + historyModeLabels[historyMode]);
+  $('historySizeCount').textContent = historyMode === 'full'
+    ? shown.length + ' / ' + evs.length
+    : (historyOffset + 1) + (shown.length > 1 ? '–' + (historyOffset + shown.length) : '') + ' / ' + evs.length;
+  $('historyPrev').disabled = historyMode === 'full';
+  $('historyNext').disabled = historyMode === 'full';
+  $('historyList').innerHTML = shown.map(function (ev) {
     var y = ev[0];
     var label = y < 0 ? '公元前' + (-y) : y + '年';
-    return '<li><span class="w">' + label + '</span>' + ev[1] + '</li>';
+    return '<li><span class="w">' + label + '：</span><span class="h-text">' + ev[1] + '</span></li>';
   }).join('');
 }
+
+function shiftHistory(delta) {
+  if (historyMode === 'full') return;
+  var evs = H[sel.m + '-' + sel.d];
+  if (!evs || !evs.length) return;
+  var visible = historyVisibleCount(evs.length);
+  var pages = historyPageOffsets(evs.length, visible);
+  var idx = 0;
+  for (var i = 0; i < pages.length; i++) {
+    if (pages[i] <= historyOffset) idx = i;
+  }
+  idx = (idx + delta + pages.length) % pages.length;
+  historyOffset = pages[idx];
+  renderHistory();
+}
+
+function cycleHistoryMode() {
+  var idx = historyModeOrder.indexOf(historyMode);
+  historyMode = historyModeOrder[(idx + 1) % historyModeOrder.length];
+  historyDateKey = '';
+  historyOffset = 0;
+  renderHistory();
+}
+$('historySizeBtn').addEventListener('click', cycleHistoryMode);
+$('historyPrev').addEventListener('click', function () { shiftHistory(-1); });
+$('historyNext').addEventListener('click', function () { shiftHistory(1); });
+window.addEventListener('resize', syncHistoryCardHeight);
+window.addEventListener('load', syncHistoryCardHeight);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHistoryCardHeight);
 
 function renderBagua() {
   var bg = baguaOf(sel.y, sel.m, sel.d);
@@ -2133,6 +2302,7 @@ function renderTarot() {
         '</div>';
     }).join('') + '</div>' +
     '<div class="tarot-method">往今未三张牌阵（过去 · 现在 · 未来）· 以当日日期推演 · 仅供娱乐</div>';
+  syncHistoryCardHeight();
 }
 
 /* ============================================================
@@ -2468,9 +2638,20 @@ $('modalMask').addEventListener('click', function (e) { if (e.target === this) c
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeSettings(); closeSearch(); closeBirthExportMenu(); } });
 
 /* ---------- 搜索面板 ---------- */
+function syncSearchFilters() {
+  var on = $('searchEventToggle').checked;
+  $('searchYearRange').classList.toggle('disabled', !on);
+  $('searchYearFrom').disabled = !on;
+  $('searchYearTo').disabled = !on;
+}
 function openSearch() {
   $('searchMask').classList.add('open');
   $('searchInput').value = '';
+  $('searchBirthToggle').checked = true;
+  $('searchEventToggle').checked = false;
+  $('searchYearFrom').value = '';
+  $('searchYearTo').value = '';
+  syncSearchFilters();
   renderSearch('');
   $('searchInput').focus();
 }
@@ -2480,6 +2661,13 @@ $('searchClose').addEventListener('click', closeSearch);
 $('searchMask').addEventListener('click', function (e) { if (e.target === this) closeSearch(); });
 $('searchInput').addEventListener('input', function () { renderSearch(this.value.trim()); });
 $('searchInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+$('searchBirthToggle').addEventListener('change', function () { renderSearch($('searchInput').value.trim()); });
+$('searchEventToggle').addEventListener('change', function () {
+  syncSearchFilters();
+  renderSearch($('searchInput').value.trim());
+});
+$('searchYearFrom').addEventListener('input', function () { renderSearch($('searchInput').value.trim()); });
+$('searchYearTo').addEventListener('input', function () { renderSearch($('searchInput').value.trim()); });
 
 function dayGap(y1, m1, d1, y0, m0, d0) {
   return Math.round((new Date(y1, m1 - 1, d1).getTime() - new Date(y0, m0 - 1, d0).getTime()) / 86400000);
@@ -2518,6 +2706,15 @@ function renderSearch(kw) {
   var box = $('searchResults');
   var terms = String(kw || '').split('*').map(function (s) { return s.trim(); }).filter(function (s) { return s; });
   if (!terms.length) { box.innerHTML = '<div class="search-empty">输入关键词开始搜索</div>'; return; }
+  var showBirth = $('searchBirthToggle').checked;
+  var showEvent = $('searchEventToggle').checked;
+  if (!showBirth && !showEvent) { box.innerHTML = '<div class="search-empty">请在筛选中选择生日或事件</div>'; return; }
+  var fromRaw = $('searchYearFrom').value.trim();
+  var toRaw = $('searchYearTo').value.trim();
+  var fromY = fromRaw === '' ? null : parseInt(fromRaw, 10);
+  var toY = toRaw === '' ? null : parseInt(toRaw, 10);
+  if (isNaN(fromY)) fromY = null;
+  if (isNaN(toY)) toY = null;
   var hit = function () {
     var hay = Array.prototype.slice.call(arguments).filter(function (v) { return v !== null && v !== undefined && v !== ''; }).join('\n');
     for (var t = 0; t < terms.length; t++) if (hay.indexOf(terms[t]) < 0) return false;
@@ -2531,6 +2728,7 @@ function renderSearch(kw) {
   for (i = 0; i < FBL.length; i++) {
     if (!friendLunarByName[FBL[i].name]) friendLunarByName[FBL[i].name] = { lm: FBL[i].lm, ld: FBL[i].ld };
   }
+  if (showBirth) {
   for (i = 0; i < B.length; i++) {
     r = B[i];
     if (hit(r.name, r.work)) {
@@ -2584,16 +2782,22 @@ function renderSearch(kw) {
       push({ type: tagTypeL, name: r.name, sub: tagL, solar: '', lunar: L.lunarMonthCN(r.lm, !!r.isLeap) + L.lunarDayCN(r.ld), lm: r.lm, ld: r.ld });
     }
   }
+  }
+  if (showEvent) {
   for (k in H) {
     if (!H.hasOwnProperty(k)) continue;
     var md = k.split('-'), mm = +md[0], dd = +md[1];
     var evs = H[k];
     for (j = 0; j < evs.length; j++) {
       e = evs[j];
+      var ey = +e[0];
+      if (fromY !== null && ey < fromY) continue;
+      if (toY !== null && ey > toY) continue;
       if (hit(String(e[1]))) {
         push({ type: '事件', name: String(e[1]), sub: (e[0] < 0 ? '公元前' + (-e[0]) : e[0]) + ' 年', solar: mm + '月' + dd + '日', lunar: '', m: mm, d: dd });
       }
     }
+  }
   }
   if (!items.length) { box.innerHTML = '<div class="search-empty">未找到匹配内容</div>'; return; }
   var html = '';
@@ -3704,14 +3908,7 @@ setInterval(function () {
       mo.textContent = (nm.type === 'rise' ? '月升' : '月落') + ' ' + astroHM(nm.t);
     }
   }
-  if (settings.showTide) {
-    var th2 = astroNextTide(sel.y, sel.m, sel.d, nh, 'high');
-    var tl2 = astroNextTide(sel.y, sel.m, sel.d, nh, 'low');
-    var eh = el.querySelector('.lg-val[data-tide-h]');
-    if (eh && th2 !== null) eh.textContent = astroHM(th2);
-    var el2 = el.querySelector('.lg-val[data-tide-l]');
-    if (el2 && tl2 !== null) el2.textContent = astroHM(tl2);
-  }
+  if (settings.showTide) updateTideNextLabels();
 }, 30000);
 </script>
 </body>
