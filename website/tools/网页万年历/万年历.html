@@ -3327,6 +3327,7 @@ function extListHtml() {
       '<span class="de-meta">' + n + ' 行' + (tm ? ' · ' + tm : '') + '</span>' +
       '<button class="de-btn small" data-ext-act="edit" data-id="' + t.id + '">编辑</button>' +
       '<button class="de-btn small" data-ext-act="export" data-id="' + t.id + '" title="导出表文件">导出</button>' +
+      (t.type === 'birthday' ? '<button class="de-btn small" data-ext-act="export-table" data-id="' + t.id + '" title="导出为表格（Excel）">表格</button>' : '') +
       '<button class="de-btn small danger" data-ext-act="unload" data-id="' + t.id + '" title="取消加载该表">卸载</button></div>';
   }
   return h + '</div>';
@@ -3557,6 +3558,7 @@ function extEditHtml(t) {
   return '<div class="de-toolbar">' +
     '<span class="de-title" title="' + escapeHtml(t.name) + '">' + escapeHtml(t.name) + ' <span class="de-tag' + (t.type === 'lunar' ? ' lunar' : (t.type === 'festival' ? ' festival' : '')) + '">' + EXT_TYPE_LABEL[t.type] + '</span></span>' +
     '<button class="de-btn small primary" data-ext-act="export" title="导出表文件">导出</button>' +
+    (t.type === 'birthday' ? '<button class="de-btn small" data-ext-act="export-table" title="导出为表格（Excel）">导出表格</button>' : '') +
     '<button class="de-btn small" data-ext-act="import" title="导入表文件">导入</button>' +
     (t.type === 'birthday' ? '<button class="de-btn small" data-ext-act="calc-lunar" title="按出生年月日计算农历生日">计算农历</button>' : '') +
     '<button class="de-btn small" data-ext-act="new" title="新建表">新建</button>' +
@@ -3747,6 +3749,184 @@ function extExport(t) {
   setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 1000);
   toast('已导出「' + t.name + '.cdata」');
 }
+function extBirthXlsxRows(t) {
+  var out = [['姓名', '身份', '年', '新历月日', '农历月日']];
+  var rows = (t && t.parsed && t.parsed.rows) || [];
+  rows.forEach(function (r) {
+    if (!r || (!r.name && !r.m && !r.lm)) return;
+    var identity = r.role || r.tag || '';
+    if (r.cls) identity += '（' + r.cls + '）';
+    var year = '';
+    if (r.y !== '' && r.y !== null && r.y !== undefined && !isNaN(Number(r.y))) year = Number(r.y);
+    var solar = (r.m && r.d) ? (r.m + '月' + r.d + '日') : '';
+    var lunar = '';
+    if (!r.noLunar && !isNoLunarRow(r) && r.lm >= 1 && r.lm <= 12 && r.ld >= 1 && r.ld <= 30) {
+      lunar = L.lunarMonthCN(r.lm, !!r.isLeap) + L.lunarDayCN(r.ld);
+    }
+    out.push([r.name || '', identity, year, solar, lunar]);
+  });
+  return out;
+}
+function extXmlEsc(v) {
+  return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/\r?\n/g, '&#10;');
+}
+function extXlsxColName(n) {
+  var s = '';
+  while (n > 0) {
+    var r = (n - 1) % 26;
+    s = String.fromCharCode(65 + r) + s;
+    n = Math.floor((n - 1) / 26);
+  }
+  return s;
+}
+function extXlsxCell(ref, v, style) {
+  var st = style ? ' s="' + style + '"' : '';
+  if (v === '' || v === null || v === undefined) return '<c r="' + ref + '"' + st + '/>';
+  if (typeof v === 'number' && isFinite(v)) return '<c r="' + ref + '"' + st + '><v>' + v + '</v></c>';
+  return '<c r="' + ref + '"' + st + ' t="inlineStr"><is><t xml:space="preserve">' + extXmlEsc(v) + '</t></is></c>';
+}
+var extXlsxCrcTable = null;
+function extXlsxCrc32(data) {
+  if (!extXlsxCrcTable) {
+    extXlsxCrcTable = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      extXlsxCrcTable[n] = c >>> 0;
+    }
+  }
+  var crc = 0xFFFFFFFF;
+  for (var i = 0; i < data.length; i++) crc = extXlsxCrcTable[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function extZipStore(files) {
+  var enc = new TextEncoder();
+  var parts = [], centrals = [], offset = 0, centralSize = 0;
+  for (var i = 0; i < files.length; i++) {
+    var name = enc.encode(files[i].name);
+    var data = typeof files[i].data === 'string' ? enc.encode(files[i].data) : files[i].data;
+    var crc = extXlsxCrc32(data);
+    var local = new Uint8Array(30 + name.length);
+    var lv = new DataView(local.buffer);
+    lv.setUint32(0, 0x04034B50, true);
+    lv.setUint16(4, 20, true);
+    lv.setUint16(6, 0x0800, true);
+    lv.setUint16(8, 0, true);
+    lv.setUint16(10, 0, true);
+    lv.setUint16(12, 0x0021, true);
+    lv.setUint32(14, crc, true);
+    lv.setUint32(18, data.length, true);
+    lv.setUint32(22, data.length, true);
+    lv.setUint16(26, name.length, true);
+    lv.setUint16(28, 0, true);
+    local.set(name, 30);
+    parts.push(local, data);
+    var central = new Uint8Array(46 + name.length);
+    var cv = new DataView(central.buffer);
+    cv.setUint32(0, 0x02014B50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0x0800, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint16(12, 0, true);
+    cv.setUint16(14, 0x0021, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, data.length, true);
+    cv.setUint32(24, data.length, true);
+    cv.setUint16(28, name.length, true);
+    cv.setUint16(30, 0, true);
+    cv.setUint16(32, 0, true);
+    cv.setUint16(34, 0, true);
+    cv.setUint16(36, 0, true);
+    cv.setUint32(38, 0, true);
+    cv.setUint32(42, offset, true);
+    central.set(name, 46);
+    centrals.push(central);
+    centralSize += central.length;
+    offset += local.length + data.length;
+  }
+  var end = new Uint8Array(22);
+  var ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054B50, true);
+  ev.setUint16(4, 0, true);
+  ev.setUint16(6, 0, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, offset, true);
+  ev.setUint16(20, 0, true);
+  var out = new Uint8Array(offset + centralSize + 22);
+  var pos = 0;
+  for (var p = 0; p < parts.length; p++) { out.set(parts[p], pos); pos += parts[p].length; }
+  for (var q = 0; q < centrals.length; q++) { out.set(centrals[q], pos); pos += centrals[q].length; }
+  out.set(end, pos);
+  return out;
+}
+function extXlsxDisplayWidth(v) {
+  var s = String(v === null || v === undefined ? '' : v), w = 0, i, c;
+  for (i = 0; i < s.length; i++) {
+    c = s.codePointAt(i);
+    if (c > 0xFFFF) { w += 2; i++; }
+    else w += (c >= 0x2E80) ? 2 : 1;
+  }
+  return w;
+}
+function extBirthXlsxColWidths(rows) {
+  var widths = [0, 0, 0, 0, 0], i, j, w;
+  for (i = 0; i < rows.length; i++) {
+    for (j = 0; j < rows[i].length && j < 5; j++) {
+      w = extXlsxDisplayWidth(rows[i][j]);
+      if (w > widths[j]) widths[j] = w;
+    }
+  }
+  for (i = 0; i < widths.length; i++) widths[i] = Math.min(255, Math.max(8, Math.round(widths[i] + 3)));
+  return widths;
+}
+function extBirthXlsxBytes(t) {
+  var rows = extBirthXlsxRows(t);
+  var last = rows.length;
+  var widths = extBirthXlsxColWidths(rows);
+  var sheetRows = rows.map(function (row, ri) {
+    var style = ri === 0 ? 1 : (ri % 2 === 1 ? 2 : 3);
+    return '<row r="' + (ri + 1) + '">' + row.map(function (v, ci) {
+      return extXlsxCell(extXlsxColName(ci + 1) + (ri + 1), v, style);
+    }).join('') + '</row>';
+  }).join('');
+  var colXml = '';
+  for (var ci = 0; ci < widths.length; ci++) {
+    colXml += '<col min="' + (ci + 1) + '" max="' + (ci + 1) + '" width="' + widths[ci] + '" customWidth="1"/>';
+  }
+  var sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><dimension ref="A1:E' + last + '"/>' +
+    '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
+    '<cols>' + colXml + '</cols>' +
+    '<sheetData>' + sheetRows + '</sheetData><autoFilter ref="A1:E' + last + '"/></worksheet>';
+  var styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+    '<fonts count="2"><font><sz val="11"/><color rgb="FF000000"/><name val="MiSans Medium"/><family val="2"/></font><font><b/><sz val="11"/><color rgb="FF000000"/><name val="MiSans Medium"/><family val="2"/></font></fonts>' +
+    '<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFFFF"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDDEBF7"/><bgColor indexed="64"/></patternFill></fill></fills>' +
+    '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
+    '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+    '<cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="3" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs>' +
+    '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  var workbook = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="生日表" sheetId="1" r:id="rId1"/></sheets></workbook>';
+  return extZipStore([
+    { name: '[Content_Types].xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+    { name: '_rels/.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: 'xl/workbook.xml', data: workbook },
+    { name: 'xl/_rels/workbook.xml.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+    { name: 'xl/worksheets/sheet1.xml', data: sheet },
+    { name: 'xl/styles.xml', data: styles }
+  ]);
+}
+function extExportTable(t) {
+  if (!t || t.type !== 'birthday') return;
+  var bytes = extBirthXlsxBytes(t);
+  var filename = t.name.replace(/[\\/:*?"<>|]/g, '_') + '_生日表.xlsx';
+  downloadBlob(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), filename);
+  toast('已导出「' + filename + '」');
+}
 function extCalcLunar() {
   var t = extCurrentTable();
   if (!t || t.type !== 'birthday' || !$('extTable')) return;
@@ -3842,6 +4022,15 @@ $('dataEditBody').addEventListener('click', function (e) {
   } else if (act === 'export') {
     for (var e2 = 0; e2 < extState.tables.length; e2++) if (extState.tables[e2].id === id) { extExport(extState.tables[e2]); break; }
     if (!id && extCurrentTable()) extExport(extCurrentTable());
+  } else if (act === 'export-table') {
+    if (extEditingId && $('extTable')) extSaveFromTable();
+    var tb = null;
+    if (id) {
+      for (var e5 = 0; e5 < extState.tables.length; e5++) if (extState.tables[e5].id === id) { tb = extState.tables[e5]; break; }
+    } else {
+      tb = extCurrentTable();
+    }
+    if (tb) extExportTable(tb);
   } else if (act === 'unload') {
     for (var k = 0; k < extState.tables.length; k++) {
       if (extState.tables[k].id === id) {
